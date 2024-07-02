@@ -8,11 +8,8 @@
         public const string ViewDataChatBotGenres            = "ChatBotGenres";
         public const string ViewDataUserInstitutions         = "UserInstitutions";       
         public const string ViewDataChatBots                 = "ChatBots";
-        public const string ViewDataChatBotId                = "ChatBotId";
-
-        public const string UserInstitutionsErrorSpan        = "An Institution is required to Create a ChatBot"; //Show this message for input error on Views
-        public const string ChatBotsErrorSpan                = "A ChatBot is required to Create an Conversation"; //Show this message for input error on Views
-
+        public const string ViewDataChatBotId                = "ChatBotId";        
+        
         public const string PartialViewNameBaseErrors        = "_BaseErrors";        
     }
 }

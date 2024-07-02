@@ -1,10 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using NinaSpeakV2.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace NinaSpeakV2.Domain.ViewModels.ChatBotConversations
 {
     public class CreateChatBotConversationViewModel : BaseCreateViewModel
     {
-        [JsonInclude]
+        [Required(ErrorMessage = BaseError.ChatBotsErrorSpan), JsonInclude]
         public long ChatBotFk { get; set; }
 
         [JsonInclude]

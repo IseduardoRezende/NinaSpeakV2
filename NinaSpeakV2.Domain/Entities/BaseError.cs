@@ -25,6 +25,10 @@
         public const string EmailAlreadyExist                 = "Email already exist.";
         public const string NameAlreadyExist                  = "Name already exist.";
 
+        public const string UserInstitutionsErrorSpan         = "An Institution is required to Create a ChatBot"; 
+        public const string ChatBotGenresErrorSpan            = "An ChatBot Genre is required to Create a ChatBot";
+        public const string ChatBotsErrorSpan                 = "An ChatBot is required to Create a Conversation";
+
         public BaseError(string description)
         {
             ArgumentNullException.ThrowIfNull(description, nameof(description));
