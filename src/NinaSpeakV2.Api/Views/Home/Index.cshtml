@@ -2,35 +2,153 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .card {
+        transition: transform 0.3s ease;        
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+    .welcome-banner {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container">
+    <main role="main" class="pb-3">
+        <!-- Bem-vindo -->
+        <div class="welcome-banner">
+            <h1>Bem-Vindo ao ChatBot Grátis!</h1>
+            <p>Gerencie suas instituições e chatbots de forma fácil e eficiente.</p>
+        </div>
+        <!-- Menu lateral -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action active">Instituições</a>
+                    <a href="#" class="list-group-item list-group-item-action">ChatBots</a>
+                    <a href="#" class="list-group-item list-group-item-action">Conversações</a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <!-- Cards Dinâmicos -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body" id="card1">
+                                <h5 class="card-title">Criar Nova Instituição</h5>
+                                <p class="card-text">Crie uma nova instituição para gerenciar e gerar novos ChatBots.</p>
+                                <a asp-controller="Institution" asp-action="Create" class="btn btn-primary">Criar</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body" id="card2">
+                                <h5 class="card-title">Ver Instituições</h5>
+                                <p class="card-text">Veja e gerencie suas instituições.</p>
+                                <a asp-controller="Institution" asp-action="Index" class="btn btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body" id="card3">
+                                <h5 class="card-title">Aprender Mais</h5>
+                                <p class="card-text">Aprenda como criar e gerenciar novas instituições.</p>
+                                <a href="https://www.youtube.com/watch?v=jtKuiuFZCjw" class="btn btn-primary">Aprender</a> <!-- Abrir nova Guia e não sair da atual -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
 
-<h4>
-    <a asp-action="Index" asp-controller="User">Usuário</a>
-</h4> 
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<br />
+    <script>
+        // Defina variáveis com URLs geradas por Razor
+        var createInstitutionUrl = '@Url.Action("Create", "Institution")';
+        var indexInstitutionUrl = '@Url.Action("Index", "Institution")';
 
-<h4>
-    <a asp-action="Index" asp-controller="Institution">Instituição</a>
-</h4>
+        var createChatBotUrl = '@Url.Action("Create", "ChatBot")';
+        var indexChatBotUrl = '@Url.Action("Index", "ChatBot")';
 
-<br />
+        var createChatBotConversationUrl = '@Url.Action("Create", "ChatBotConversation")';
+        var indexChatBotConversationUrl = '@Url.Action("Index", "ChatBotConversation")';
+        
+        $(document).ready(function () {
+            $('.list-group-item-action').on('click', function () {
+                $('.list-group-item-action').removeClass('active');
+                $(this).addClass('active');
 
-<h4>
-    <a asp-action="Index" asp-controller="UserInstitution">Usuário Instituições</a>
-</h4>
+                // Verifica o texto do item ativo e atualiza o conteúdo dos cards
+                const activeItemText = $(this).text().trim();
 
-<br />
+                if (activeItemText.includes('Instituições')) {
+                    $('#card1').html(`
+                                <h5 class="card-title">Criar Nova Instituição</h5>
+                                <p class="card-text">Crie uma nova instituição para gerenciar e gerar novos ChatBots.</p>
+                                <a href="${createInstitutionUrl}" class="btn btn-primary">Criar</a>
+                            `);
+                    $('#card2').html(`
+                                <h5 class="card-title">Ver Instituições</h5>
+                                <p class="card-text">Veja e gerencie suas instituições.</p>
+                                <a href="${indexInstitutionUrl}" class="btn btn-primary">Ver</a>
+                            `);
+                    $('#card3').html(`
+                                <h5 class="card-title">Aprender Mais</h5>
+                                <p class="card-text">Aprenda como criar e gerenciar novas instituições.</p>
+                                <a href="https://www.youtube.com/watch?v=jtKuiuFZCjw" class="btn btn-primary">Aprender</a>
+                            `);
+                } else if (activeItemText.includes('ChatBots')) {
+                    $('#card1').html(`
+                                <h5 class="card-title">Criar Novo ChatBot</h5>
+                                <p class="card-text">Crie um novo ChatBot para interagir e compartilhar.</p>
+                                <a href="${createChatBotUrl}" class="btn btn-primary">Criar</a>
+                            `);
+                    $('#card2').html(`
+                                <h5 class="card-title">Ver ChatBots</h5>
+                                <p class="card-text">Veja e gerencie seus ChatBots.</p>
+                                <a href="${indexChatBotUrl}" class="btn btn-primary">Ver</a>
+                            `);
+                    $('#card3').html(`
+                                <h5 class="card-title">Aprender Mais</h5>
+                                <p class="card-text">Aprenda como criar e gerenciar seus ChatBots.</p>
+                                <a href="https://www.youtube.com/watch?v=jtKuiuFZCjw" class="btn btn-primary">Aprender</a>
+                            `);
+                } else if (activeItemText.includes('Conversações')) {
+                    $('#card1').html(`
+                                <h5 class="card-title">Ensinar Nova Conversação</h5>
+                                <p class="card-text">Ensine seus ChatBots a interagirem com clientes e amigos.</p>
+                                <a href="${createChatBotConversationUrl}" class="btn btn-primary">Ensinar</a>
+                            `);
+                    $('#card2').html(`
+                                <h5 class="card-title">Ver Aprendizado</h5>
+                                <p class="card-text">Veja e gerencie o aprendizado dos seus ChatBots.</p>
+                                <a href="${indexChatBotConversationUrl}" class="btn btn-primary">Ver</a>
+                            `);
+                    $('#card3').html(`
+                                <h5 class="card-title">Aprender Mais</h5>
+                                <p class="card-text">Aprenda como criar e gerenciar conversações dos ChatBots.</p>
+                                <a href="https://www.youtube.com/watch?v=jtKuiuFZCjw" class="btn btn-primary">Aprender</a>
+                            `);
+                }
+                // Adicione outras condições para novos textos de itens da lista, se necessário
+            });
+        });
+    </script>
 
-<h4>
-    <a asp-action="Index" asp-controller="ChatBot">ChatBot</a>
-</h4>
-
-<br />
-
-<h4>
-    <a asp-action="Index" asp-controller="ChatBotConversation">ChatBot Conversação</a>
-</h4>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
