@@ -1,0 +1,36 @@
+﻿@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
+@model CreateUserInstitutionViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Criar</h1>
+
+<h4>Usuário Instituição</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserFk" class="control-label">UserFk</label>
+                <input asp-for="UserFk" class="form-control" />
+                <span asp-validation-for="UserFk" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InstitutionFk" class="control-label">InstitutionFk</label>
+                <input asp-for="InstitutionFk" class="form-control" />
+                <span asp-validation-for="InstitutionFk" class="text-danger"></span>
+            </div>            
+            <div class="form-group">
+                <input type="submit" value="Cadastrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Voltar</a>
+</div>

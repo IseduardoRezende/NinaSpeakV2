@@ -1,0 +1,71 @@
+﻿@using NinaSpeakV2.Api.Utils
+@using NinaSpeakV2.Domain.Entities
+@using NinaSpeakV2.Domain.ViewModels.ChatBotGenres
+@using NinaSpeakV2.Domain.ViewModels.ChatBots
+@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
+@model CreateChatBotViewModel
+
+@{
+    ViewData["Title"] = "Create";
+
+    var chatBotGenres = ViewData[Constant.ViewDataChatBotGenres] as IEnumerable<ReadChatBotGenreViewModel> ?? Enumerable.Empty<ReadChatBotGenreViewModel>();
+    var userInstitutions = ViewData[Constant.ViewDataUserInstitutions] as IEnumerable<ReadUserInstitutionViewModel> ?? Enumerable.Empty<ReadUserInstitutionViewModel>();
+}
+
+<h1>Criar</h1>
+
+<h4>ChatBot</h4>
+<hr />
+
+@Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Nome</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Descrição</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChatBotGenreFk" class="control-label">Gênero</label>
+                <select asp-for="ChatBotGenreFk" class="form-control">
+                    @foreach (var genre in chatBotGenres!)
+                    {
+                        <option value="@genre.Id">@genre.Description</option>
+                    }
+                </select>
+                <span asp-validation-for="ChatBotGenreFk" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InstitutionFk" class="control-label">Instituição</label>
+                <select asp-for="InstitutionFk" class="form-control">
+                    @foreach (var userInstitution in userInstitutions!)
+                    {
+                        <option value="@userInstitution.InstitutionFk">@userInstitution.InstitutionName</option>
+                    }
+                </select>
+                <span asp-validation-for="InstitutionFk" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Cadastrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Voltar</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

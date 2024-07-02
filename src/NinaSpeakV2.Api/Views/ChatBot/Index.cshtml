@@ -1,0 +1,65 @@
+﻿@using NinaSpeakV2.Domain.ViewModels.ChatBots
+@model IEnumerable<ReadChatBotViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Listagem de ChatBots</h1>
+
+<p>
+    <a asp-action="Create">Criar novo</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.Label("Nome")
+            </th>
+            <th>
+                @Html.Label("Descrição")
+            </th>
+            <th>
+                @Html.Label("Instituição")
+            </th>
+            <th>
+                @Html.Label("Gênero")
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InstitutionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChatBotGenreDescription)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Voltar</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

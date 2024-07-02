@@ -1,0 +1,38 @@
+﻿@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
+@model ReadUserInstitutionViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Detalhes</h1>
+
+<div>
+    <h4>Usuário Instituições</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserEmail)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserEmail)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.InstitutionName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.InstitutionName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Owner)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Owner)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+    <a asp-action="Delete" asp-route-id="@Model.Id">Deletar</a> |
+    <a asp-action="Index">Voltar</a>
+</div>

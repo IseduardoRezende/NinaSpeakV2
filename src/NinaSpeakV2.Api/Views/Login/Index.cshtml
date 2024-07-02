@@ -1,0 +1,44 @@
+﻿@using NinaSpeakV2.Api.Utils
+@using NinaSpeakV2.Domain.Entities
+@using NinaSpeakV2.Domain.ViewModels.Login
+@model ReadLoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+<hr />
+
+@Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Index">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input type="email" asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Senha</label>
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Entrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<a asp-action="Create">Criar Conta</a>
+@* <a asp-action="ResetPassword">Esqueci Senha</a> | *@
+@* <a asp-action="ReactivateAccount">Reativar Conta</a> *@
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
