@@ -5,51 +5,63 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Listagem de Instituições</h1>
+<style>    
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
 
-<p>
-    <a asp-action="Create">Criar nova</a>
-</p>
+    .btn-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+</style>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.Label("Nome")
-            </th>
-            <th>
-                @Html.Label("Descrição")
-            </th>
-            <th>
-                @Html.Label("Imagem")
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="container">
+    <h2 class="my-4">Suas Instituições</h2>
+    <a asp-action="Create" class="btn btn-primary mb-3">Criar nova</a>
+    <table class="table table-striped">
+        <thead class="thead-dark">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Image)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
-                </td>
+                <th>
+                    @Html.Label("Nome")
+                </th>
+                @* <th>
+                    @Html.Label("Descrição")
+                </th> *@
+                @* <th>
+                    @Html.Label("Descrição") Quantidade de membros
+                </th> *@
+                <th>
+                    @Html.Label("Imagem")
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
-
-<div>
-    <a asp-controller="Home" asp-action="Index">Voltar</a>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>    
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    @* <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td> *@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Image)
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" aria-label="Editar"><i class="fas fa-edit"></i> Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" aria-label="Deletar"><i class="fas fa-trash-alt"></i> Deletar</a>
+                        </div>
+                    </td>
+                </tr>
+            }            
+        </tbody>
+    </table>
+    <a asp-controller="Home" asp-action="Index" class="btn-link">Voltar</a>
 </div>
 
 @section Scripts {
