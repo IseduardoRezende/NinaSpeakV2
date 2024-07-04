@@ -84,6 +84,16 @@ a {
     border-color: #1861ac;
 }
 
+.btn-primary-index {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     color: #fff;
     background-color: #1b6ec2;
