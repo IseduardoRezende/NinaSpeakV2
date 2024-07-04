@@ -5,37 +5,74 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Detalhes</h1>
+<h1 class="text-center">Detalhes da Instituição</h1>
 
-<div>
-    <h4>Instituição</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-    </dl>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Instituição: @Model.Name</h4>
+    </div>
+    <div class="card-body">
+        @* <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Instituição:</strong>
+            </div>
+            <div class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </div>
+        </div> *@
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Descrição:</strong>
+            </div>
+            <div class="col-sm-10">
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        @* <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Imagem:</strong>
+            </div>
+            <div class="col-sm-10">
+                <img src="@Model.Image" alt="Imagem da Instituição" class="img-fluid" />
+            </div>
+        </div> *@
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>N° Membros:</strong>
+            </div>
+            <div class="col-sm-10">
+                @Html.DisplayFor(model => model.QtyMembers)
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Membros:</strong>
+            </div>
+            <div class="col-sm-10">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var member in Model.Members)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => member.Email)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Index">Voltar</a>
-    @* <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> | *@
-    @* <a asp-action="Delete" asp-route-id="@Model.Id">Deletar</a> | *@
-    @* <a asp-controller="Home" asp-action="Index">Voltar</a> *@
+
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-primary">Voltar</a>
 </div>
 
 @section Scripts {

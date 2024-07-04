@@ -1,11 +1,11 @@
-﻿@using NinaSpeakV2.Domain.ViewModels.Institutions
-@model IEnumerable<ReadInstitutionViewModel>
+﻿@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
+@model IEnumerable<ReadUserInstitutionViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<style>    
+<style>
     .btn-primary {
         background-color: #007bff;
         border-color: #007bff;
@@ -24,44 +24,52 @@
         <thead class="thead-dark">
             <tr>
                 <th>
-                    @Html.Label("Nome")
+                    @Html.Label("Instituição")
                 </th>
-                @* <th>
-                    @Html.Label("Descrição")
-                </th> *@
-                @* <th>
-                    @Html.Label("Descrição") Quantidade de membros
-                </th> *@
                 <th>
                     @Html.Label("Imagem")
+                </th>
+                <th>
+                    @Html.Label("Proprietárioª")
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var userInstitution in Model)
             {
                 <tr>
-                    <td>    
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    @* <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td> *@
                     <td>
-                        @Html.DisplayFor(modelItem => item.Image)
+                        @Html.DisplayFor(modelItem => userInstitution.InstitutionName)
                     </td>
                     <td>
-                        <div class="btn-group">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-info" aria-label="Editar"><i class="fas fa-edit"></i> Editar</a>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" aria-label="Deletar"><i class="fas fa-trash-alt"></i> Deletar</a>
-                        </div>
+                        @Html.DisplayFor(modelItem => userInstitution.InstitutionImage)
                     </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => userInstitution.Owner)
+                    </td>
+                    @if (userInstitution.Owner)
+                    {
+                        <td>
+                            <div class="btn-group">
+                                <a asp-action="Edit" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-info" aria-label="Editar"><i class="fas fa-edit"></i> Editar</a>
+                                <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
+                                <a asp-action="Delete" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-danger" aria-label="Deletar"><i class="fas fa-trash-alt"></i> Deletar</a>
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div class="btn-group">
+                                <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
+                            </div>
+                        </td>
+                    }
                 </tr>
-            }            
+            }
         </tbody>
     </table>
-    <a asp-controller="Home" asp-action="Index" class="btn-link">Voltar</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link">Voltar</a>
 </div>
 
 @section Scripts {
