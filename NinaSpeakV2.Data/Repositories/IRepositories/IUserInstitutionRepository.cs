@@ -6,6 +6,8 @@ namespace NinaSpeakV2.Data.Repositories.IRepositories
     {
         Task<IEnumerable<UserInstitution>> GetByOwnerAsync(long userFk);
 
-        Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool onlyWriter = true);
+        Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool onlyWriter = false);
+
+        Task<IEnumerable<UserInstitution>> GetMembersByInstitutionFkAsync(long institutionFk);
     }
 }
