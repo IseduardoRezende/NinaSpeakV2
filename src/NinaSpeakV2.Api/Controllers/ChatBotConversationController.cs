@@ -11,12 +11,12 @@ namespace NinaSpeakV2.Api.Controllers
     public class ChatBotConversationController
         : BaseController<ChatBotConversation, CreateChatBotConversationViewModel, UpdateChatBotConversationViewModel, ReadChatBotConversationViewModel>
     {
-        private readonly IChatBotService _chatBotService;
+        private readonly IUserInstitutionService _userInstitutionService;
 
-        public ChatBotConversationController(IChatBotConversationService chatBotConversationService, IChatBotService chatBotService, 
+        public ChatBotConversationController(IChatBotConversationService chatBotConversationService, IUserInstitutionService userInstitutionService, 
                                              IMapper mapper) : base(chatBotConversationService, mapper)
-        { 
-            _chatBotService = chatBotService;
+        {
+            _userInstitutionService = userInstitutionService;
         }
 
         public override async Task<IActionResult> Index()
@@ -27,7 +27,7 @@ namespace NinaSpeakV2.Api.Controllers
         public override async Task<IActionResult> Create()
         {
             var userId = User.GetCurrentUserId();
-            ViewData[Constant.ViewDataChatBots] = await _chatBotService.GetByUserIdAsync(userId);
+            ViewData[Constant.ViewDataChatBots] = await _userInstitutionService.GetByUserFkAsync(userId, onlyWriter: true);
             return View();
         }        
     }
