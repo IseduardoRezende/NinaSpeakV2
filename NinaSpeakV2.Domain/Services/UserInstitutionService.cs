@@ -93,6 +93,16 @@ namespace NinaSpeakV2.Domain.Services
             return errors;
         }
 
+        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetMembersByInstitutionFkAsync(long institutionFk)
+        {
+            var usersIntitution = await _userInstitutionRepository.GetMembersByInstitutionFkAsync(institutionFk);
+
+            if (!BaseValidator.IsValid(usersIntitution))
+                return Enumerable.Empty<ReadUserInstitutionViewModel>();
+
+            return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(usersIntitution);
+        }
+
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk)
         {
             var userInstitutions = await _userInstitutionRepository.GetByOwnerAsync(userFk);
@@ -103,7 +113,7 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(userInstitutions);
         }
 
-        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool onlyWriter = true)
+        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool onlyWriter = false)
         {
             var userInstitution = await _userInstitutionRepository.GetByUserFkAsync(userFk, onlyWriter);
 
