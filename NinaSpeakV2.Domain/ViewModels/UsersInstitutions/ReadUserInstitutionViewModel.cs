@@ -17,6 +17,12 @@ namespace NinaSpeakV2.Domain.ViewModels.UsersInstitutions
         public string InstitutionName { get; set; }
 
         [JsonInclude]
+        public string InstitutionDescription { get; set; }
+
+        [JsonInclude]
+        public string InstitutionImage { get; set; }
+
+        [JsonInclude]
         public bool Owner { get; set; }
 
         [JsonInclude]
