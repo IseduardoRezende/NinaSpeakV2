@@ -14,16 +14,13 @@ namespace NinaSpeakV2.Domain.Services
         private readonly IChatBotRepository _chatBotRepository;
         private readonly IInstitutionService _institutionService;
         private readonly IChatBotGenreService _chatBotGenreService;
-        private readonly IUserInstitutionService _userInstitutionService;
 
         public ChatBotService(IChatBotRepository chatBotRepository, IInstitutionService institutionService,
-                              IChatBotGenreService chatBotGenreService, IUserInstitutionService userInstitutionService,
-                              IMapper mapper) : base(chatBotRepository, mapper)
+                              IChatBotGenreService chatBotGenreService, IMapper mapper) : base(chatBotRepository, mapper)
         {
             _chatBotRepository = chatBotRepository;
             _institutionService = institutionService;
             _chatBotGenreService = chatBotGenreService;
-            _userInstitutionService = userInstitutionService;
         }       
 
         protected override Func<ChatBot, bool> ApplyFilters()
@@ -116,19 +113,7 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.NameAlreadyExist));
 
             return errors;
-        }
-
-        public async Task<IEnumerable<ReadChatBotViewModel>> GetByUserIdAsync(long userId)
-        {
-            var userInstitutions = await _userInstitutionService.GetByUserFkAsync(userId);
-
-            if (!BaseValidator.IsValid(userInstitutions))
-                return Enumerable.Empty<ReadChatBotViewModel>();
-
-            var institutionsFks = userInstitutions.Select(ui => ui.InstitutionFk);
-
-            return await GetByInstitutionsFksAsync(institutionsFks);
-        }
+        }       
 
         public async Task<IEnumerable<ReadChatBotViewModel>> GetByInstitutionsFksAsync(IEnumerable<long> institutionsFks)
         {
