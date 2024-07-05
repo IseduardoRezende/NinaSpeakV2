@@ -9,7 +9,9 @@
         public const string ViewDataUserInstitutions         = "UserInstitutions";       
         public const string ViewDataChatBots                 = "ChatBots";
         public const string ViewDataChatBotId                = "ChatBotId";        
-        
+
+        public const string InstitutionStandardName          = "ChatBot de Graça";
+
         public const string PartialViewNameBaseErrors        = "_BaseErrors";        
     }
 }
