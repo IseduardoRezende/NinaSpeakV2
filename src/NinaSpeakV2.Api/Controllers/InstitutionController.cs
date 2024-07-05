@@ -6,7 +6,6 @@ using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.Institutions;
-using NinaSpeakV2.Domain.ViewModels.Users;
 
 namespace NinaSpeakV2.Api.Controllers
 {
@@ -35,7 +34,7 @@ namespace NinaSpeakV2.Api.Controllers
                 return NotFound();
 
             var members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);
-            institution.Members = members.Select(ui => new ReadUserViewModel { Email = ui.UserEmail });
+            institution.Members = members.OrderBy(ui => ui.UserEmail);
             
             return View(institution);
         }
@@ -50,6 +49,21 @@ namespace NinaSpeakV2.Api.Controllers
 
             createModel.UserFk = User.GetCurrentUserId();
             return await base.Create(createModel);
+        }
+
+        public override async Task<IActionResult> Edit(long? id)
+        {
+            var institution = await _readonlyService.GetByIdAsync(id ?? 0);
+
+            if (institution is null)
+                return NotFound();
+
+            var members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);
+            
+            var updateModel = _mapper.Map<UpdateInstitutionViewModel>(institution);           
+            updateModel.Members = members.OrderBy(ui => ui.UserEmail);
+
+            return View(updateModel);
         }
     }
 }
