@@ -9,10 +9,12 @@ namespace NinaSpeakV2.Domain.Services.IServices
         where UpdateModel : class, IBaseUpdateViewModel
         where ReadModel   : class, IBaseReadViewModel, new()
     {
-        public Task<ReadModel> CreateAsync(CreateModel createModel);
+        Task<ReadModel> CreateAsync(CreateModel createModel);
         
-        public Task<ReadModel> UpdateAsync(UpdateModel updateModel);
+        Task<ReadModel> UpdateAsync(UpdateModel updateModel);
 
-        public Task<bool> SoftDeleteAsync(long id);
+        Task<bool> SoftDeleteAsync(long id);
+
+        Task<bool> SoftDeleteAsync(params long[] ids);
     }
 }
