@@ -6,6 +6,8 @@ namespace NinaSpeakV2.Domain.Services.IServices
     public interface IUserInstitutionService 
         : IBaseService<UserInstitution, CreateUserInstitutionViewModel, UpdateUserInstitutionViewModel, ReadUserInstitutionViewModel>
     {
+        Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels);
+        
         Task<ReadUserInstitutionViewModel> StandardRegistrationAsync(long userFk);
 
         Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk);

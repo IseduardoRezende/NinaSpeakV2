@@ -7,6 +7,7 @@
         public const string InexistentObject                  = "Inexistent Object found.";
         public const string NullObject                        = "Object Value is null.";
         public const string UserNotFound                      = "User not found.";
+        public const string UserInstitutionNotFound           = "User Institution not found.";
         public const string InstitutionNotFound               = "Institution not found.";
         public const string ChatBotNotFound                   = "ChatBot not found.";
         public const string ChatBotConversationNotFound       = "ChatBot Conversation not found.";
@@ -15,6 +16,7 @@
         public const string InvalidFilters                    = "Invalid Filters.";
         public const string InvalidIncludes                   = "Invalid Includes.";
         public const string InvalidValue                      = "Invalid Value.";
+        public const string InvalidValues                     = "Invalid Values.";
         public const string InvalidPassword                   = "Invalid Password.";
         public const string InvalidDescription                = "Invalid Description.";
         public const string InvalidEmail                      = "Invalid Email.";
