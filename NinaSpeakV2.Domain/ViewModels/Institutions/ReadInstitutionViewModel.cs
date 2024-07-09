@@ -1,4 +1,4 @@
-﻿using NinaSpeakV2.Domain.ViewModels.Users;
+﻿using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 using System.Text.Json.Serialization;
 
 namespace NinaSpeakV2.Domain.ViewModels.Institutions
@@ -15,6 +15,6 @@ namespace NinaSpeakV2.Domain.ViewModels.Institutions
         public long QtyMembers { get { return Members.LongCount(); } }
 
         [JsonInclude]
-        public IEnumerable<ReadUserViewModel> Members { get; set; } = Enumerable.Empty<ReadUserViewModel>();
+        public IEnumerable<ReadUserInstitutionViewModel> Members { get; set; } = Enumerable.Empty<ReadUserInstitutionViewModel>();
     }
 }

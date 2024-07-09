@@ -6,7 +6,6 @@ using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.Institutions;
-using NinaSpeakV2.Domain.ViewModels.Users;
 
 namespace NinaSpeakV2.Api.Controllers
 {
@@ -34,9 +33,7 @@ namespace NinaSpeakV2.Api.Controllers
             if (institution is null)
                 return NotFound();
 
-            var members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);
-            institution.Members = members.Select(ui => new ReadUserViewModel { Email = ui.UserEmail });
-            
+            institution.Members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);            
             return View(institution);
         }
 
@@ -50,6 +47,6 @@ namespace NinaSpeakV2.Api.Controllers
 
             createModel.UserFk = User.GetCurrentUserId();
             return await base.Create(createModel);
-        }
+        }       
     }
 }
