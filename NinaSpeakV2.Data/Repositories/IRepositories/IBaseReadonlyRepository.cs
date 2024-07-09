@@ -5,12 +5,12 @@ namespace NinaSpeakV2.Data.Repositories.IRepositories
     public interface IBaseReadonlyRepository<TModel>
         where TModel : class, IBaseModelGlobal
     {
-        public Task<IEnumerable<TModel>> GetAsync(Func<TModel, bool> filters, params string[] includes);
+        Task<IEnumerable<TModel>> GetAsync(Func<TModel, bool> filters, params string[] includes);
 
-        public Task<TModel?> GetByIdsAsync(long[] ids, params string[] includes);
+        Task<TModel?> GetByIdsAsync(long[] ids, params string[] includes);
     
-        public Task<TModel?> GetByIdAsync(long id, params string[] includes);   
+        Task<TModel?> GetByIdAsync(long id, params string[] includes);   
 
-        public Task<TModel?> GetByAsync(Func<TModel, bool> filters, params string[] includes);
+        Task<TModel?> GetByAsync(Func<TModel, bool> filters, params string[] includes);
     }
 }

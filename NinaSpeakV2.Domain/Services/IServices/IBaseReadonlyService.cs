@@ -7,11 +7,11 @@ namespace NinaSpeakV2.Domain.Services.IServices
         where TModel    : class, IBaseModelGlobal
         where ReadModel : class, IBaseReadViewModel, new()
     {
-        public Task<IEnumerable<ReadModel>> GetAsync(params string[] includes);
+        Task<IEnumerable<ReadModel>> GetAsync(params string[] includes);
         
-        public Task<ReadModel?> GetByIdsAsync(long[] ids, params string[] includes);
+        Task<ReadModel?> GetByIdsAsync(long[] ids, params string[] includes);
 
-        public Task<ReadModel?> GetByIdAsync(long id, params string[] includes);
+        Task<ReadModel?> GetByIdAsync(long id, params string[] includes);
 
         Task<ReadModel?> GetByAsync(Func<TModel, bool> filter, params string[] includes);
     }

@@ -66,5 +66,14 @@ namespace NinaSpeakV2.Api.Controllers
             var updateModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);
             return View(updateModel);
         }
+
+        [HttpPost("Delete/{userId}/{institutionId}"), ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(long userId, long institutionId)
+        {
+            if (!await _baseService.SoftDeleteAsync(userId, institutionId))
+                return NotFound();
+
+            return RedirectToAction("Edit", "UserInstitution", new { InstitutionId = institutionId });
+        }
     }
 }

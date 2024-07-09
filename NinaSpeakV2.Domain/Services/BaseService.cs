@@ -69,6 +69,19 @@ namespace NinaSpeakV2.Domain.Services
             return await _baseRepository.SoftDeleteAsync(model!);
         }
 
+        public virtual async Task<bool> SoftDeleteAsync(params long[] ids)
+        {
+            if (!BaseValidator.IsValid(ids) || ids.Any(v => !BaseValidator.IsAbove(v, BaseValidator.IdMinValue)))
+                return false;
+
+            var model = await _baseReadonlyRepository.GetByIdsAsync(ids);
+
+            if (!BaseValidator.IsValid(model))
+                return false;
+
+            return await _baseRepository.SoftDeleteAsync(model!);
+        }
+
         protected abstract void UpdateFields(TModel model, UpdateModel updateModel);
     }
 }
