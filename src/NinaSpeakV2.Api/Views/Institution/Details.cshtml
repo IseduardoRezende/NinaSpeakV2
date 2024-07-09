@@ -17,10 +17,10 @@
         color: #007bff;
     }
 
-    .pagination .page-link:hover {
-        background-color: #e9ecef;
-        border-color: #dee2e6;
-    }
+        .pagination .page-link:hover {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
 
     .pagination {
         margin-top: 20px;
@@ -73,10 +73,18 @@
                     <strong>Membros:</strong>
                 </div>
                 <div class="col-sm-10">
-                    <table class="table table-bordered table-striped">
-                        <thead>
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
                             <tr>
-                                <th>Email</th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Proprietárioª
+                                </th>
+                                <th>
+                                    Escritorª
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="memberTableBody">
@@ -85,6 +93,12 @@
                                 <tr>
                                     <td>
                                         @Html.DisplayFor(modelItem => member.UserEmail)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => member.Owner)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => member.Writer)
                                     </td>
                                 </tr>
                             }
@@ -120,10 +134,10 @@
             // Generate pagination controls
             for (let i = 1; i <= pageCount; i++) {
                 paginationControls.append(`
-                                <li class="page-item">
-                                    <a class="page-link" href="#">${i}</a>
-                                </li>
-                            `);
+                    <li class="page-item">
+                        <a class="page-link" href="#">${i}</a>
+                    </li>
+                `);
             }
 
             // Display the first set of rows
