@@ -9,9 +9,9 @@ namespace NinaSpeakV2.Domain.Services.IServices
     {
         public Task<IEnumerable<ReadModel>> GetAsync(params string[] includes);
         
-        public Task<ReadModel?> GetByIdsAsync(params long[] ids);
+        public Task<ReadModel?> GetByIdsAsync(long[] ids, params string[] includes);
 
-        public Task<ReadModel?> GetByIdAsync(long id);
+        public Task<ReadModel?> GetByIdAsync(long id, params string[] includes);
 
         Task<ReadModel?> GetByAsync(Func<TModel, bool> filter, params string[] includes);
     }
