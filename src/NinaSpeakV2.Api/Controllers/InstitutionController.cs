@@ -33,9 +33,7 @@ namespace NinaSpeakV2.Api.Controllers
             if (institution is null)
                 return NotFound();
 
-            var members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);
-            institution.Members = members.OrderBy(ui => ui.UserEmail);
-            
+            institution.Members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);            
             return View(institution);
         }
 
@@ -49,21 +47,6 @@ namespace NinaSpeakV2.Api.Controllers
 
             createModel.UserFk = User.GetCurrentUserId();
             return await base.Create(createModel);
-        }
-
-        public override async Task<IActionResult> Edit(long? id)
-        {
-            var institution = await _readonlyService.GetByIdAsync(id ?? 0);
-
-            if (institution is null)
-                return NotFound();
-
-            var members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);
-            
-            var updateModel = _mapper.Map<UpdateInstitutionViewModel>(institution);           
-            updateModel.Members = members.OrderBy(ui => ui.UserEmail);
-
-            return View(updateModel);
-        }
+        }       
     }
 }
