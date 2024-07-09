@@ -4,16 +4,22 @@ namespace NinaSpeakV2.Domain.ViewModels.UsersInstitutions
 {
     public class UpdateUserInstitutionViewModel : BaseUpdateViewModel
     {
-        [JsonInclude]
+        [JsonIgnore]
         public long UserFk { get; set; }
 
         [JsonInclude]
+        public string UserEmail { get; set; }
+
+        [JsonIgnore]
         public long InstitutionFk { get; set; }
 
-        [JsonIgnore]
+        [JsonInclude]
+        public string InstitutionName { get; set; }
+
+        [JsonInclude]
         public bool Owner { get; set; }
 
-        [JsonIgnore]
+        [JsonInclude]
         public bool Writer { get; set; }
     }
 }
