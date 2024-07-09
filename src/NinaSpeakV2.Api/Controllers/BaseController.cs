@@ -5,6 +5,7 @@ using NinaSpeakV2.Data.Interfaces;
 using NinaSpeakV2.Domain.Extensions;
 using NinaSpeakV2.Domain.Interfaces;
 using NinaSpeakV2.Domain.Services.IServices;
+using NinaSpeakV2.Domain.Validators;
 
 namespace NinaSpeakV2.Api.Controllers
 {
@@ -47,7 +48,7 @@ namespace NinaSpeakV2.Api.Controllers
         {            
             var model = await _readonlyService.GetByIdAsync(id ?? 0);
 
-            if (model is null)
+            if (!BaseValidator.IsValid(model))
                 return NotFound();
 
             var updateModel = _mapper.Map<UpdateModel>(model);
@@ -76,7 +77,7 @@ namespace NinaSpeakV2.Api.Controllers
         {            
             var value = await _readonlyService.GetByIdAsync(id ?? 0);
 
-            if (value is null)
+            if (!BaseValidator.IsValid(value))
                 return NotFound();
 
             return View(value);
