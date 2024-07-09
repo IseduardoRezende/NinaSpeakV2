@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 using System.Text.Json.Serialization;
 
 namespace NinaSpeakV2.Domain.ViewModels.Institutions
@@ -14,8 +13,5 @@ namespace NinaSpeakV2.Domain.ViewModels.Institutions
 
         [JsonIgnore]
         public string? FileName { get { return Image?.FileName; } }
-
-        [JsonInclude]
-        public IEnumerable<ReadUserInstitutionViewModel> Members { get; set; } = Enumerable.Empty<ReadUserInstitutionViewModel>();
     }
 }
