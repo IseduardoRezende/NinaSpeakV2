@@ -16,5 +16,8 @@ namespace NinaSpeakV2.Domain.ViewModels.Institutions
 
         [JsonInclude]
         public IEnumerable<ReadUserInstitutionViewModel> Members { get; set; } = Enumerable.Empty<ReadUserInstitutionViewModel>();
+
+        [JsonInclude]
+        public ReadUserInstitutionViewModel? Creator { get { return Members.FirstOrDefault(ui => ui.Creator); } }
     }
 }
