@@ -43,27 +43,47 @@ namespace NinaSpeakV2.Data.Repositories
             IQueryable<TModel> query = Model;
 
             foreach (var include in includes)
-                query = query.Include(include);            
+                query = query.Include(include);
 
             return Task.FromResult(query.Where(filters).FirstOrDefault());
         }
 
-        public virtual async Task<TModel?> GetByIdsAsync(params long[] ids)
+        public virtual async Task<TModel?> GetByIdsAsync(long[] ids, params string[] includes)
         {
             ArgumentNullException.ThrowIfNull(ids, nameof(ids));
-            
-            if (!ids.Any() || ids.Any(v => v <= default(long)))
+            ArgumentNullException.ThrowIfNull(includes, nameof(includes));
+
+            if (!ids.Any() || ids.Length < 2 || ids.Any(v => v <= default(long)))
                 return null;
 
-            return await Model.FindAsync(ids);
+            var keys = Array.ConvertAll(ids, id => (object)id);
+            var model = await Model.FindAsync(keys);
+
+            if (model is null)
+                return null;
+            
+            foreach (var include in includes)            
+                _context.Entry(model).Reference(include).Load();            
+
+            return model;
         }
 
-        public virtual async Task<TModel?> GetByIdAsync(long id)
+        public virtual async Task<TModel?> GetByIdAsync(long id, params string[] includes)
         {
+            ArgumentNullException.ThrowIfNull(includes, nameof(includes));
+
             if (id <= default(long))
                 return null;
 
-            return await Model.FindAsync(id);
+            var model = await Model.FindAsync(id);
+
+            if (model is null)
+                return null;
+
+            foreach (var include in includes)
+                _context.Entry(model).Reference(include).Load();
+
+            return model;
         }
     }
 }
