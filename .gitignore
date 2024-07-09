@@ -136,3 +136,6 @@ _NCrunch*
 *.v2
 *.vsidx
 .vs/NinaSpeakV2/v17/DocumentLayout.json
+/.vs
+/.vs/NinaSpeakV2
+/.vs/NinaSpeakV2/v17
