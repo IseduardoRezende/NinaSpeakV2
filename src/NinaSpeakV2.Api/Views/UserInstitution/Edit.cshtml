@@ -1,31 +1,68 @@
-﻿@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
-@model UpdateUserInstitutionViewModel
+﻿@using NinaSpeakV2.Api.Extensions
+@using NinaSpeakV2.Api.Utils
+@using NinaSpeakV2.Domain.Entities
+@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
+@model IList<UpdateUserInstitutionViewModel>
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Editar</h1>
+<h1>Configurar Instituição: <strong>@Model.First().InstitutionName</strong></h1>
 
-<h4>Usuário Instituição</h4>
+<h4>Membros</h4>
 <hr />
 
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="col-md-12">
+        @Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UserFk" class="control-label">UserFk</label>
-                <input asp-for="UserFk" class="form-control" />
-                <span asp-validation-for="UserFk" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InstitutionFk" class="control-label">InstitutionFk</label>
-                <input asp-for="InstitutionFk" class="form-control" />
-                <span asp-validation-for="InstitutionFk" class="text-danger"></span>
-            </div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Membro</th>
+                        <th>Proprietárioª</th>
+                        <th>Escritorª</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <input type="hidden" asp-for="@Model[i].InstitutionName" name="[@i].InstitutionName" />
+                            <td>
+                                <input type="hidden" asp-for="@Model[i].UserEmail" name="[@i].UserEmail" />
+                                @Model[i].UserEmail
+                            </td>
+                            <!-- O próprio usuário não pode se editar -->
+                            @if (User.GetCurrentUserId() == @Model[i].UserFk)
+                            {
+                                <td>
+                                    @Html.DisplayFor(model => @Model[i].Owner)
+                                    <input type="hidden" asp-for="@Model[i].Owner" name="[@i].Owner" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => @Model[i].Writer)
+                                    <input type="hidden" asp-for="@Model[i].Writer" name="[@i].Writer" />
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <input asp-for="@Model[i].Owner" type="checkbox" name="[@i].Owner" />
+                                </td>
+                                <td>
+                                    <input asp-for="@Model[i].Writer" type="checkbox" name="[@i].Writer" />
+                                </td>
+                            }
+                            <input type="hidden" asp-for="@Model[i].UserFk" name="[@i].UserFk" />
+                            <input type="hidden" asp-for="@Model[i].InstitutionFk" name="[@i].InstitutionFk" />
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="form-group text-center">
                 <input type="submit" value="Salvar" class="btn btn-primary" />
             </div>
         </form>
@@ -33,5 +70,11 @@
 </div>
 
 <div>
-    <a asp-action="Index">Voltar</a>
+    <a asp-controller="Institution" asp-action="Edit" asp-route-id="@Model.First().InstitutionFk">Voltar</a>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
