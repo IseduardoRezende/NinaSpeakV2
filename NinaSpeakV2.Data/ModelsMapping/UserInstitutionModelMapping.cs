@@ -44,6 +44,12 @@ namespace NinaSpeakV2.Data.ModelsMapping
                 .HasDefaultValue(false)
                 .IsRequired()
                 .HasColumnName("Escritor");
+
+            builder
+               .Property(m => m.Creator)
+               .HasDefaultValue(false)
+               .IsRequired()
+               .HasColumnName("Criador");
         }
     }
 }
