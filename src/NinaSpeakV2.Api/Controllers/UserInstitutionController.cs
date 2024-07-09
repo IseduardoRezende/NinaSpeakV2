@@ -23,7 +23,7 @@ namespace NinaSpeakV2.Api.Controllers
         public override async Task<IActionResult> Index()
         {
             return View(await _readonlyService.GetAsync("User", "Institution"));
-        }
+        }        
 
         public override async Task<IActionResult> Edit(long? institutionId)
         {
@@ -53,6 +53,18 @@ namespace NinaSpeakV2.Api.Controllers
             }
 
             return RedirectToAction("Edit", "Institution", new { Id = updateModels.First().InstitutionFk } );
+        }
+
+        [HttpGet("Delete/{userId?}/{institutionId?}")]
+        public async Task<IActionResult> Delete(long? userId, long? institutionId)
+        {
+            var userInstitution = await _readonlyService.GetByIdsAsync(new[] { userId ?? 0, institutionId ?? 0 }, "User", "Institution");
+
+            if (!BaseValidator.IsValid(userInstitution))
+                return NotFound();
+
+            var updateModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);
+            return View(updateModel);
         }
     }
 }

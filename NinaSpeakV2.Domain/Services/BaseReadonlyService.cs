@@ -30,12 +30,12 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadModel>>(models);
         }
 
-        public virtual async Task<ReadModel?> GetByIdAsync(long id)
+        public virtual async Task<ReadModel?> GetByIdAsync(long id, params string[] includes)
         {
-            if (!BaseValidator.IsAbove(id, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsAbove(id, BaseValidator.IdMinValue) || !BaseValidator.IsValid(includes))
                 return null;
 
-            var model = await _baseReadonlyRepository.GetByIdAsync(id);
+            var model = await _baseReadonlyRepository.GetByIdAsync(id, includes);
 
             if (model is null)
                 return null;
@@ -43,12 +43,13 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<ReadModel>(model);
         }
 
-        public virtual async Task<ReadModel?> GetByIdsAsync(params long[] ids)
+        public virtual async Task<ReadModel?> GetByIdsAsync(long[] ids, params string[] includes)
         {
-            if (!BaseValidator.IsValid(ids) || ids.Any(v => !BaseValidator.IsAbove(v, BaseValidator.IdMinValue)))
+            if (!BaseValidator.IsValid(ids) || ids.Any(v => !BaseValidator.IsAbove(v, BaseValidator.IdMinValue)) ||
+                !BaseValidator.IsValid(includes))
                 return null;
         
-            var model = await _baseReadonlyRepository.GetByIdsAsync(ids);
+            var model = await _baseReadonlyRepository.GetByIdsAsync(ids, includes);
 
             if (model is null)
                 return null;

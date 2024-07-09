@@ -30,10 +30,10 @@ namespace NinaSpeakV2.Api.Controllers
         {
             var institution = await _readonlyService.GetByIdAsync(id ?? 0);
 
-            if (institution is null)
+            if (!BaseValidator.IsValid(institution))
                 return NotFound();
 
-            institution.Members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);            
+            institution!.Members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);            
             return View(institution);
         }
 

@@ -7,9 +7,9 @@ namespace NinaSpeakV2.Data.Repositories.IRepositories
     {
         public Task<IEnumerable<TModel>> GetAsync(Func<TModel, bool> filters, params string[] includes);
 
-        public Task<TModel?> GetByIdsAsync(params long[] ids);
+        public Task<TModel?> GetByIdsAsync(long[] ids, params string[] includes);
     
-        public Task<TModel?> GetByIdAsync(long id);   
+        public Task<TModel?> GetByIdAsync(long id, params string[] includes);   
 
         public Task<TModel?> GetByAsync(Func<TModel, bool> filters, params string[] includes);
     }

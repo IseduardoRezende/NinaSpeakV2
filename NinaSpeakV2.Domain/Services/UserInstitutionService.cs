@@ -112,7 +112,8 @@ namespace NinaSpeakV2.Domain.Services
                 UserFk = user!.Id,
                 InstitutionFk = institution.Id,
                 Owner = false,
-                Writer = false
+                Writer = false,
+                Creator = false
             };
 
             model = await _userInstitutionRepository.CreateAsync(model);
@@ -217,7 +218,7 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            var userInstitution = await _userInstitutionRepository.GetByIdsAsync(updateModel.UserFk, updateModel.InstitutionFk);
+            var userInstitution = await _userInstitutionRepository.GetByIdsAsync(new[] { updateModel.UserFk, updateModel.InstitutionFk });
 
             if (!BaseValidator.IsValid(userInstitution))
             {

@@ -30,13 +30,12 @@
                     @for (var i = 0; i < Model.Count; i++)
                     {
                         <tr>
-                            <input type="hidden" asp-for="@Model[i].InstitutionName" name="[@i].InstitutionName" />
                             <td>
                                 <input type="hidden" asp-for="@Model[i].UserEmail" name="[@i].UserEmail" />
                                 @Model[i].UserEmail
                             </td>
-                            <!-- O próprio usuário não pode se editar -->
-                            @if (User.GetCurrentUserId() == @Model[i].UserFk)
+                            <!-- O próprio usuário não pode se configurar ou configurar oª criadorª da instituição -->
+                            @if (User.GetCurrentUserId() == @Model[i].UserFk || Model[i].Creator)
                             {
                                 <td>
                                     @Html.DisplayFor(model => @Model[i].Owner)
@@ -45,6 +44,9 @@
                                 <td>
                                     @Html.DisplayFor(model => @Model[i].Writer)
                                     <input type="hidden" asp-for="@Model[i].Writer" name="[@i].Writer" />
+                                </td>
+                                <td>
+                                    <a href="#" class="btn alert-dark">Expulsar</a>
                                 </td>
                             }
                             else
@@ -55,9 +57,17 @@
                                 <td>
                                     <input asp-for="@Model[i].Writer" type="checkbox" name="[@i].Writer" />
                                 </td>
+                                <td>
+                                    <a asp-action="Delete" asp-route-userId="@Model[i].UserFk" asp-route-institutionId="@Model.First().InstitutionFk"
+                                       class="btn btn-danger">
+                                        Expulsar
+                                    </a>
+                                </td>
                             }
                             <input type="hidden" asp-for="@Model[i].UserFk" name="[@i].UserFk" />
+                            <input type="hidden" asp-for="@Model[i].Creator" name="[@i].Creator" />
                             <input type="hidden" asp-for="@Model[i].InstitutionFk" name="[@i].InstitutionFk" />
+                            <input type="hidden" asp-for="@Model[i].InstitutionName" name="[@i].InstitutionName" />
                         </tr>
                     }
                 </tbody>

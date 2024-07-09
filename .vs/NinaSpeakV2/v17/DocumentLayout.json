@@ -1,12 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Fabiola\\Desktop\\CSharp\\NinaSpeakV2\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{306308C0-FA45-4213-85A0-E6604A723B9A}|src\\NinaSpeakV2.Api\\NinaSpeakV2.Api.csproj|c:\\users\\fabiola\\desktop\\csharp\\ninaspeakv2\\src\\ninaspeakv2.api\\views\\institution\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{306308C0-FA45-4213-85A0-E6604A723B9A}|src\\NinaSpeakV2.Api\\NinaSpeakV2.Api.csproj|solutionrelative:src\\ninaspeakv2.api\\views\\institution\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -14,21 +9,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\Fabiola\\Desktop\\CSharp\\NinaSpeakV2\\src\\NinaSpeakV2.Api\\Views\\Institution\\Index.cshtml",
-              "RelativeDocumentMoniker": "src\\NinaSpeakV2.Api\\Views\\Institution\\Index.cshtml",
-              "ToolTip": "C:\\Users\\Fabiola\\Desktop\\CSharp\\NinaSpeakV2\\src\\NinaSpeakV2.Api\\Views\\Institution\\Index.cshtml",
-              "RelativeToolTip": "src\\NinaSpeakV2.Api\\Views\\Institution\\Index.cshtml",
-              "ViewState": "AQIAACQAAAAAAAAAAAAAAD8AAAA3AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-02T23:04:36.026Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"

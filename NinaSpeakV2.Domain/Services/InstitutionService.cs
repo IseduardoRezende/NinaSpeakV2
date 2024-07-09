@@ -40,7 +40,8 @@ namespace NinaSpeakV2.Domain.Services
                 InstitutionFk = (long)model.Id!, 
                 UserFk = createModel.UserFk,
                 Owner = true,
-                Writer = true
+                Writer = true,
+                Creator = true,
             };
 
             var userInstitutionModel = await _userInstitutionService.CreateAsync(userInstitution);   

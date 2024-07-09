@@ -34,14 +34,6 @@
         <h4>Instituição: @Model.Name</h4>
     </div>
     <div class="card-body">
-        @* <div class="row mb-3">
-        <div class="col-sm-2">
-        <strong>Instituição:</strong>
-        </div>
-        <div class="col-sm-10">
-        @Html.DisplayFor(model => model.Name)
-        </div>
-        </div> *@
         <div class="row mb-3">
             <div class="col-sm-2">
                 <strong>Descrição:</strong>
@@ -58,6 +50,17 @@
         <img src="@Model.Image" alt="Imagem da Instituição" class="img-fluid" />
         </div>
         </div> *@
+        @if (Model.Name is not Constant.InstitutionStandardName && Model.Creator is not null)
+        {
+            <div class="row mb-3">
+                <div class="col-sm-2">
+                    <strong>Criadorª:</strong>
+                </div>
+                <div class="col-sm-10">
+                    @Html.DisplayFor(model => model.Creator!.UserEmail)
+                </div>
+            </div>
+        }
         <div class="row mb-3">
             <div class="col-sm-2">
                 <strong>N° Membros:</strong>

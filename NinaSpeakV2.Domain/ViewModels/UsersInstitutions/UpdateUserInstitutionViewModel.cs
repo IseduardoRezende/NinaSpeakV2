@@ -21,5 +21,8 @@ namespace NinaSpeakV2.Domain.ViewModels.UsersInstitutions
 
         [JsonInclude]
         public bool Writer { get; set; }
+
+        [JsonInclude]
+        public bool Creator { get; set; }
     }
 }
