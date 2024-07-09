@@ -42,7 +42,7 @@ namespace NinaSpeakV2.Data.Repositories
             return await SaveChangesAsync();
         }
 
-        private async Task<bool> SaveChangesAsync()
+        protected async Task<bool> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync() > 0;
         }
