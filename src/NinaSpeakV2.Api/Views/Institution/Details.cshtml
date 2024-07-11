@@ -1,4 +1,5 @@
-﻿@using NinaSpeakV2.Api.Utils
+﻿@using NinaSpeakV2.Api.Extensions
+@using NinaSpeakV2.Api.Utils
 @using NinaSpeakV2.Domain.ViewModels.Institutions
 @model ReadInstitutionViewModel
 
@@ -113,6 +114,12 @@
                         </ul>
                     </nav>
                 </div>
+            </div>
+            <div>
+                <a asp-action="Delete" asp-controller="UserInstitution" asp-route-userId="@User.GetCurrentUserId()"
+                   asp-route-institutionId="@Model.Id" class="btn btn-danger">
+                    Sair da Instituição
+                </a>
             </div>
         }
     </div>

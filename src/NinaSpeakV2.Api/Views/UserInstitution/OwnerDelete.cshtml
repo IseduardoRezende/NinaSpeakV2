@@ -1,0 +1,27 @@
+﻿@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
+@model ReadUserInstitutionViewModel
+
+@{
+    ViewData["Title"] = "OwnerDelete";
+}
+
+<h1>Tem certeza que deseja remover Membro: <strong>@Model.UserEmail</strong> ?</h1>
+
+<div>
+    <h4>Sua Instituição: @Model.InstitutionName</h4>
+    <hr />
+    <form asp-action="OwnerDelete">
+        <input type="hidden" asp-for="UserFk" />
+        <input type="hidden" asp-for="InstitutionFk" />
+        <a asp-controller="UserInstitution" asp-action="Edit" asp-route-institutionId="@Model.InstitutionFk" class="btn btn-primary">
+            Voltar
+        </a>
+        <input type="submit" value="Remover" class="btn btn-danger" />
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
