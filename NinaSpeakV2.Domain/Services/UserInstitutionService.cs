@@ -214,24 +214,40 @@ namespace NinaSpeakV2.Domain.Services
             if (!await base.SoftDeleteAsync(userFk, institutionFk))
                 return false;
 
-            if (!_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? values))
+            if (!_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? members))
                 return false;
             
-            if ((values!.LongCount() - 1) is not 0)
+            if ((members!.LongCount() - 1) is 0)
             {
-                var newValues = values!.Where(ui => ui.UserFk != userFk);
+                var institution = await _institutionRepository.GetByIdAsync(institutionFk);
 
-                _membersCache.Set(institutionFk, newValues);
+                if (!await _institutionRepository.SoftDeleteAsync(institution!))
+                    return false;
+
+                _membersCache.Remove(institutionFk);
                 return true;
             }
 
-            var institution = await _institutionRepository.GetByIdAsync(institutionFk);
+            var updatedMembers = members!.Where(ui => ui.UserFk != userFk);
 
-            if (!await _institutionRepository.SoftDeleteAsync(institution!))
-                return false;
+            if (!updatedMembers.Any(m => m.Creator) && !updatedMembers.Any(m => m.Owner))
+                await ChooseNewOwner(updatedMembers);
 
-            _membersCache.Remove(institutionFk);
+            _membersCache.Set(institutionFk, updatedMembers);
             return true;
+        }
+
+        private async Task ChooseNewOwner(IEnumerable<ReadUserInstitutionViewModel> members)
+        {
+            if (!BaseValidator.IsValid(members))
+                return;
+
+            var oldestMember = members.MinBy(m => m.CreatedAt);
+            oldestMember!.Owner = true;
+
+            var model = _mapper.Map<UserInstitution>(oldestMember);
+
+            await _userInstitutionRepository.UpdateAsync(model);           
         }
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetMembersByInstitutionFkAsync(long institutionFk)
