@@ -19,7 +19,7 @@ namespace NinaSpeakV2.Data.Repositories
             if (!await SaveChangesAsync())
                 throw new Exception();
 
-            return userInstitutions;
+            return await GetMembersByInstitutionFkAsync(userInstitutions.First().InstitutionFk);
         }
 
         public async Task<IEnumerable<UserInstitution>> GetMembersByInstitutionFkAsync(long institutionFk)
