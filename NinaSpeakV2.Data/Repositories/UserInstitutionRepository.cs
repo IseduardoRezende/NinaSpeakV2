@@ -22,6 +22,34 @@ namespace NinaSpeakV2.Data.Repositories
             return await GetMembersByInstitutionFkAsync(userInstitutions.First().InstitutionFk);
         }
 
+        public override async Task<bool> SoftDeleteAsync(UserInstitution model)
+        {
+            if (model is null)
+                return false;
+
+            model.DeletedAt = DateTime.Now;
+
+            if (model.Creator)
+                model.Creator = false;
+
+            Model.Update(model);
+            return await SaveChangesAsync();
+        }
+
+        public async Task<bool> SoftDeleteAsync(IEnumerable<UserInstitution> userInstitutions)
+        {
+            ArgumentNullException.ThrowIfNull(userInstitutions, nameof(userInstitutions));
+
+            if (!userInstitutions.Any())
+                throw new Exception();
+
+            foreach (var userInstitution in userInstitutions)
+                userInstitution.DeletedAt = DateTime.Now;
+
+            Model.UpdateRange(userInstitutions);
+            return await SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<UserInstitution>> GetMembersByInstitutionFkAsync(long institutionFk)
         {
             if (institutionFk <= default(long))
