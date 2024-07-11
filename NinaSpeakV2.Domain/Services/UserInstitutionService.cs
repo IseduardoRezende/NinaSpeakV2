@@ -78,10 +78,10 @@ namespace NinaSpeakV2.Domain.Services
 
                 if (!BaseValidator.IsValid(userInstitution))
                     return Enumerable.Empty<UpdateUserInstitutionViewModel>();
-                
+
                 if (userInstitution!.Creator || UserInstitutionValidator.IsEqual(userInstitution, updateModel))
                     continue;
-                
+
                 changedOnes.Add(updateModel);
             }
 
@@ -190,6 +190,25 @@ namespace NinaSpeakV2.Domain.Services
             return errors;
         }
 
+        public async Task<bool> SoftDeleteByInstitutionFkAsync(long institutionFk)
+        {
+            if (!BaseValidator.IsAbove(institutionFk, BaseValidator.IdMinValue))
+                return false;
+
+            var readModels = await GetMembersByInstitutionFkAsync(institutionFk);
+
+            if (!BaseValidator.IsValid(readModels))
+                return false;
+
+            var userInstitutions = _mapper.Map<IEnumerable<UserInstitution>>(readModels);
+
+            if (!await _userInstitutionRepository.SoftDeleteAsync(userInstitutions))
+                return false;
+
+            _membersCache.Remove(institutionFk);
+            return true;
+        }
+
         public async Task<bool> SoftDeleteAsync(long userFk, long institutionFk)
         {
             if (!await base.SoftDeleteAsync(userFk, institutionFk))
@@ -197,10 +216,21 @@ namespace NinaSpeakV2.Domain.Services
 
             if (!_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? values))
                 return false;
+            
+            if ((values!.LongCount() - 1) is not 0)
+            {
+                var newValues = values!.Where(ui => ui.UserFk != userFk);
 
-            var newValues = values!.Where(ui => ui.UserFk != userFk);
+                _membersCache.Set(institutionFk, newValues);
+                return true;
+            }
 
-            _membersCache.Set(institutionFk, newValues);
+            var institution = await _institutionRepository.GetByIdAsync(institutionFk);
+
+            if (!await _institutionRepository.SoftDeleteAsync(institution!))
+                return false;
+
+            _membersCache.Remove(institutionFk);
             return true;
         }
 
