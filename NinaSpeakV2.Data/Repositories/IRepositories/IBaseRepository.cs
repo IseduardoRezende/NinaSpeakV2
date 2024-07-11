@@ -10,5 +10,7 @@ namespace NinaSpeakV2.Data.Repositories.IRepositories
         Task<TModel> UpdateAsync(TModel model);
 
         Task<bool> SoftDeleteAsync(TModel model);
+
+        Task<bool> ActiveAsync(TModel model);
     }    
 }

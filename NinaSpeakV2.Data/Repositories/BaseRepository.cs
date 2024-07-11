@@ -42,6 +42,16 @@ namespace NinaSpeakV2.Data.Repositories
             return await SaveChangesAsync();
         }
 
+        public virtual async Task<bool> ActiveAsync(TModel model)
+        {
+            if (model is null)
+                return false;
+
+            model.DeletedAt = null;
+            Model.Update(model);
+            return await SaveChangesAsync();
+        }
+
         protected async Task<bool> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync() > 0;
