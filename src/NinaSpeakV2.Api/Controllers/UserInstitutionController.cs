@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using NinaSpeakV2.Api.Extensions;
+using NinaSpeakV2.Api.RequestValidators;
 using NinaSpeakV2.Data.Models;
 using NinaSpeakV2.Domain.Extensions;
 using NinaSpeakV2.Domain.Services.IServices;
@@ -19,12 +20,7 @@ namespace NinaSpeakV2.Api.Controllers
         {
             _userInstitutionService = userInstitutionService;
         }
-
-        public override async Task<IActionResult> Index()
-        {
-            return View(await _readonlyService.GetAsync("User", "Institution"));
-        }        
-
+        
         public override async Task<IActionResult> Edit(long? institutionId)
         {
             var usersInstitution = await _userInstitutionService.GetMembersByInstitutionFkAsync(institutionId ?? 0);
@@ -32,10 +28,13 @@ namespace NinaSpeakV2.Api.Controllers
             if (!BaseValidator.IsValid(usersInstitution))
                 return NotFound();
 
+            if (!InstitutionRequestValidator.IsOwner(User.GetCurrentUserEmail(), usersInstitution))
+                return Forbid();
+            
             var updateModel = _mapper.Map<IEnumerable<UpdateUserInstitutionViewModel>>(usersInstitution);
             return View(updateModel);
         }        
-
+            
         [HttpPost("Edit"), ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(IEnumerable<UpdateUserInstitutionViewModel> updateModels)
         {
@@ -57,7 +56,18 @@ namespace NinaSpeakV2.Api.Controllers
 
         [HttpGet("Delete/{userId?}/{institutionId?}")]
         public async Task<IActionResult> Delete(long? userId, long? institutionId)
-        {
+        {            
+            var usersInstitution = await _userInstitutionService.GetMembersByInstitutionFkAsync(institutionId ?? 0);
+
+            if (!BaseValidator.IsValid(usersInstitution))
+                return BadRequest();
+
+            if (!InstitutionRequestValidator.IsOwner(User.GetCurrentUserEmail(), usersInstitution))
+                return Forbid();
+
+            if (InstitutionRequestValidator.IsCreator(userId, usersInstitution))
+                return Forbid();
+
             var userInstitution = await _readonlyService.GetByIdsAsync(new[] { userId ?? 0, institutionId ?? 0 }, "User", "Institution");
 
             if (!BaseValidator.IsValid(userInstitution))
@@ -70,7 +80,7 @@ namespace NinaSpeakV2.Api.Controllers
         [HttpPost("Delete/{userId}/{institutionId}"), ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(long userId, long institutionId)
         {
-            if (!await _baseService.SoftDeleteAsync(userId, institutionId))
+            if (!await _userInstitutionService.SoftDeleteAsync(userId, institutionId))
                 return NotFound();
 
             return RedirectToAction("Edit", "UserInstitution", new { InstitutionId = institutionId });
