@@ -16,5 +16,9 @@ namespace NinaSpeakV2.Domain.Services.IServices
         Task<bool> SoftDeleteAsync(long id);
 
         Task<bool> SoftDeleteAsync(params long[] ids);
+
+        Task<bool> ActiveAsync(long id);
+
+        Task<bool> ActiveAsync(params long[] ids);
     }
 }
