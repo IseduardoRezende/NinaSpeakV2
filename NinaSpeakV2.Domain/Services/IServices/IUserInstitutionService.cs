@@ -7,7 +7,9 @@ namespace NinaSpeakV2.Domain.Services.IServices
         : IBaseService<UserInstitution, CreateUserInstitutionViewModel, UpdateUserInstitutionViewModel, ReadUserInstitutionViewModel>
     {
         Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels);
-        
+
+        Task<bool> SoftDeleteAsync(long userFk, long institutionFk);
+
         Task<ReadUserInstitutionViewModel> StandardRegistrationAsync(long userFk);
 
         Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk);
