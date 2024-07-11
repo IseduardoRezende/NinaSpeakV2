@@ -58,7 +58,7 @@
                                     <input asp-for="@Model[i].Writer" type="checkbox" name="[@i].Writer" />
                                 </td>
                                 <td>
-                                    <a asp-action="Delete" asp-route-userId="@Model[i].UserFk" asp-route-institutionId="@Model.First().InstitutionFk"
+                                    <a asp-action="OwnerDelete" asp-route-userId="@Model[i].UserFk" asp-route-institutionId="@Model.First().InstitutionFk"
                                        class="btn btn-danger">
                                         Remover
                                     </a>

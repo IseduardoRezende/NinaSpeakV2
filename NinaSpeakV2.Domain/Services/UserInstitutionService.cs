@@ -78,10 +78,10 @@ namespace NinaSpeakV2.Domain.Services
 
                 if (!BaseValidator.IsValid(userInstitution))
                     return Enumerable.Empty<UpdateUserInstitutionViewModel>();
-                
+
                 if (userInstitution!.Creator || UserInstitutionValidator.IsEqual(userInstitution, updateModel))
                     continue;
-                
+
                 changedOnes.Add(updateModel);
             }
 
@@ -190,18 +190,64 @@ namespace NinaSpeakV2.Domain.Services
             return errors;
         }
 
+        public async Task<bool> SoftDeleteByInstitutionFkAsync(long institutionFk)
+        {
+            if (!BaseValidator.IsAbove(institutionFk, BaseValidator.IdMinValue))
+                return false;
+
+            var readModels = await GetMembersByInstitutionFkAsync(institutionFk);
+
+            if (!BaseValidator.IsValid(readModels))
+                return false;
+
+            var userInstitutions = _mapper.Map<IEnumerable<UserInstitution>>(readModels);
+
+            if (!await _userInstitutionRepository.SoftDeleteAsync(userInstitutions))
+                return false;
+
+            _membersCache.Remove(institutionFk);
+            return true;
+        }
+
         public async Task<bool> SoftDeleteAsync(long userFk, long institutionFk)
         {
             if (!await base.SoftDeleteAsync(userFk, institutionFk))
                 return false;
 
-            if (!_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? values))
+            if (!_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? members))
                 return false;
+            
+            if ((members!.LongCount() - 1) is 0)
+            {
+                var institution = await _institutionRepository.GetByIdAsync(institutionFk);
 
-            var newValues = values!.Where(ui => ui.UserFk != userFk);
+                if (!await _institutionRepository.SoftDeleteAsync(institution!))
+                    return false;
 
-            _membersCache.Set(institutionFk, newValues);
+                _membersCache.Remove(institutionFk);
+                return true;
+            }
+
+            var updatedMembers = members!.Where(ui => ui.UserFk != userFk);
+
+            if (!updatedMembers.Any(m => m.Creator) && !updatedMembers.Any(m => m.Owner))
+                await ChooseNewOwner(updatedMembers);
+
+            _membersCache.Set(institutionFk, updatedMembers);
             return true;
+        }
+
+        private async Task ChooseNewOwner(IEnumerable<ReadUserInstitutionViewModel> members)
+        {
+            if (!BaseValidator.IsValid(members))
+                return;
+
+            var oldestMember = members.MinBy(m => m.CreatedAt);
+            oldestMember!.Owner = true;
+
+            var model = _mapper.Map<UserInstitution>(oldestMember);
+
+            await _userInstitutionRepository.UpdateAsync(model);           
         }
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetMembersByInstitutionFkAsync(long institutionFk)

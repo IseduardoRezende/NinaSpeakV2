@@ -6,6 +6,8 @@ namespace NinaSpeakV2.Data.Repositories.IRepositories
     {
         Task<IEnumerable<UserInstitution>> UpdateAsync(IEnumerable<UserInstitution> userInstitutions);
 
+        Task<bool> SoftDeleteAsync(IEnumerable<UserInstitution> userInstitutions);
+
         Task<IEnumerable<UserInstitution>> GetByOwnerAsync(long userFk);
 
         Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool onlyWriter = false);

@@ -116,7 +116,21 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.NameAlreadyExist));
 
             return errors;
-        }               
+        }
+
+        public override async Task<bool> SoftDeleteAsync(long id)
+        {
+            if (!await base.SoftDeleteAsync(id))
+                return false;
+
+            if (!await _userInstitutionService.SoftDeleteByInstitutionFkAsync(id))
+            {
+                await base.ActiveAsync(id);
+                return false;
+            }
+            
+            return true;
+        }
 
         protected override void UpdateFields(Institution model, UpdateInstitutionViewModel updateModel)
         {

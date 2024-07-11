@@ -12,6 +12,7 @@ namespace NinaSpeakV2.Domain.Profiles
             CreateMap<UpdateUserInstitutionViewModel, UserInstitution>();
             CreateMap<ReadUserInstitutionViewModel, UpdateUserInstitutionViewModel>();
             CreateMap<UserInstitution, ReadUserInstitutionViewModel>();
+            CreateMap<ReadUserInstitutionViewModel, UserInstitution>();
         }
     }
 }
