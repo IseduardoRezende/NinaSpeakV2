@@ -5,7 +5,7 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Tem certeza que deseja expulsar Membro: <strong>@Model.UserEmail</strong> ?</h1>
+<h1>Tem certeza que deseja remover Membro: <strong>@Model.UserEmail</strong> ?</h1>
 
 <div>
     <h4>Sua Instituição: @Model.InstitutionName</h4>
@@ -16,6 +16,6 @@
         <a asp-controller="UserInstitution" asp-action="Edit" asp-route-institutionId="@Model.InstitutionFk" class="btn btn-primary">
             Voltar
         </a>
-        <input type="submit" value="Expulsar" class="btn btn-danger" />
+        <input type="submit" value="Remover" class="btn btn-danger" />
     </form>
 </div>

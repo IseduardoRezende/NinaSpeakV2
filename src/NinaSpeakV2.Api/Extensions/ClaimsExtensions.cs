@@ -23,12 +23,6 @@ namespace NinaSpeakV2.Api.Extensions
         {
             ArgumentNullException.ThrowIfNull(claimsPrincipal, nameof(claimsPrincipal));
             return GetClaimValueByType(claimsPrincipal, ClaimsType.Email);
-        }
-
-        public static bool IsValidRequest(this long? id, ClaimsPrincipal claimsPrincipal)
-        {           
-            ArgumentNullException.ThrowIfNull(claimsPrincipal, nameof(claimsPrincipal));            
-            return Convert.ToInt64(claimsPrincipal.GetClaimValueByType(ClaimsType.Id)) == (id ?? 0);
-        }
+        }       
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using NinaSpeakV2.Data.Models;
 using NinaSpeakV2.Data.Repositories.IRepositories;
 using NinaSpeakV2.Domain.Entities;
@@ -11,6 +12,8 @@ namespace NinaSpeakV2.Domain.Services
     public class UserInstitutionService : BaseService<UserInstitution, CreateUserInstitutionViewModel, UpdateUserInstitutionViewModel, ReadUserInstitutionViewModel>,
                                           IUserInstitutionService
     {
+        private readonly static IMemoryCache _membersCache = new MemoryCache(new MemoryCacheOptions());
+
         private readonly IUserRepository _userRepository;
         private readonly IInstitutionRepository _institutionRepository;
         private readonly IUserInstitutionRepository _userInstitutionRepository;
@@ -21,6 +24,17 @@ namespace NinaSpeakV2.Domain.Services
             _userRepository = userRepository;
             _institutionRepository = institutionRepository;
             _userInstitutionRepository = userInstitutionRepository;
+        }
+
+        public override async Task<ReadUserInstitutionViewModel> CreateAsync(CreateUserInstitutionViewModel createModel)
+        {
+            var result = await base.CreateAsync(createModel);
+
+            if (result?.BaseErrors?.Any() ?? false)
+                return result;
+
+            _membersCache.Set(result!.InstitutionFk, new[] { result }.AsEnumerable());
+            return result;
         }
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels)
@@ -36,11 +50,16 @@ namespace NinaSpeakV2.Domain.Services
                 return new[] { new ReadUserInstitutionViewModel { BaseErrors = new[] { new BaseError(BaseError.NoChangesDetected) } } };
 
             var models = _mapper.Map<IEnumerable<UserInstitution>>(changedOnes);
-            
-            models = await _userInstitutionRepository.UpdateAsync(models);                  
-            return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(models);
+
+            models = await _userInstitutionRepository.UpdateAsync(models);
+
+            var readModels = _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(models);
+
+            _membersCache.Set(updateModels.First().InstitutionFk, readModels);
+
+            return readModels;
         }
-        
+
         private async Task<IEnumerable<UpdateUserInstitutionViewModel>> GetOnlyChangedOnesAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels)
         {
             if (!BaseValidator.IsValid(updateModels))
@@ -58,11 +77,11 @@ namespace NinaSpeakV2.Domain.Services
                 var userInstitution = usersInstitutions.FirstOrDefault(ui => ui.UserFk == updateModel.UserFk);
 
                 if (!BaseValidator.IsValid(userInstitution))
-                    return Enumerable.Empty<UpdateUserInstitutionViewModel>();                
-
-                if (UserInstitutionValidator.IsEqual(userInstitution!, updateModel))
+                    return Enumerable.Empty<UpdateUserInstitutionViewModel>();
+                
+                if (userInstitution!.Creator || UserInstitutionValidator.IsEqual(userInstitution, updateModel))
                     continue;
-
+                
                 changedOnes.Add(updateModel);
             }
 
@@ -107,7 +126,7 @@ namespace NinaSpeakV2.Domain.Services
 
             var institution = await _institutionRepository.GetStandardAsync();
 
-            var model = new UserInstitution
+            var userInstitution = new UserInstitution
             {
                 UserFk = user!.Id,
                 InstitutionFk = institution.Id,
@@ -116,8 +135,13 @@ namespace NinaSpeakV2.Domain.Services
                 Creator = false
             };
 
-            model = await _userInstitutionRepository.CreateAsync(model);
-            return _mapper.Map<ReadUserInstitutionViewModel>(model);
+            userInstitution = await _userInstitutionRepository.CreateAsync(userInstitution);
+            var readModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);
+
+            var usersInstitution = await GetMembersByInstitutionFkAsync(institution.Id);
+            _membersCache.Set(institution.Id, usersInstitution.Append(readModel));
+
+            return readModel;
         }
 
         protected override Func<UserInstitution, bool> ApplyFilters()
@@ -166,14 +190,35 @@ namespace NinaSpeakV2.Domain.Services
             return errors;
         }
 
+        public async Task<bool> SoftDeleteAsync(long userFk, long institutionFk)
+        {
+            if (!await base.SoftDeleteAsync(userFk, institutionFk))
+                return false;
+
+            if (!_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? values))
+                return false;
+
+            var newValues = values!.Where(ui => ui.UserFk != userFk);
+
+            _membersCache.Set(institutionFk, newValues);
+            return true;
+        }
+
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetMembersByInstitutionFkAsync(long institutionFk)
         {
+            if (_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? values))
+                return values!;
+
             var usersIntitution = await _userInstitutionRepository.GetMembersByInstitutionFkAsync(institutionFk);
 
             if (!BaseValidator.IsValid(usersIntitution))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
 
-            return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(usersIntitution);
+            var readModels = _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(usersIntitution);
+
+            _membersCache.Set(institutionFk, readModels);
+
+            return readModels;
         }
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk)
@@ -225,7 +270,7 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.UserInstitutionNotFound));
                 return errors;
             }
-            
+
             if (UserInstitutionValidator.IsEqual(userInstitution!, updateModel))
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
 

@@ -47,7 +47,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => userInstitution.Owner)
                     </td>
-                    @if (userInstitution.Owner)
+                    @if (userInstitution.Creator)
                     {
                         <td>
                             <div class="btn-group">
@@ -57,13 +57,22 @@
                             </div>
                         </td>
                     }
+                    else if (userInstitution.Owner)
+                    {
+                        <td>
+                            <div class="btn-group">
+                                <a asp-action="Edit" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-info" aria-label="Editar"><i class="fas fa-edit"></i> Editar</a>
+                                <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
+                            </div>
+                        </td>
+                    }
                     else
                     {
                         <td>
                             <div class="btn-group">
                                 <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
                             </div>
-                        </td>
+                        </td>                        
                     }
                 </tr>
             }

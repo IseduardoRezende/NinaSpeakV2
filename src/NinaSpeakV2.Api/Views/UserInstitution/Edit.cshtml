@@ -16,7 +16,7 @@
 <div class="row">
     <div class="col-md-12">
         @Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
-        <form asp-action="Edit" method="post">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <table class="table">
                 <thead>
@@ -46,7 +46,7 @@
                                     <input type="hidden" asp-for="@Model[i].Writer" name="[@i].Writer" />
                                 </td>
                                 <td>
-                                    <a href="#" class="btn alert-dark">Expulsar</a>
+                                    <a href="#" class="btn alert-dark">Remover</a>
                                 </td>
                             }
                             else
@@ -60,7 +60,7 @@
                                 <td>
                                     <a asp-action="Delete" asp-route-userId="@Model[i].UserFk" asp-route-institutionId="@Model.First().InstitutionFk"
                                        class="btn btn-danger">
-                                        Expulsar
+                                        Remover
                                     </a>
                                 </td>
                             }
