@@ -34,7 +34,7 @@ namespace NinaSpeakV2.Api.RequestValidators
         {
             ArgumentNullException.ThrowIfNull(members, nameof(members));
             
-            if (!BaseValidator.IsValid(userFk) || BaseValidator.IsAbove(userFk!.Value, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsValid(userFk) || !BaseValidator.IsAbove(userFk!.Value, BaseValidator.IdMinValue))
                 return false;
 
             return members.Any(m => m.UserFk == userFk && m.Creator);
@@ -44,7 +44,7 @@ namespace NinaSpeakV2.Api.RequestValidators
         {
             ArgumentNullException.ThrowIfNull(members, nameof(members));
 
-            if (!BaseValidator.IsValid(userFk) || BaseValidator.IsAbove(userFk!.Value, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsValid(userFk) || !BaseValidator.IsAbove(userFk!.Value, BaseValidator.IdMinValue))
                 return false;
 
             return members.Any(m => m.UserFk == userFk && m.Owner);
@@ -54,7 +54,7 @@ namespace NinaSpeakV2.Api.RequestValidators
         {
             ArgumentNullException.ThrowIfNull(members, nameof(members));
 
-            if (!BaseValidator.IsValid(userFk) || BaseValidator.IsAbove(userFk!.Value, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsValid(userFk) || !BaseValidator.IsAbove(userFk!.Value, BaseValidator.IdMinValue))
                 return false;
 
             return members.Any(m => m.UserFk == userFk);
