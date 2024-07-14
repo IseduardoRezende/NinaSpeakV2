@@ -217,6 +217,7 @@ namespace NinaSpeakV2.Domain.Services
             if (!_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? members))
                 return false;
             
+            //Caso o último Usuário de uma Instituição sair, a Instituição será excluída
             if ((members!.LongCount() - 1) is 0)
             {
                 var institution = await _institutionRepository.GetByIdAsync(institutionFk);
@@ -228,6 +229,7 @@ namespace NinaSpeakV2.Domain.Services
                 return true;
             }
 
+            //Enquanto houver Usuários na Instituição, o Cache é atualizado removendo apenas o Usuário que saiu
             var updatedMembers = members!.Where(ui => ui.UserFk != userFk);
 
             if (!updatedMembers.Any(m => m.Creator) && !updatedMembers.Any(m => m.Owner))
@@ -252,6 +254,9 @@ namespace NinaSpeakV2.Domain.Services
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetMembersByInstitutionFkAsync(long institutionFk)
         {
+            if (!BaseValidator.IsAbove(institutionFk, BaseValidator.IdMinValue))
+                return Enumerable.Empty<ReadUserInstitutionViewModel>();
+
             if (_membersCache.TryGetValue(institutionFk, out IEnumerable<ReadUserInstitutionViewModel>? values))
                 return values!;
 
@@ -269,6 +274,9 @@ namespace NinaSpeakV2.Domain.Services
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk)
         {
+            if (!BaseValidator.IsAbove(userFk, BaseValidator.IdMinValue))
+                return Enumerable.Empty<ReadUserInstitutionViewModel>();
+
             var userInstitutions = await _userInstitutionRepository.GetByOwnerAsync(userFk);
 
             if (!BaseValidator.IsValid(userInstitutions))
@@ -279,13 +287,16 @@ namespace NinaSpeakV2.Domain.Services
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool onlyWriter = false)
         {
+            if (!BaseValidator.IsAbove(userFk, BaseValidator.IdMinValue))
+                return Enumerable.Empty<ReadUserInstitutionViewModel>();
+
             var userInstitution = await _userInstitutionRepository.GetByUserFkAsync(userFk, onlyWriter);
 
             if (!BaseValidator.IsValid(userInstitution))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
 
             return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(userInstitution);
-        }
+        }        
 
         protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateUserInstitutionViewModel updateModel)
         {
