@@ -4,7 +4,13 @@ using System.Security.Claims;
 namespace NinaSpeakV2.Api.Extensions
 {
     public static class ClaimsExtensions
-    {       
+    {
+        public static bool IsLogged(this ClaimsPrincipal claimsPrincipal)
+        {
+            ArgumentNullException.ThrowIfNull(claimsPrincipal, nameof(claimsPrincipal));
+            return claimsPrincipal?.Identity?.IsAuthenticated ?? false;
+        }
+
         public static string GetClaimValueByType(this ClaimsPrincipal claimsPrincipal, ClaimsType type)
         {
             ArgumentNullException.ThrowIfNull(claimsPrincipal, nameof(claimsPrincipal));

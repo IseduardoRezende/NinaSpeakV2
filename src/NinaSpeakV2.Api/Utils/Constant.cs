@@ -8,7 +8,8 @@
         public const string ViewDataChatBotGenres            = "ChatBotGenres";
         public const string ViewDataUserInstitutions         = "UserInstitutions";       
         public const string ViewDataChatBots                 = "ChatBots";
-        public const string ViewDataChatBotId                = "ChatBotId";        
+        public const string ViewDataChatBotId                = "ChatBotId";
+        public const string ViewDataInstitutionName          = "InstitutionName";        
 
         public const string InstitutionStandardName          = "ChatBot de Graça";
 
