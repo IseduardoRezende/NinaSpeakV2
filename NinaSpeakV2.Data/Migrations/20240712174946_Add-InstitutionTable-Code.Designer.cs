@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NinaSpeakV2.Data;
 
@@ -11,9 +12,11 @@ using NinaSpeakV2.Data;
 namespace NinaSpeakV2.Data.Migrations
 {
     [DbContext(typeof(NinaSpeakContext))]
-    partial class NinaSpeakContextModelSnapshot : ModelSnapshot
+    [Migration("20240712174946_Add-InstitutionTable-Code")]
+    partial class AddInstitutionTableCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,8 +161,8 @@ namespace NinaSpeakV2.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)")
-                        .HasColumnName("Codigo")
-                        .HasDefaultValueSql("LEFT(LOWER(NEWID()), 8)");
+                        .HasDefaultValue("da90d7c8")
+                        .HasColumnName("Codigo");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()

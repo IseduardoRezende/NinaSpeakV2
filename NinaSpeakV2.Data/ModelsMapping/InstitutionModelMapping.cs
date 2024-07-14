@@ -18,6 +18,13 @@ namespace NinaSpeakV2.Data.ModelsMapping
                 .HasColumnName("Nome");
 
             builder
+                .Property(m => m.Code)
+                .HasMaxLength(8)
+                .HasDefaultValueSql("LEFT(LOWER(NEWID()), 8)")
+                .IsRequired()
+                .HasColumnName("Codigo");
+            
+            builder
                 .Property(m => m.Image)
                 .HasMaxLength(30)
                 .IsRequired(false)
