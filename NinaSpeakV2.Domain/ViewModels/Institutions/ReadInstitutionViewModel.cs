@@ -9,6 +9,9 @@ namespace NinaSpeakV2.Domain.ViewModels.Institutions
         public string Name { get; set; }
 
         [JsonInclude]
+        public string Code { get; set; }
+
+        [JsonInclude]
         public string? Image { get; set; }
 
         [JsonInclude]

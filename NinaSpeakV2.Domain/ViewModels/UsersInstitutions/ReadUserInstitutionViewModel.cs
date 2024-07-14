@@ -20,6 +20,9 @@ namespace NinaSpeakV2.Domain.ViewModels.UsersInstitutions
         public string InstitutionDescription { get; set; }
 
         [JsonInclude]
+        public string InstitutionCode { get; set; }
+
+        [JsonInclude]
         public string InstitutionImage { get; set; }
 
         [JsonInclude]
@@ -29,6 +32,6 @@ namespace NinaSpeakV2.Domain.ViewModels.UsersInstitutions
         public bool Writer { get; set; }
 
         [JsonInclude]
-        public bool Creator { get; set; }
+        public bool Creator { get; set; }        
     }
 }
