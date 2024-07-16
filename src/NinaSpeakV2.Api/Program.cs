@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using NinaSpeakV2.Api.Enums;
 using NinaSpeakV2.Data;
 using NinaSpeakV2.IoC;
 
@@ -12,8 +14,32 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Login/Index";
+        options.Cookie.HttpOnly = true;
         options.ExpireTimeSpan = TimeSpan.FromDays(5);
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
+
+builder.Services.AddRateLimiter(limiterOptions =>
+{
+    limiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // Política para usuários não autenticados
+    limiterOptions.AddFixedWindowLimiter(policyName: nameof(PolicyType.Unauthenticated), options =>
+    {
+        options.PermitLimit = 10;
+        options.Window = TimeSpan.FromMinutes(1);
+        options.QueueLimit = 2;        
+    });    
+
+    // Política para usuários autenticados
+    limiterOptions.AddFixedWindowLimiter(policyName: nameof(PolicyType.Authenticated), options =>
+    {
+        options.PermitLimit = 20;
+        options.Window = TimeSpan.FromMinutes(1);
+        options.QueueLimit = 4;
+    });
+});
 
 builder.Services.AddDbContext<NinaSpeakContext>(options =>
 {
@@ -39,6 +65,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

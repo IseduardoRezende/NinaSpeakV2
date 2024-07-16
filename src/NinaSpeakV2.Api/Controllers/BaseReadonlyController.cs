@@ -4,10 +4,12 @@ using NinaSpeakV2.Data.Interfaces;
 using NinaSpeakV2.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using NinaSpeakV2.Domain.Services.IServices;
+using Microsoft.AspNetCore.RateLimiting;
+using NinaSpeakV2.Api.Enums;
 
 namespace NinaSpeakV2.Api.Controllers
 {
-    [Route("[controller]"), Authorize]
+    [Route("[controller]"), Authorize, EnableRateLimiting(nameof(PolicyType.Authenticated))]
     public abstract class BaseReadonlyController<TModel, ReadModel> : Controller
         where TModel    : class, IBaseModelGlobal
         where ReadModel : class, IBaseReadViewModel, new()
