@@ -1,36 +1,140 @@
-﻿@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
+﻿@using NinaSpeakV2.Api.Utils
+@using NinaSpeakV2.Domain.Entities
+@using NinaSpeakV2.Domain.ViewModels.Institutions
+@using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
 @model CreateUserInstitutionViewModel
 
 @{
     ViewData["Title"] = "Create";
+    var institution = @ViewData[Constant.ViewDataInstitution] as ReadInstitutionViewModel;
 }
 
-<h1>Criar</h1>
+<style>
+    .form-container {
+        display: flex;
+        width: 100%;
+    }
 
-<h4>Usuário Instituição</h4>
-<hr />
+    .login-form, .register-form {
+        padding: 40px;
+        flex: 1;
+    }
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UserFk" class="control-label">UserFk</label>
-                <input asp-for="UserFk" class="form-control" />
-                <span asp-validation-for="UserFk" class="text-danger"></span>
+    .login-form {
+        background-color: darkgray;
+        color: white;
+    }
+
+    .register-form {
+        background-color: dimgray;
+        color: white;
+    }
+
+    h2-form {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: white;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .toggle-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .toggle-link a {
+        color: #007bff;
+    }
+
+    .toggle-link a:hover {
+        text-decoration: underline;
+    }
+
+    .vertical-line {
+        color: black;
+        height: 550px;
+        border-left: 2px solid;
+    }
+</style>
+
+<h2 class="text-center">Convite para Instituição: <strong><i>@institution.Name</i></strong></h2>
+
+@Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
+
+<div class="container">
+    <div class="card mb-4">
+        <div class="form-container">
+            <div class="login-form">
+                <h2 class="h2-form">Entrar</h2>
+                <form asp-action="CreateUI" asp-controller="UserInstitution" method="post">
+                    <div class="form-group">
+                        <label asp-for="UserEmail" class="control-label">Email</label>
+                        <input type="email" asp-for="UserEmail" class="form-control" placeholder="Digite seu email" />
+                        <span asp-validation-for="UserEmail" class="text-white"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="UserPassword" class="control-label">Senha</label>
+                        <input type="password" asp-for="UserPassword" class="form-control" placeholder="Digite sua senha" />
+                        <span asp-validation-for="UserPassword" class="text-white"></span>
+                    </div>                    
+                    <div>
+                        <input type="hidden" asp-for="InstitutionFk" value="@institution.Id" />
+                        <input type="hidden" asp-for="InstitutionCode" value="@institution.Code" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Entrar" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="InstitutionFk" class="control-label">InstitutionFk</label>
-                <input asp-for="InstitutionFk" class="form-control" />
-                <span asp-validation-for="InstitutionFk" class="text-danger"></span>
-            </div>            
-            <div class="form-group">
-                <input type="submit" value="Cadastrar" class="btn btn-primary" />
+            <div class="vertical-line"></div>
+            <div class="register-form">
+                <h2 class="h2-form">Criar Conta e Entrar</h2>
+                <form asp-action="CreateNew" asp-controller="UserInstitution" method="post">
+                    <div class="form-group">
+                        <label asp-for="UserEmail" class="control-label">Email</label>
+                        <input type="email" asp-for="UserEmail" class="form-control" placeholder="Digite seu email" />
+                        <span asp-validation-for="UserEmail" class="text-white"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="UserPassword" class="control-label">Senha</label>
+                        <input type="password" asp-for="UserPassword" class="form-control" placeholder="Digite sua senha" />
+                        <span asp-validation-for="UserPassword" class="text-white"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="UserConfirmPassword" class="control-label">Confirmar Senha</label>
+                        <input type="password" asp-for="UserConfirmPassword" class="form-control" placeholder="Confirme sua senha" />
+                        <span asp-validation-for="UserConfirmPassword" class="text-white"></span>
+                    </div>
+                    <div>
+                        <input type="hidden" asp-for="InstitutionFk" value="@institution.Id" />
+                        <input type="hidden" asp-for="InstitutionCode" value="@institution.Code" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Criar" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
