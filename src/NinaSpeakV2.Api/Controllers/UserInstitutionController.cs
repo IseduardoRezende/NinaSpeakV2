@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NinaSpeakV2.Api.Extensions;
 using NinaSpeakV2.Api.RequestValidators;
+using NinaSpeakV2.Api.Utils;
 using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Extensions;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
+using NinaSpeakV2.Domain.ViewModels.Institutions;
 using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 
 namespace NinaSpeakV2.Api.Controllers
@@ -13,14 +17,65 @@ namespace NinaSpeakV2.Api.Controllers
     public class UserInstitutionController
         : BaseController<UserInstitution, CreateUserInstitutionViewModel, UpdateUserInstitutionViewModel, ReadUserInstitutionViewModel>
     {
+        private readonly ILoginService _loginService;
+        private readonly IInstitutionService _institutionService;
         private readonly IUserInstitutionService _userInstitutionService;
 
-        public UserInstitutionController(IUserInstitutionService userInstitutionService, IMapper mapper) 
-            : base(userInstitutionService, mapper)
+        public UserInstitutionController(IUserInstitutionService userInstitutionService, IInstitutionService institutionService,
+                                         ILoginService loginService, IMapper mapper) : base(userInstitutionService, mapper)
         {
+            _loginService = loginService;
+            _institutionService = institutionService;
             _userInstitutionService = userInstitutionService;
         }
+
+        [HttpGet("Create/{institutionCode?}"), AllowAnonymous]
+        public async Task<IActionResult> Create(string? institutionCode)
+        {
+            if (ViewData.TryGetValues(Constant.ViewDataBaseErrors, out object? values))
+            {
+                ViewData.SetBaseErrors((values as IEnumerable<BaseError>)!);
+            }
+
+            var hasValue = await Task.FromResult(_institutionService.TryGetByCode(institutionCode, out ReadInstitutionViewModel? institution));
+
+            if (!hasValue)
+                return NotFound();
+
+            ViewData[Constant.ViewDataInstitution] = institution;
+            return View();
+        }
         
+        [HttpPost("CreateUI"), ValidateAntiForgeryToken, AllowAnonymous]
+        public override async Task<IActionResult> Create(CreateUserInstitutionViewModel createModel)
+        {            
+            var value = await _userInstitutionService.CreateAsync(createModel);
+
+            if (value.HasErrors())
+            {
+                ViewData.SetBaseErrors(value.BaseErrors!);
+                ViewData.StoreValues();
+                return RedirectToAction("Create", "UserInstitution", new { institutionCode = createModel.InstitutionCode });
+            }
+
+            return RedirectToAction("Index", "Login");
+        }
+
+        [HttpPost("CreateNew"), ValidateAntiForgeryToken, AllowAnonymous]
+        public async Task<IActionResult> CreateNew(CreateUserInstitutionViewModel createModel)
+        {
+            var value = await _loginService.RegisterAsync(createModel);
+
+            if (value.HasErrors())
+            {
+                ViewData.SetBaseErrors(value.BaseErrors!);
+                ViewData.StoreValues();
+                return RedirectToAction("Create", "UserInstitution", new { institutionCode = createModel.InstitutionCode });
+            }
+
+            return RedirectToAction("Index", "Login");
+        }
+
         public override async Task<IActionResult> Edit(long? institutionId)
         {
             var usersInstitution = await _userInstitutionService.GetMembersByInstitutionFkAsync(institutionId ?? 0);
