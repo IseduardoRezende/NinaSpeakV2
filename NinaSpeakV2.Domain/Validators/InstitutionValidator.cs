@@ -9,14 +9,21 @@ namespace NinaSpeakV2.Domain.Validators
         public const int NameMaxLength = 80;
         public const int NameMinLength = 1;
 
+        public const int CodeLength = 8;
+
         public const int ImageFileNameMaxLength = 30;
         public const int ImageFileNameMinLength = 1;
 
         public const string StandardName = "ChatBot de Graça";
 
-        public static bool IsValidName(string name)
+        public static bool IsValidCode(string? code)
         {
-            return IsValid(name) && IsBetween(name.Length, NameMinLength, NameMaxLength) && name is not StandardName;
+            return IsValid(code) && code!.Length is CodeLength && code.All(char.IsAsciiLetterOrDigit); 
+        }
+
+        public static bool IsValidName(string? name)
+        {
+            return IsValid(name) && IsBetween(name!.Length, NameMinLength, NameMaxLength) && name is not StandardName;
         }
 
         public static bool IsValidImage(IFormFile? image)
