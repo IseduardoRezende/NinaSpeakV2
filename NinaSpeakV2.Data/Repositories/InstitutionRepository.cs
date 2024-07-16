@@ -30,6 +30,12 @@ namespace NinaSpeakV2.Data.Repositories
 
             var nameOwner = await GetByAsync(i => i.Name == newName);
             return nameOwner is null || nameOwner.Id == institution.Id;
+        }        
+
+        public async Task UpdateCodeAsync(long id)
+        {
+            var newCode = Guid.NewGuid().ToString()[..8];
+            await Model.Where(i => i.Id == id && i.Name != Institution.StandardName).ExecuteUpdateAsync(s => s.SetProperty(i => i.Code, newCode));
         }
     }
 }
