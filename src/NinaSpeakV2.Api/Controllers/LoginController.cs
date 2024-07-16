@@ -5,10 +5,12 @@ using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.ViewModels.Login;
 using NinaSpeakV2.Domain.Extensions;
 using NinaSpeakV2.Api.Configurations;
+using Microsoft.AspNetCore.RateLimiting;
+using NinaSpeakV2.Api.Enums;
 
 namespace NinaSpeakV2.Api.Controllers
 {
-    [Route("[controller]"), AllowAnonymous]
+    [Route("[controller]"), AllowAnonymous, EnableRateLimiting(nameof(PolicyType.Unauthenticated))]
     public class LoginController : Controller
     {
         private readonly ILoginService _loginService;
