@@ -5,9 +5,45 @@
 
 @{
     ViewData["Title"] = "Details";
+    var urlToAction = Url.ActionLink("Create", "UserInstitution", new { InstitutionCode = Model.Code });
 }
 
 <style>
+    .popup-overlay {
+        display: none; /* Escondido por padrão */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .popup {
+        display: none; /* Escondido por padrão */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        z-index: 1000;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .popup-content {
+        text-align: center;
+    }
+
     .pagination .page-item.active .page-link {
         background-color: #007bff;
         border-color: #007bff;
@@ -18,10 +54,10 @@
         color: #007bff;
     }
 
-        .pagination .page-link:hover {
-            background-color: #e9ecef;
-            border-color: #dee2e6;
-        }
+    .pagination .page-link:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
 
     .pagination {
         margin-top: 20px;
@@ -29,6 +65,25 @@
 </style>
 
 <h1 class="text-center">Detalhes da Instituição</h1>
+
+<div class="text-end">
+    <button class="btn btn-outline-primary" id="show-popup">Convidar Novo Membro</button>
+</div>
+
+<div class="popup-overlay" id="popup-overlay"></div>
+<div class="popup" id="popup">
+    <span class="close-btn" id="close-btn">&times;</span>
+    <div class="popup-content">
+        <h2 class="text-center">Convidar para Instituição&nbsp;</h2>
+        <p>Copie o link abaixo e compartilhe:</p>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="inviteLink" value="@urlToAction" readonly>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" id="copyBtn">Copiar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="card mb-4">
     <div class="card-header">
@@ -42,15 +97,7 @@
             <div class="col-sm-10">
                 @Html.TextAreaFor(model => model.Description, new { @class = "form-control", @readonly = "readonly" })
             </div>
-        </div>
-        @* <div class="row mb-3">
-        <div class="col-sm-2">
-        <strong>Imagem:</strong>
-        </div>
-        <div class="col-sm-10">
-        <img src="@Model.Image" alt="Imagem da Instituição" class="img-fluid" />
-        </div>
-        </div> *@
+        </div>    
         @if (Model.Name is not Constant.InstitutionStandardName && Model.Creator is not null)
         {
             <div class="row mb-3">
@@ -134,6 +181,41 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Seleciona os elementos
+            const showPopupButton = document.getElementById('show-popup');
+            const popup = document.getElementById('popup');
+            const popupOverlay = document.getElementById('popup-overlay');
+            const closeButton = document.getElementById('close-btn');
+            const copyButton = document.getElementById('copyBtn');
+            const inviteLinkInput = document.getElementById('inviteLink');
+
+            // Adiciona evento de clique ao botão para mostrar o pop-up
+            showPopupButton.addEventListener('click', () => {
+                popup.style.display = 'block';
+                popupOverlay.style.display = 'block';
+            });
+
+            // Adiciona evento de clique ao botão de fechar para ocultar o pop-up
+            closeButton.addEventListener('click', () => {
+                popup.style.display = 'none';
+                popupOverlay.style.display = 'none';
+            });
+
+            // Adiciona evento de clique ao overlay para ocultar o pop-up
+            popupOverlay.addEventListener('click', () => {
+                popup.style.display = 'none';
+                popupOverlay.style.display = 'none';
+            });
+
+            // Adiciona evento de clique ao botão de copiar para copiar o link
+            copyButton.addEventListener('click', () => {
+                inviteLinkInput.select();
+                document.execCommand('copy');
+                alert('Link copiado para a área de transferência!');
+            });
+        });
+
         $(document).ready(function () {
             const rowsPerPage = 5;
             const rows = $('#memberTableBody tr');
