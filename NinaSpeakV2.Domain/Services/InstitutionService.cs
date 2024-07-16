@@ -132,6 +132,17 @@ namespace NinaSpeakV2.Domain.Services
             return true;
         }
 
+        public bool TryGetByCode(string? code, out ReadInstitutionViewModel? institution)
+        {
+            institution = default;            
+
+            if (!InstitutionValidator.IsValidCode(code))
+                return false;
+
+            institution = base.GetByAsync(i => i.Code == code).GetAwaiter().GetResult();
+            return institution is not null;
+        }
+
         protected override void UpdateFields(Institution model, UpdateInstitutionViewModel updateModel)
         {
             model.Name = updateModel.Name;

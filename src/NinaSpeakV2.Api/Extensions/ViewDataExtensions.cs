@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Caching.Memory;
 using NinaSpeakV2.Api.Utils;
 using NinaSpeakV2.Domain.Entities;
 using System.Security.Claims;
@@ -7,6 +8,29 @@ namespace NinaSpeakV2.Api.Extensions
 {
     public static class ViewDataExtensions
     {
+        private readonly static IMemoryCache _viewDataCache = new MemoryCache(new MemoryCacheOptions());
+
+        public static void StoreValues(this ViewDataDictionary viewData)
+        {
+            ArgumentNullException.ThrowIfNull(viewData, nameof(viewData));
+
+            lock (viewData)
+            {
+                _viewDataCache.Set(viewData.Last().Key, viewData.Last().Value, new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5)
+                });
+            }
+        }
+
+        public static bool TryGetValues(this ViewDataDictionary viewData, object key, out object? value)
+        {
+            ArgumentNullException.ThrowIfNull(viewData, nameof(viewData));
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+
+            return _viewDataCache.TryGetValue(key, out value);
+        }
+
         public static ViewDataDictionary SetBaseErrors(this ViewDataDictionary viewData, IEnumerable<BaseError> baseErrors)
         {
             ArgumentNullException.ThrowIfNull(viewData, nameof(viewData));

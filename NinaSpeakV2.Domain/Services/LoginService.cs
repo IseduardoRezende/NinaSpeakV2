@@ -6,6 +6,7 @@ using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.Login;
 using NinaSpeakV2.Domain.ViewModels.Users;
+using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 
 namespace NinaSpeakV2.Domain.Services
 {
@@ -33,6 +34,32 @@ namespace NinaSpeakV2.Domain.Services
         public Task<ReadUserViewModel> RegisterAsync(CreateLoginViewModel login)
         {
             return base.CreateAsync(login);
+        }
+
+        public async Task<ReadUserViewModel> RegisterAsync(CreateUserInstitutionViewModel userInstitution)
+        {
+            if (!BaseValidator.IsValid(userInstitution))
+                return new ReadUserViewModel { BaseErrors = new[] { new BaseError(BaseError.NullObject) } };
+
+            var login = new CreateUserViewModel 
+            { 
+                Email = userInstitution.UserEmail,
+                Password = userInstitution.UserPassword,
+                ConfirmPassword = userInstitution.UserConfirmPassword
+            };
+
+            var result = await base.CreateAsync(login);
+
+            if (result.HasErrors())
+                return result;
+
+            userInstitution.UserFk = (long)result!.Id!;
+            var value = await _userInstitutionService.CreateAsync(userInstitution);
+
+            if (value.HasErrors())
+                return new ReadUserViewModel { BaseErrors = value.BaseErrors };
+
+            return result;                
         }
 
         private async Task<IEnumerable<BaseError>> ValidateLoginAsync(ReadLoginViewModel login)

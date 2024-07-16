@@ -12,7 +12,7 @@ namespace NinaSpeakV2.Domain.Services
     public class UserService : BaseService<User, CreateUserViewModel, UpdateUserViewModel, ReadUserViewModel>, IUserService
     {
         protected readonly IUserRepository _userRepository;
-        private readonly IUserInstitutionService _userInstitutionService;
+        protected readonly IUserInstitutionService _userInstitutionService;
 
         public UserService(IUserRepository userRepository, IUserInstitutionService userInstitutionService,
             IMapper mapper) : base(userRepository, mapper)

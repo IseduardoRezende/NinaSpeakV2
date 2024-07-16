@@ -9,5 +9,7 @@ namespace NinaSpeakV2.Data.Repositories.IRepositories
         Task<bool> NameAlreadyExistAsync(string name);
 
         Task<bool> CanChangeNameAsync(Institution institution, string newName);
+
+        Task UpdateCodeAsync(long id);
     }
 }
