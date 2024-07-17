@@ -35,7 +35,7 @@ builder.Services.AddRateLimiter(limiterOptions =>
     // Política para usuários autenticados
     limiterOptions.AddFixedWindowLimiter(policyName: nameof(PolicyType.Authenticated), options =>
     {
-        options.PermitLimit = 20;
+        options.PermitLimit = 30;
         options.Window = TimeSpan.FromMinutes(1);
         options.QueueLimit = 4;
     });
