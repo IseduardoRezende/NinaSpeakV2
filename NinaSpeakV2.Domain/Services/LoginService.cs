@@ -25,10 +25,10 @@ namespace NinaSpeakV2.Domain.Services
                     
             var user = await base.GetByAsync(u => u.Email == login.Email.ToLowerInvariant());
 
-            if (user is null)
+            if (!BaseValidator.IsValid(user))
                 return new ReadUserViewModel { BaseErrors = new[] { new BaseError(BaseError.UserNotFound) } };
 
-            return user;
+            return user!;
         }
 
         public Task<ReadUserViewModel> RegisterAsync(CreateLoginViewModel login)
@@ -53,12 +53,11 @@ namespace NinaSpeakV2.Domain.Services
             if (result.HasErrors())
                 return result;
 
-            userInstitution.UserFk = (long)result!.Id!;
             var value = await _userInstitutionService.CreateAsync(userInstitution);
 
             if (value.HasErrors())
                 return new ReadUserViewModel { BaseErrors = value.BaseErrors };
-
+            
             return result;                
         }
 
@@ -66,7 +65,7 @@ namespace NinaSpeakV2.Domain.Services
         {
             var errors = new List<BaseError>();
 
-            if (login is null)
+            if (!BaseValidator.IsValid(login))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
@@ -80,13 +79,13 @@ namespace NinaSpeakV2.Domain.Services
 
             var user = await _userRepository.GetByAsync(u => u.Email == login.Email.ToLowerInvariant());
 
-            if (user is null)
+            if (!BaseValidator.IsValid(user))
             {
                 errors.Add(new BaseError(BaseError.UserNotFound));
                 return errors;
             }
             
-            var password = login.Password.ConvertToSHA512(user.Salt);
+            var password = login.Password.ConvertToSHA512(user!.Salt);
 
             if (password != user.Password)
                 errors.Add(new BaseError(BaseError.InvalidPassword));

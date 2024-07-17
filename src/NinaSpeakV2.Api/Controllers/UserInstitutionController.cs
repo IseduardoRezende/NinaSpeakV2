@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using NinaSpeakV2.Api.Enums;
 using NinaSpeakV2.Api.Extensions;
 using NinaSpeakV2.Api.RequestValidators;
 using NinaSpeakV2.Api.Utils;
@@ -29,7 +31,7 @@ namespace NinaSpeakV2.Api.Controllers
             _userInstitutionService = userInstitutionService;
         }
 
-        [HttpGet("Create/{institutionCode?}"), AllowAnonymous]
+        [HttpGet("Create/{institutionCode?}"), AllowAnonymous, EnableRateLimiting(nameof(PolicyType.Unauthenticated))]
         public async Task<IActionResult> Create(string? institutionCode)
         {
             if (ViewData.TryGetValues(Constant.ViewDataBaseErrors, out object? values))
@@ -46,7 +48,7 @@ namespace NinaSpeakV2.Api.Controllers
             return View();
         }
         
-        [HttpPost("CreateUI"), ValidateAntiForgeryToken, AllowAnonymous]
+        [HttpPost("CreateUI"), ValidateAntiForgeryToken, AllowAnonymous, EnableRateLimiting(nameof(PolicyType.Unauthenticated))]
         public override async Task<IActionResult> Create(CreateUserInstitutionViewModel createModel)
         {            
             var value = await _userInstitutionService.CreateAsync(createModel);
@@ -54,14 +56,14 @@ namespace NinaSpeakV2.Api.Controllers
             if (value.HasErrors())
             {
                 ViewData.SetBaseErrors(value.BaseErrors!);
-                ViewData.StoreValues();
+                ViewData.TemporarilyStore();
                 return RedirectToAction("Create", "UserInstitution", new { institutionCode = createModel.InstitutionCode });
             }
 
             return RedirectToAction("Index", "Login");
         }
 
-        [HttpPost("CreateNew"), ValidateAntiForgeryToken, AllowAnonymous]
+        [HttpPost("CreateNew"), ValidateAntiForgeryToken, AllowAnonymous, EnableRateLimiting(nameof(PolicyType.Unauthenticated))]
         public async Task<IActionResult> CreateNew(CreateUserInstitutionViewModel createModel)
         {
             var value = await _loginService.RegisterAsync(createModel);
@@ -69,7 +71,7 @@ namespace NinaSpeakV2.Api.Controllers
             if (value.HasErrors())
             {
                 ViewData.SetBaseErrors(value.BaseErrors!);
-                ViewData.StoreValues();
+                ViewData.TemporarilyStore();
                 return RedirectToAction("Create", "UserInstitution", new { institutionCode = createModel.InstitutionCode });
             }
 
@@ -102,7 +104,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             if (valueError is not null)
             {
-                ViewData = ViewData.SetBaseErrors(valueError.BaseErrors!);
+                ViewData.SetBaseErrors(valueError.BaseErrors!);
                 return View(updateModels);
             }
 

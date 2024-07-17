@@ -36,7 +36,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             if (user.HasErrors())
             {
-                ViewData = ViewData.SetBaseErrors(user.BaseErrors!);
+                ViewData.SetBaseErrors(user.BaseErrors!);
                 return View(login);
             }
 
@@ -57,7 +57,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             if (user.HasErrors())
             {
-                ViewData = ViewData.SetBaseErrors(user.BaseErrors!);
+                ViewData.SetBaseErrors(user.BaseErrors!);
                 return View(login);
             }
 

@@ -36,7 +36,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             if (value.HasErrors())
             {
-                ViewData = ViewData.SetBaseErrors(value.BaseErrors!);
+                ViewData.SetBaseErrors(value.BaseErrors!);
                 return View(createModel);
             }
 
@@ -65,7 +65,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             if (value.HasErrors())
             {
-                ViewData = ViewData.SetBaseErrors(value.BaseErrors!);
+                ViewData.SetBaseErrors(value.BaseErrors!);
                 return View(updateModel);
             }
 

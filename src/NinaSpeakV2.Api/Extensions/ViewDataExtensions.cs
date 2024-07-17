@@ -10,7 +10,7 @@ namespace NinaSpeakV2.Api.Extensions
     {
         private readonly static IMemoryCache _viewDataCache = new MemoryCache(new MemoryCacheOptions());
 
-        public static void StoreValues(this ViewDataDictionary viewData)
+        public static void TemporarilyStore(this ViewDataDictionary viewData)
         {
             ArgumentNullException.ThrowIfNull(viewData, nameof(viewData));
 

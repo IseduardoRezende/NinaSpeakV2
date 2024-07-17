@@ -31,7 +31,7 @@ namespace NinaSpeakV2.Api.Controllers
         {
             if (!BaseValidator.IsValid(createModel))
             {
-                ViewData = ViewData.SetBaseErrors([new BaseError(BaseError.NullObject)]);
+                ViewData.SetBaseErrors([new BaseError(BaseError.NullObject)]);
                 return View();
             }
 
