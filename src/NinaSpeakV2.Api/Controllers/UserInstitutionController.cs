@@ -113,64 +113,21 @@ namespace NinaSpeakV2.Api.Controllers
             }
 
             return RedirectToAction("Edit", "Institution", new { Id = updateModels.First().InstitutionFk } );
-        }
+        }        
 
-        [HttpGet("Delete/{userId?}/{institutionId?}")]
-        public async Task<IActionResult> Delete(long? userId, long? institutionId)
+        [HttpPost("Delete"), ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(long userId, long institutionId)
         {
             if (!UserRequestValidator.IsHimself(userId, User))
                 return Forbid();
 
-            var usersInstitution = await _userInstitutionService.GetMembersByInstitutionFkAsync(institutionId ?? 0);
-
-            if (!BaseValidator.IsValid(usersInstitution))
-                return BadRequest();
-
-            if (!InstitutionRequestValidator.IsMember(userId, usersInstitution))
-                return Forbid();
-
-            var userInstitution = await _readonlyService.GetByIdsAsync(new[] { userId ?? 0, institutionId ?? 0 }, "User", "Institution");
-
-            if (!BaseValidator.IsValid(userInstitution))
-                return NotFound();
-
-            var updateModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);
-            return View(updateModel);
-        }
-
-        [HttpPost("Delete/{userId}/{institutionId}"), ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(long userId, long institutionId)
-        {
             if (!await _userInstitutionService.SoftDeleteAsync(userId, institutionId))
                 return NotFound();
 
             return RedirectToAction("Index", "Home");
-        }
+        }        
 
-        [HttpGet("OwnerDelete/{userId?}/{institutionId?}")]
-        public async Task<IActionResult> OwnerDelete(long? userId, long? institutionId)
-        {            
-            var usersInstitution = await _userInstitutionService.GetMembersByInstitutionFkAsync(institutionId ?? 0);
-
-            if (!BaseValidator.IsValid(usersInstitution))
-                return BadRequest();
-
-            if (InstitutionRequestValidator.IsCreator(userId, usersInstitution))
-                return Forbid();
-
-            if (!InstitutionRequestValidator.IsOwner(User.GetCurrentUserEmail(), usersInstitution))
-                return Forbid();
-
-            var userInstitution = await _readonlyService.GetByIdsAsync(new[] { userId ?? 0, institutionId ?? 0 }, "User", "Institution");
-
-            if (!BaseValidator.IsValid(userInstitution))
-                return NotFound();
-
-            var updateModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);
-            return View(updateModel);
-        }
-
-        [HttpPost("OwnerDelete/{userId}/{institutionId}"), ValidateAntiForgeryToken]
+        [HttpPost("OwnerDelete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> OwnerDelete(long userId, long institutionId)
         {
             if (!await _userInstitutionService.SoftDeleteAsync(userId, institutionId))
