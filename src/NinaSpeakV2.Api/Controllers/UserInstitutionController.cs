@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using NinaSpeakV2.Api.Configurations;
 using NinaSpeakV2.Api.Enums;
 using NinaSpeakV2.Api.Extensions;
 using NinaSpeakV2.Api.RequestValidators;
@@ -62,7 +63,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             return RedirectToAction("Index", "Login");
         }
-
+        
         [HttpPost("CreateNew"), ValidateAntiForgeryToken, AllowAnonymous, EnableRateLimiting(nameof(PolicyType.Unauthenticated))]
         public async Task<IActionResult> CreateNew(CreateUserInstitutionViewModel createModel)
         {
@@ -75,7 +76,8 @@ namespace NinaSpeakV2.Api.Controllers
                 return RedirectToAction("Create", "UserInstitution", new { institutionCode = createModel.InstitutionCode });
             }
 
-            return RedirectToAction("Index", "Login");
+            await EnvironmentConfiguration.ConfigureLogin(HttpContext, value);
+            return RedirectToAction("Index", "Home");
         }
 
         public override async Task<IActionResult> Edit(long? institutionId)
