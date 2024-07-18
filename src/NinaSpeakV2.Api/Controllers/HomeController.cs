@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using NinaSpeakV2.Api.Configurations;
+using NinaSpeakV2.Api.Enums;
 using NinaSpeakV2.Api.Temporal;
 using System.Diagnostics;
 
 namespace NinaSpeakV2.Api.Controllers
 {
-    [Route("[controller]"), Authorize]
+    [Route("[controller]"), Authorize, EnableRateLimiting(nameof(PolicyType.Authenticated))]
     public class HomeController : Controller
     {
         [HttpGet("Index")]
@@ -15,7 +17,7 @@ namespace NinaSpeakV2.Api.Controllers
             return View();
         }
 
-        [HttpGet("Privacy")]
+        [HttpGet("Privacy"), AllowAnonymous, DisableRateLimiting]
         public IActionResult Privacy()
         {
             return View();
