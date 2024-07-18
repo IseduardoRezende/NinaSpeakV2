@@ -13,6 +13,7 @@ using NinaSpeakV2.Domain.Extensions;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.Institutions;
+using NinaSpeakV2.Domain.ViewModels.Users;
 using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 
 namespace NinaSpeakV2.Api.Controllers
@@ -37,9 +38,9 @@ namespace NinaSpeakV2.Api.Controllers
         {
             if (ViewData.TryGetValues(Constant.ViewDataBaseErrors, out object? values))
             {
-                ViewData.SetBaseErrors((values as IEnumerable<BaseError>)!);
-            }
-
+                ViewData.SetBaseErrors((values as IEnumerable<BaseError>)!);            
+            }      
+            
             var hasValue = await Task.FromResult(_institutionService.TryGetByCode(institutionCode, out ReadInstitutionViewModel? institution));
 
             if (!hasValue)
@@ -52,31 +53,32 @@ namespace NinaSpeakV2.Api.Controllers
         [HttpPost("CreateUI"), ValidateAntiForgeryToken, AllowAnonymous, EnableRateLimiting(nameof(PolicyType.Unauthenticated))]
         public override async Task<IActionResult> Create(CreateUserInstitutionViewModel createModel)
         {            
-            var value = await _userInstitutionService.CreateAsync(createModel);
+            var userInstitution = await _userInstitutionService.CreateAsync(createModel);
 
-            if (value.HasErrors())
+            if (userInstitution.HasErrors())
             {
-                ViewData.SetBaseErrors(value.BaseErrors!);
+                ViewData.SetBaseErrors(userInstitution.BaseErrors!);
                 ViewData.TemporarilyStore();
                 return RedirectToAction("Create", "UserInstitution", new { institutionCode = createModel.InstitutionCode });
             }
-
-            return RedirectToAction("Index", "Login");
+            
+            await EnvironmentConfiguration.ConfigureLogin(HttpContext, new ReadUserViewModel { Id = userInstitution.UserFk, Email = userInstitution.UserEmail });
+            return RedirectToAction("Index", "Home");
         }
         
         [HttpPost("CreateNew"), ValidateAntiForgeryToken, AllowAnonymous, EnableRateLimiting(nameof(PolicyType.Unauthenticated))]
         public async Task<IActionResult> CreateNew(CreateUserInstitutionViewModel createModel)
         {
-            var value = await _loginService.RegisterAsync(createModel);
+            var user = await _loginService.RegisterAsync(createModel);
 
-            if (value.HasErrors())
+            if (user.HasErrors())
             {
-                ViewData.SetBaseErrors(value.BaseErrors!);
+                ViewData.SetBaseErrors(user.BaseErrors!);
                 ViewData.TemporarilyStore();
                 return RedirectToAction("Create", "UserInstitution", new { institutionCode = createModel.InstitutionCode });
             }
 
-            await EnvironmentConfiguration.ConfigureLogin(HttpContext, value);
+            await EnvironmentConfiguration.ConfigureLogin(HttpContext, user);
             return RedirectToAction("Index", "Home");
         }
 

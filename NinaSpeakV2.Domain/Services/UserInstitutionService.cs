@@ -37,8 +37,11 @@ namespace NinaSpeakV2.Domain.Services
             var userInstitution = _mapper.Map<UserInstitution>(createModel);            
             userInstitution = await _userInstitutionRepository.CreateAsync(userInstitution);
         
-            await _institutionRepository.UpdateCodeAsync(createModel.InstitutionFk);
-            return _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);            
+            await _institutionRepository.UpdateCodeAsync(createModel.InstitutionFk);            
+            var readModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);            
+        
+            readModel.UserEmail = user.Email;
+            return readModel;
         }
 
         public async Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels)
