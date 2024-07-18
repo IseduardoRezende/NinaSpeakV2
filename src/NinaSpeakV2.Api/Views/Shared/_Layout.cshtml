@@ -22,7 +22,7 @@
                 }
                 else
                 {
-                    <a class="navbar-brand">
+                    <a class="navbar-brand" asp-area="" asp-controller="Login" asp-action="Index">
                         <i class="fas fa-robot"></i> ChatBot Grátis
                     </a>
                 }
@@ -53,14 +53,7 @@
     </div>
     <footer class="border-top footer text-muted">
         <div class="container">
-            @if (User!.Identity!.IsAuthenticated)
-            {
-                <text>&copy; @DateTime.Now.Year - ChatBot Grátis - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a></text>
-            }
-            else
-            {
-                <text>&copy; @DateTime.Now.Year - ChatBot Grátis</text>
-            }
+            <text>&copy; @DateTime.Now.Year - ChatBot Grátis - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a></text>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
