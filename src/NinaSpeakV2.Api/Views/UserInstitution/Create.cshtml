@@ -6,128 +6,67 @@
 
 @{
     ViewData["Title"] = "Create";
-    var institution = @ViewData[Constant.ViewDataInstitution] as ReadInstitutionViewModel;
+    var institution = (@ViewData[Constant.ViewDataInstitution] as ReadInstitutionViewModel)!;
 }
 
-<style>
-    .form-container {
-        display: flex;
-        width: 100%;
-    }
-
-    .login-form, .register-form {
-        padding: 40px;
-        flex: 1;
-    }
-
-    .login-form {
-        background-color: darkgray;
-        color: white;
-    }
-
-    .register-form {
-        background-color: dimgray;
-        color: white;
-    }
-
-    h2-form {
-        margin-bottom: 20px;
-        font-size: 24px;
-        color: white;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-    }
-
-    .toggle-link {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    .toggle-link a {
-        color: #007bff;
-    }
-
-    .toggle-link a:hover {
-        text-decoration: underline;
-    }
-
-    .vertical-line {
-        color: black;
-        height: 550px;
-        border-left: 2px solid;
-    }
-</style>
-
-<h2 class="text-center">Convite para Instituição: <strong><i>@institution.Name</i></strong></h2>
+<h1 class="text-center my-4">Ingresse em <i>@institution.Name</i></h1>
 
 @Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
 
 <div class="container">
-    <div class="card mb-4">
-        <div class="form-container">
-            <div class="login-form">
-                <h2 class="h2-form">Entrar</h2>
-                <form asp-action="CreateUI" asp-controller="UserInstitution" method="post">
-                    <div class="form-group">
-                        <label asp-for="UserEmail" class="control-label">Email</label>
-                        <input type="email" asp-for="UserEmail" class="form-control" placeholder="Digite seu email" />
-                        <span asp-validation-for="UserEmail" class="text-white"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="UserPassword" class="control-label">Senha</label>
-                        <input type="password" asp-for="UserPassword" class="form-control" placeholder="Digite sua senha" />
-                        <span asp-validation-for="UserPassword" class="text-white"></span>
-                    </div>                    
-                    <div>
-                        <input type="hidden" asp-for="InstitutionFk" value="@institution.Id" />
-                        <input type="hidden" asp-for="InstitutionCode" value="@institution.Code" />
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Entrar" class="btn btn-primary" />
-                    </div>
-                </form>
-            </div>
-            <div class="vertical-line"></div>
-            <div class="register-form">
-                <h2 class="h2-form">Criar Conta e Entrar</h2>
-                <form asp-action="CreateNew" asp-controller="UserInstitution" method="post">
-                    <div class="form-group">
-                        <label asp-for="UserEmail" class="control-label">Email</label>
-                        <input type="email" asp-for="UserEmail" class="form-control" placeholder="Digite seu email" />
-                        <span asp-validation-for="UserEmail" class="text-white"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="UserPassword" class="control-label">Senha</label>
-                        <input type="password" asp-for="UserPassword" class="form-control" placeholder="Digite sua senha" />
-                        <span asp-validation-for="UserPassword" class="text-white"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="UserConfirmPassword" class="control-label">Confirmar Senha</label>
-                        <input type="password" asp-for="UserConfirmPassword" class="form-control" placeholder="Confirme sua senha" />
-                        <span asp-validation-for="UserConfirmPassword" class="text-white"></span>
-                    </div>
-                    <div>
-                        <input type="hidden" asp-for="InstitutionFk" value="@institution.Id" />
-                        <input type="hidden" asp-for="InstitutionCode" value="@institution.Code" />
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Criar" class="btn btn-primary" />
-                    </div>
-                </form>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <!-- Login Form -->
+                <div class="col-4">
+                    <h3 class="text-center">Entrar</h3>
+                    <form asp-action="CreateUI" asp-controller="UserInstitution" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UserEmail" class="form-label">Email</label>
+                            <input type="email" asp-for="UserEmail" class="form-control" placeholder="Digite seu email" />
+                            <span asp-validation-for="UserEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UserPassword" class="form-label">Senha</label>
+                            <input type="password" asp-for="UserPassword" class="form-control" placeholder="Digite sua senha" />
+                            <span asp-validation-for="UserPassword" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Entrar</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Vertical Divider -->
+                <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <div class="vr" style="height: 100%; width: 2px; background-color: #dee2e6;"></div>
+                </div>
+                <!-- Registration Form -->
+                <div class="col-4">
+                    <h3 class="text-center">Criar Conta</h3>
+                    <form asp-action="CreateNew" asp-controller="UserInstitution" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UserEmail" class="form-label">Email</label>
+                            <input type="email" asp-for="UserEmail" class="form-control" placeholder="Digite seu email" />
+                            <span asp-validation-for="UserEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UserPassword" class="form-label">Senha</label>
+                            <input type="password" asp-for="UserPassword" class="form-control" placeholder="Digite sua senha" />
+                            <span asp-validation-for="UserPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UserConfirmPassword" class="form-label">Confirmar Senha</label>
+                            <input type="password" asp-for="UserConfirmPassword" class="form-control" placeholder="Confirme sua senha" />
+                            <span asp-validation-for="UserConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">Criar</button>
+                        </div>
+                    </form>
+                    <br />
+                </div>
             </div>
         </div>
     </div>

@@ -7,35 +7,33 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
-<hr />
+<h1 class="text-center my-4">Olá Novamente</h1>
 
 @Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
 
-<div class="row">
-    <div class="col-md-4">
+<div class="row justify-content-center">
+    <div class="col-md-6 form-container">
         <form asp-action="Index">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input type="email" asp-for="Email" class="form-control" />
+                <label asp-for="Email" class="form-label">Email</label>
+                <input type="email" asp-for="Email" class="form-control" placeholder="Digite seu email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label">Senha</label>
-                <input type="password" asp-for="Password" class="form-control" />
+                <label asp-for="Password" class="form-label">Senha</label>
+                <input type="password" asp-for="Password" class="form-control" placeholder="Digite sua senha" />
                 <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Entrar" class="btn btn-primary" />
+            </div>            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Entrar</button>
             </div>
         </form>
+        <div class="mt-3 text-center">
+            <a asp-action="Create">Criar Conta</a>
+        </div>
     </div>
 </div>
-
-<a asp-action="Create">Criar Conta</a>
-@* <a asp-action="ResetPassword">Esqueci Senha</a> | *@
-@* <a asp-action="ReactivateAccount">Reativar Conta</a> *@
 
 @section Scripts {
     @{
