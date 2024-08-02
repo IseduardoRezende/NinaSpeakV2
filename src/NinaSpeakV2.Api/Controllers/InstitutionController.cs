@@ -68,21 +68,12 @@ namespace NinaSpeakV2.Api.Controllers
 
             var updateModel = _mapper.Map<UpdateInstitutionViewModel>(institution);
             return View(updateModel);
-        }
+        }        
 
-        public async override Task<IActionResult> Delete(long? id)
+        [HttpPost("Delete"), ValidateAntiForgeryToken]
+        public override Task<IActionResult> Delete(long id)
         {
-            var institution = await _readonlyService.GetByIdAsync(id ?? 0);
-            
-            if (!BaseValidator.IsValid(institution))
-                return NotFound();
-
-            var members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution!.Id!);
-
-            if (!InstitutionRequestValidator.IsCreator(User.GetCurrentUserEmail(), members))
-                return Forbid();
-
-            return View(institution);
+            return base.Delete(id);
         }
     }
 }
