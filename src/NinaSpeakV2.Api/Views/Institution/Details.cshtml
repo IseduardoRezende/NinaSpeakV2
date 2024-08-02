@@ -171,9 +171,16 @@
                 <span class="close-btn" id="close-exit-btn">&times;</span>
                 <div class="popup-content">
                     <h2 class="text-center">Sair da Instituição&nbsp;</h2>
-                    <p>Confirme que deseja sair.</p>
+                    <hr />
+                    <p>
+                        Confirma que deseja sair?
+                        <br /><br />
+                        <strong>Não será mais possível acessar nada relacionado a Instituição.</strong>
+                    </p>
+                    <hr />
                     <div class="text-center">
-                        <div class="input-group-append">
+                        <div class="input-group-append d-flex w-100 items-center justify-content-center">
+                            <button class="btn btn-secondary" id="close-exit-btn-confirm">Cancelar</button>&nbsp;
                             <form asp-action="Delete" asp-controller="UserInstitution">
                                 <input type="hidden" name="UserId" value="@User.GetCurrentUserId()" />
                                 <input type="hidden" name="InstitutionId" value="@Model.Id" />
@@ -234,6 +241,7 @@
             const showExitPopupButton = document.getElementById('show-exit-popup');
             const popupExit = document.getElementById('popup-exit');
             const closeExitButton = document.getElementById('close-exit-btn');
+            const closeButtonConfirm = document.getElementById('close-exit-btn-confirm');
             const popupExitOverlay = document.getElementById('popup-exit-overlay');
 
             // Adiciona evento de clique ao botão para mostrar o pop-up de saída
@@ -244,6 +252,12 @@
 
             // Adiciona evento de clique ao botão de fechar para ocultar o pop-up de saída
             closeExitButton.addEventListener('click', () => {
+                popupExit.style.display = 'none';
+                popupExitOverlay.style.display = 'none';
+            });
+
+            // Adiciona evento de clique ao botão de cancelar para ocultar o pop-up de saída
+            closeButtonConfirm.addEventListener('click', () => {
                 popupExit.style.display = 'none';
                 popupExitOverlay.style.display = 'none';
             });

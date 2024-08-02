@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    var antiForgeryToken = @Html.AntiForgeryToken().ToString();
 }
 
 <div class="container">
@@ -41,7 +42,9 @@
                             <div class="btn-group">
                                 <a asp-action="Edit" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-info" aria-label="Editar"><i class="fas fa-edit"></i> Editar</a>
                                 <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
-                                <a asp-action="Delete" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-danger" aria-label="Deletar"><i class="fas fa-trash-alt"></i> Deletar</a>
+                                <button type="button" class="btn btn-sm btn-danger" aria-label="Deletar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-institution-id="@userInstitution.InstitutionFk">
+                                    <i class="fas fa-trash-alt"></i> Deletar
+                                </button>
                             </div>
                         </td>
                     }
@@ -60,7 +63,7 @@
                             <div class="btn-group">
                                 <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
                             </div>
-                        </td>                        
+                        </td>
                     }
                 </tr>
             }
@@ -69,7 +72,66 @@
     <a asp-controller="Home" asp-action="Index" class="btn btn-link">Voltar</a>
 </div>
 
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title w-100 text-center" id="confirmDeleteModalLabel">Confirmar Deleção</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body w-100 text-center">
+                Tem certeza de que deseja deletar?
+                <br /><br />
+                <strong>Não será mais possível visualizar Membros e ChatBots da Instituição.</strong>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100 text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="confirmDeleteButton" class="btn btn-danger">Deletar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+
+    <script>
+        var confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        var institutionIdToDelete = null;
+        var antiForgeryToken = '@Html.AntiForgeryToken()'.split('value="')[1].split('"')[0]; // Obter o token anti-falsificação
+
+        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            institutionIdToDelete = button.getAttribute('data-institution-id');
+        });
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function () {
+            if (institutionIdToDelete) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '@Url.Action("Delete")';
+
+                // Adicionar token anti-falsificação
+                var antiForgeryInput = document.createElement('input');
+                antiForgeryInput.type = 'hidden';
+                antiForgeryInput.name = '__RequestVerificationToken';
+                antiForgeryInput.value = antiForgeryToken;
+                form.appendChild(antiForgeryInput);
+
+                var institutionFkInput = document.createElement('input');
+                institutionFkInput.type = 'hidden';
+                institutionFkInput.name = 'id';
+                institutionFkInput.value = institutionIdToDelete;
+                form.appendChild(institutionFkInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

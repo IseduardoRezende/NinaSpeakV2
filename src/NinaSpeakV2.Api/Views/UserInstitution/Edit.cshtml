@@ -79,7 +79,7 @@
                     </div>
                 </div>
                 <div>
-                    <a asp-controller="Institution" asp-action="Edit" asp-route-id="@Model.First().InstitutionFk" class="btn btn-link">Voltar</a>
+                    <a asp-controller="Institution" asp-action="Edit" asp-route-id="@Model.First().InstitutionFk" class="btn-link">Voltar</a>
                 </div>
             </form>
         </div>
@@ -91,15 +91,19 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Remoção</h5>
+                <h5 class="modal-title w-100 text-center" id="confirmDeleteModalLabel">Confirmar Remoção</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                Tem certeza de que deseja remover este membro?
+            <div class="modal-body w-100 text-center">
+                Tem certeza de que deseja remover?
+                <br /><br />
+                <strong>Membro não poderá mais acessar nada relacionado a Instituição.</strong>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" id="confirmDeleteButton" class="btn btn-danger">Remover</button>
+                <div class="w-100 text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="confirmDeleteButton" class="btn btn-danger">Remover</button>
+                </div>
             </div>
         </div>
     </div>
