@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
 
 namespace NinaSpeakV2.Data.Repositories
@@ -13,7 +13,7 @@ namespace NinaSpeakV2.Data.Repositories
             if (institutionsFks is null || institutionsFks.Any(v => v <= default(long)))
                 return Enumerable.Empty<ChatBot>();
 
-            return await Task.FromResult(Model.Where(c => institutionsFks.Contains(c.InstitutionFk)));
+            return await Task.FromResult(Entity.Where(c => institutionsFks.Contains(c.InstitutionFk)));
         }
 
         public async Task<bool> NameAlreadyExistAsync(long institutionFk, string name)
@@ -24,7 +24,7 @@ namespace NinaSpeakV2.Data.Repositories
             if (institutionFk <= default(long))
                 throw new ArgumentException("Invalid institutionFk");
 
-            return await Model.AnyAsync(c => c.InstitutionFk == institutionFk && c.Name == name);
+            return await Entity.AnyAsync(c => c.InstitutionFk == institutionFk && c.Name == name);
         }
 
         public async Task<bool> CanChangeNameAsync(ChatBot chatBot, long institutionFk, string newName)

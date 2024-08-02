@@ -1,6 +1,6 @@
-﻿namespace NinaSpeakV2.Data.Models
+﻿namespace NinaSpeakV2.Data.Entities
 {
-    public class ChatBotGenre : BaseModelEnum
+    public class ChatBotGenre : BaseEntityEnum
     {
         public ChatBotGenre()
         {

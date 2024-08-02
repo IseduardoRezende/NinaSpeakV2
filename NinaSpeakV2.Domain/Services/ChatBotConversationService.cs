@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
-using NinaSpeakV2.Domain.Entities;
+using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.ChatBotConversations;
@@ -24,64 +24,64 @@ namespace NinaSpeakV2.Domain.Services
             return _ => true;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateChatBotConversationViewModel createModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateChatBotConversationViewModel createViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(createModel))
+            if (!BaseValidator.IsValid(createViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            var chatBot = await _chatBotService.GetByIdAsync(createModel.ChatBotFk);
+            var chatBot = await _chatBotService.GetByIdAsync(createViewModel.ChatBotFk);
 
             if (!BaseValidator.IsValid(chatBot))
                 errors.Add(new BaseError(BaseError.ChatBotNotFound));
 
-            if (!ChatBotConversationValidator.IsValidMessage(createModel.Message))
+            if (!ChatBotConversationValidator.IsValidMessage(createViewModel.Message))
                 errors.Add(new BaseError(BaseError.InvalidMessage));
 
-            if (!ChatBotConversationValidator.IsValidResponse(createModel.Response))
+            if (!ChatBotConversationValidator.IsValidResponse(createViewModel.Response))
                 errors.Add(new BaseError(BaseError.InvalidResponse));
 
             return errors;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateChatBotConversationViewModel updateModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateChatBotConversationViewModel updateViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(updateModel))
+            if (!BaseValidator.IsValid(updateViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            var model = await _baseReadonlyRepository.GetByIdAsync(updateModel.Id);
+            var entity = await _baseReadonlyRepository.GetByIdAsync(updateViewModel.Id);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
             {
                 errors.Add(new BaseError(BaseError.ChatBotConversationNotFound));
                 return errors;
             }
 
-            if (ChatBotConversationValidator.IsEqual(model!, updateModel))
+            if (ChatBotConversationValidator.IsEqual(entity!, updateViewModel))
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
             
-            if (!ChatBotConversationValidator.IsValidMessage(updateModel.Message))
+            if (!ChatBotConversationValidator.IsValidMessage(updateViewModel.Message))
                 errors.Add(new BaseError(BaseError.InvalidMessage));
 
-            if (!ChatBotConversationValidator.IsValidResponse(updateModel.Response))
+            if (!ChatBotConversationValidator.IsValidResponse(updateViewModel.Response))
                 errors.Add(new BaseError(BaseError.InvalidResponse));
 
             return errors;
         }
 
-        protected override void UpdateFields(ChatBotConversation model, UpdateChatBotConversationViewModel updateModel)
+        protected override void UpdateFields(ChatBotConversation entity, UpdateChatBotConversationViewModel updateViewModel)
         {
-            model.Message = updateModel.Message;
-            model.Response = updateModel.Response;
+            entity.Message = updateViewModel.Message;
+            entity.Response = updateViewModel.Response;
         }
     }
 }

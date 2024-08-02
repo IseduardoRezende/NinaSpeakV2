@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NinaSpeakV2.Api.Extensions;
 using NinaSpeakV2.Api.Utils;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.ViewModels.ChatBots;
 
@@ -40,12 +40,12 @@ namespace NinaSpeakV2.Api.Controllers
 
         public override async Task<IActionResult> Edit(long? id)
         {
-            var model = await _readonlyService.GetByIdAsync(id ?? 0);
+            var entity = await _readonlyService.GetByIdAsync(id ?? 0);
 
-            if (model is null)
+            if (entity is null)
                 return NotFound();
 
-            var updateModel = _mapper.Map<UpdateChatBotViewModel>(model);
+            var updateModel = _mapper.Map<UpdateChatBotViewModel>(entity);
 
             ViewData[Constant.ViewDataChatBotGenres] = await _chatBotGenreService.GetAsync();                        
             return View(updateModel);

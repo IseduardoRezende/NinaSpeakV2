@@ -9,15 +9,16 @@ using NinaSpeakV2.Domain.Validators;
 
 namespace NinaSpeakV2.Api.Controllers
 {
-    public abstract class BaseController<TModel, CreateModel, UpdateModel, ReadModel> : BaseReadonlyController<TModel, ReadModel>
-        where TModel      : class, IBaseModelGlobal
-        where CreateModel : class, IBaseCreateViewModel
-        where UpdateModel : class, IBaseUpdateViewModel
-        where ReadModel   : class, IBaseReadViewModel, new()
+    public abstract class BaseController<TEntity, TCreateViewModel, TUpdateViewModel, TReadViewModel> : 
+                          BaseReadonlyController<TEntity, TReadViewModel>
+        where TEntity          : class, IBaseEntityGlobal
+        where TCreateViewModel : class, IBaseCreateViewModel
+        where TUpdateViewModel : class, IBaseUpdateViewModel
+        where TReadViewModel   : class, IBaseReadViewModel, new()
     {
-        protected IBaseService<TModel, CreateModel, UpdateModel, ReadModel> _baseService;
+        protected IBaseService<TEntity, TCreateViewModel, TUpdateViewModel, TReadViewModel> _baseService;
 
-        protected BaseController(IBaseService<TModel, CreateModel, UpdateModel, ReadModel> baseService, IMapper mapper)
+        protected BaseController(IBaseService<TEntity, TCreateViewModel, TUpdateViewModel, TReadViewModel> baseService, IMapper mapper)
             : base(baseService, mapper)
         {
             _baseService = baseService;
@@ -30,7 +31,7 @@ namespace NinaSpeakV2.Api.Controllers
         }
 
         [HttpPost("Create"), ValidateAntiForgeryToken]
-        public virtual async Task<IActionResult> Create(CreateModel createModel)
+        public virtual async Task<IActionResult> Create(TCreateViewModel createModel)
         {
             var value = await _baseService.CreateAsync(createModel);
 
@@ -46,17 +47,17 @@ namespace NinaSpeakV2.Api.Controllers
         [HttpGet("Edit/{id?}")]
         public virtual async Task<IActionResult> Edit(long? id)
         {            
-            var model = await _readonlyService.GetByIdAsync(id ?? 0);
+            var entity = await _readonlyService.GetByIdAsync(id ?? 0);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
                 return NotFound();
 
-            var updateModel = _mapper.Map<UpdateModel>(model);
+            var updateModel = _mapper.Map<TUpdateViewModel>(entity);
             return View(updateModel);
         }
 
         [HttpPost("Edit/{id}"), ValidateAntiForgeryToken]
-        public virtual async Task<IActionResult> Edit(long id, UpdateModel updateModel)
+        public virtual async Task<IActionResult> Edit(long id, TUpdateViewModel updateModel)
         {
             if (id != updateModel.Id)
                 return BadRequest();

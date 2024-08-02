@@ -1,4 +1,4 @@
-﻿using NinaSpeakV2.Data.Models;
+﻿using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 
 namespace NinaSpeakV2.Domain.Services.IServices
@@ -6,7 +6,7 @@ namespace NinaSpeakV2.Domain.Services.IServices
     public interface IUserInstitutionService 
         : IBaseService<UserInstitution, CreateUserInstitutionViewModel, UpdateUserInstitutionViewModel, ReadUserInstitutionViewModel>
     {
-        Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels);
+        Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateViewModels);
 
         Task<bool> SoftDeleteByInstitutionFkAsync(long institutionFk);
 

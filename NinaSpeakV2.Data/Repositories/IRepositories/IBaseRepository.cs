@@ -2,15 +2,15 @@
 
 namespace NinaSpeakV2.Data.Repositories.IRepositories
 {
-    public interface IBaseRepository<TModel> : IBaseReadonlyRepository<TModel>
-        where TModel : class, IBaseModelGlobal
+    public interface IBaseRepository<TEntity> : IBaseReadonlyRepository<TEntity>
+        where TEntity : class, IBaseEntityGlobal
     {
-        Task<TModel> CreateAsync(TModel model);
+        Task<TEntity> CreateAsync(TEntity model);
         
-        Task<TModel> UpdateAsync(TModel model);
+        Task<TEntity> UpdateAsync(TEntity model);
 
-        Task<bool> SoftDeleteAsync(TModel model);
+        Task<bool> SoftDeleteAsync(TEntity model);
 
-        Task<bool> ActiveAsync(TModel model);
+        Task<bool> ActiveAsync(TEntity model);
     }    
 }

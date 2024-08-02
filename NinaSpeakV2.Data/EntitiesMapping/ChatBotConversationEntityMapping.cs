@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public class ChatBotConversationModelMapping : BaseModelMapping<ChatBotConversation>
+    public class ChatBotConversationEntityMapping : BaseEntityMapping<ChatBotConversation>
     {
         public override void Configure(EntityTypeBuilder<ChatBotConversation> builder)
         {

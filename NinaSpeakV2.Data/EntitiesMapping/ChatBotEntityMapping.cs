@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public class ChatBotModelMapping : BaseModelEnumMapping<ChatBot>
+    public class ChatBotEntityMapping : BaseEntityEnumMapping<ChatBot>
     {
         public override void Configure(EntityTypeBuilder<ChatBot> builder)
         {
@@ -35,7 +35,7 @@ namespace NinaSpeakV2.Data.ModelsMapping
                 .Property(m => m.Name)
                 .HasMaxLength(80)
                 .IsRequired()
-                .HasColumnName("Nome");                
+                .HasColumnName("Nome");
         }
     }
 }

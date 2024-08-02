@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
-using NinaSpeakV2.Domain.Entities;
+using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.ChatBots;
@@ -28,17 +28,17 @@ namespace NinaSpeakV2.Domain.Services
             return _ => true;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateChatBotViewModel createModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateChatBotViewModel createViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(createModel))
+            if (!BaseValidator.IsValid(createViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            var chatBotGenre = await _chatBotGenreService.GetByIdAsync(createModel.ChatBotGenreFk);
+            var chatBotGenre = await _chatBotGenreService.GetByIdAsync(createViewModel.ChatBotGenreFk);
 
             if (!BaseValidator.IsValid(chatBotGenre))
             {
@@ -46,7 +46,7 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            var institution = await _institutionService.GetByIdAsync(createModel.InstitutionFk);
+            var institution = await _institutionService.GetByIdAsync(createViewModel.InstitutionFk);
 
             if (!BaseValidator.IsValid(institution))
             {
@@ -54,29 +54,29 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            if (!BaseEnumValidator.IsValidDescription(createModel.Description))
+            if (!BaseEnumValidator.IsValidDescription(createViewModel.Description))
                 errors.Add(new BaseError(BaseError.InvalidDescription));
 
-            if (!ChatBotValidator.IsValidName(createModel.Name))
+            if (!ChatBotValidator.IsValidName(createViewModel.Name))
                 errors.Add(new BaseError(BaseError.InvalidName));
 
-            if (await _chatBotRepository.NameAlreadyExistAsync((long)institution!.Id!, createModel.Name))
+            if (await _chatBotRepository.NameAlreadyExistAsync((long)institution!.Id!, createViewModel.Name))
                 errors.Add(new BaseError(BaseError.NameAlreadyExist));
 
             return errors;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateChatBotViewModel updateModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateChatBotViewModel updateViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(updateModel))
+            if (!BaseValidator.IsValid(updateViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            var chatBot = await _chatBotRepository.GetByIdAsync(updateModel.Id);
+            var chatBot = await _chatBotRepository.GetByIdAsync(updateViewModel.Id);
 
             if (!BaseValidator.IsValid(chatBot))
             {
@@ -84,16 +84,16 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            if (!BaseEnumValidator.IsValidDescription(updateModel.Description))
+            if (!BaseEnumValidator.IsValidDescription(updateViewModel.Description))
                 errors.Add(new BaseError(BaseError.InvalidDescription));
 
-            if (!ChatBotValidator.IsValidName(updateModel.Name))
+            if (!ChatBotValidator.IsValidName(updateViewModel.Name))
                 errors.Add(new BaseError(BaseError.InvalidName));
 
-            if (ChatBotValidator.IsEqual(chatBot!, updateModel))  //Create an abstract implementation (IsEqual) foreach [Model]Validator
+            if (ChatBotValidator.IsEqual(chatBot!, updateViewModel))  //Create an abstract implementation (IsEqual) foreach [Model]Validator
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
 
-            var chatBotGenre = await _chatBotGenreService.GetByIdAsync(updateModel.ChatBotGenreFk);
+            var chatBotGenre = await _chatBotGenreService.GetByIdAsync(updateViewModel.ChatBotGenreFk);
 
             if (!BaseValidator.IsValid(chatBotGenre))
             {
@@ -109,7 +109,7 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            if (!await _chatBotRepository.CanChangeNameAsync(chatBot!, (long)institution!.Id!, updateModel.Name))
+            if (!await _chatBotRepository.CanChangeNameAsync(chatBot!, (long)institution!.Id!, updateViewModel.Name))
                 errors.Add(new BaseError(BaseError.NameAlreadyExist));
 
             return errors;
@@ -125,11 +125,11 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadChatBotViewModel>>(chatBots);
         }
 
-        protected override void UpdateFields(ChatBot model, UpdateChatBotViewModel updateModel)
+        protected override void UpdateFields(ChatBot entity, UpdateChatBotViewModel updateViewModel)
         {
-            model.Name = updateModel.Name;
-            model.Description = updateModel.Description;
-            model.ChatBotGenreFk = updateModel.ChatBotGenreFk;
+            entity.Name = updateViewModel.Name;
+            entity.Description = updateViewModel.Description;
+            entity.ChatBotGenreFk = updateViewModel.ChatBotGenreFk;
         }
     }
 }

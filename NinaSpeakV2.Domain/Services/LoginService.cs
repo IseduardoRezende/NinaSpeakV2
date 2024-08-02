@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using NinaSpeakV2.Data.Repositories.IRepositories;
-using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Extensions;
+using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.Login;

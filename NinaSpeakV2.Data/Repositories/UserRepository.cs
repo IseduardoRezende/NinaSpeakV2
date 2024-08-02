@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
 
 namespace NinaSpeakV2.Data.Repositories
@@ -13,7 +13,7 @@ namespace NinaSpeakV2.Data.Repositories
             if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email))
                 throw new ArgumentException("Invalid Email");
 
-            return await Model.AnyAsync(u => u.Email == email.ToLowerInvariant());
+            return await Entity.AnyAsync(u => u.Email == email.ToLowerInvariant());
         }
 
         public async Task<bool> CanChangeEmailAsync(User user, string newEmail)

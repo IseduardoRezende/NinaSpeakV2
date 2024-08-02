@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Caching.Memory;
 using NinaSpeakV2.Api.Utils;
-using NinaSpeakV2.Domain.Entities;
+using NinaSpeakV2.Domain.Models;
 using System.Security.Claims;
 
 namespace NinaSpeakV2.Api.Extensions

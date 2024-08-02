@@ -1,6 +1,6 @@
 ﻿namespace NinaSpeakV2.Data.Interfaces
 {
-    public interface IBaseModelGlobal
+    public interface IBaseEntityGlobal
     {
         public DateTime CreatedAt { get; set; }
 

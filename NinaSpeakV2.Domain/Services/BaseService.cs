@@ -1,59 +1,59 @@
 ﻿using AutoMapper;
 using NinaSpeakV2.Data.Interfaces;
 using NinaSpeakV2.Data.Repositories.IRepositories;
-using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Interfaces;
+using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 
 namespace NinaSpeakV2.Domain.Services
 {
-    public abstract class BaseService<TModel, CreateModel, UpdateModel, ReadModel> : BaseReadonlyService<TModel, ReadModel>, 
-                                                                                     IBaseService<TModel, CreateModel, UpdateModel, ReadModel>
-        where TModel      : class, IBaseModelGlobal
-        where CreateModel : class, IBaseCreateViewModel
-        where UpdateModel : class, IBaseUpdateViewModel
-        where ReadModel   : class, IBaseReadViewModel, new()
+    public abstract class BaseService<TEntity, TCreateViewModel, TUpdateViewModel, TReadViewModel> : 
+                          BaseReadonlyService<TEntity, TReadViewModel>, IBaseService<TEntity, TCreateViewModel, TUpdateViewModel, TReadViewModel>
+        where TEntity          : class, IBaseEntityGlobal
+        where TCreateViewModel : class, IBaseCreateViewModel
+        where TUpdateViewModel : class, IBaseUpdateViewModel
+        where TReadViewModel   : class, IBaseReadViewModel, new()
     {
-        protected IBaseRepository<TModel> _baseRepository;
+        protected IBaseRepository<TEntity> _baseRepository;
 
-        protected BaseService(IBaseRepository<TModel> baseRepository, IMapper mapper) : base(baseRepository, mapper)
+        protected BaseService(IBaseRepository<TEntity> baseRepository, IMapper mapper) : base(baseRepository, mapper)
         {
             _baseRepository = baseRepository;
         }
         
-        protected abstract Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateModel createModel);
+        protected abstract Task<IEnumerable<BaseError>> ValidateCreationAsync(TCreateViewModel createViewModel);
         
-        public virtual async Task<ReadModel> CreateAsync(CreateModel createModel)
+        public virtual async Task<TReadViewModel> CreateAsync(TCreateViewModel createViewModel)
         {
-            var errors = await ValidateCreationAsync(createModel);
+            var errors = await ValidateCreationAsync(createViewModel);
 
             if (errors.Any())
-                return new ReadModel { BaseErrors = errors };
+                return new TReadViewModel { BaseErrors = errors };
 
-            var model = _mapper.Map<TModel>(createModel);
-            model = await _baseRepository.CreateAsync(model);
-            return _mapper.Map<ReadModel>(model);
+            var entity = _mapper.Map<TEntity>(createViewModel);
+            entity = await _baseRepository.CreateAsync(entity);
+            return _mapper.Map<TReadViewModel>(entity);
         }
 
-        protected abstract Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateModel updateModel);
+        protected abstract Task<IEnumerable<BaseError>> ValidateChangeAsync(TUpdateViewModel updateViewModel);
 
-        public virtual async Task<ReadModel> UpdateAsync(UpdateModel updateModel)
+        public virtual async Task<TReadViewModel> UpdateAsync(TUpdateViewModel updateViewModel)
         {
-            var errors = await ValidateChangeAsync(updateModel);
+            var errors = await ValidateChangeAsync(updateViewModel);
 
             if (errors.Any())
-                return new ReadModel { BaseErrors = errors };
+                return new TReadViewModel { BaseErrors = errors };
 
-            var model = await _baseReadonlyRepository.GetByIdAsync(updateModel.Id);
+            var entity = await _baseReadonlyRepository.GetByIdAsync(updateViewModel.Id);
 
-            if (!BaseValidator.IsValid(model))
-                return new ReadModel { BaseErrors = new[] { new BaseError(BaseError.InexistentObject) } };
+            if (!BaseValidator.IsValid(entity))
+                return new TReadViewModel { BaseErrors = new[] { new BaseError(BaseError.InexistentObject) } };
 
-            UpdateFields(model!, updateModel);
+            UpdateFields(entity!, updateViewModel);
 
-            model = await _baseRepository.UpdateAsync(model!);
-            return _mapper.Map<ReadModel>(model);
+            entity = await _baseRepository.UpdateAsync(entity!);
+            return _mapper.Map<TReadViewModel>(entity);
         }
 
         public virtual async Task<bool> SoftDeleteAsync(long id)
@@ -61,12 +61,12 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsAbove(id, BaseValidator.IdMinValue))
                 return false;
 
-            var model = await _baseReadonlyRepository.GetByIdAsync(id);
+            var entity = await _baseReadonlyRepository.GetByIdAsync(id);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
                 return false;
 
-            return await _baseRepository.SoftDeleteAsync(model!);
+            return await _baseRepository.SoftDeleteAsync(entity!);
         }
 
         public virtual async Task<bool> SoftDeleteAsync(params long[] ids)
@@ -74,12 +74,12 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsValid(ids) || ids.Any(v => !BaseValidator.IsAbove(v, BaseValidator.IdMinValue)))
                 return false;
 
-            var model = await _baseReadonlyRepository.GetByIdsAsync(ids);
+            var entity = await _baseReadonlyRepository.GetByIdsAsync(ids);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
                 return false;
 
-            return await _baseRepository.SoftDeleteAsync(model!);
+            return await _baseRepository.SoftDeleteAsync(entity!);
         }
 
         public virtual async Task<bool> ActiveAsync(long id)
@@ -87,12 +87,12 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsAbove(id, BaseValidator.IdMinValue))
                 return false;
 
-            var model = await _baseReadonlyRepository.GetByIdAsync(id);
+            var entity = await _baseReadonlyRepository.GetByIdAsync(id);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
                 return false;
 
-            return await _baseRepository.ActiveAsync(model!);
+            return await _baseRepository.ActiveAsync(entity!);
         }
 
         public virtual async Task<bool> ActiveAsync(params long[] ids)
@@ -100,14 +100,14 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsValid(ids) || ids.Any(v => !BaseValidator.IsAbove(v, BaseValidator.IdMinValue)))
                 return false;
 
-            var model = await _baseReadonlyRepository.GetByIdsAsync(ids);
+            var entity = await _baseReadonlyRepository.GetByIdsAsync(ids);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
                 return false;
 
-            return await _baseRepository.ActiveAsync(model!);
+            return await _baseRepository.ActiveAsync(entity!);
         }
 
-        protected abstract void UpdateFields(TModel model, UpdateModel updateModel);
+        protected abstract void UpdateFields(TEntity entity, TUpdateViewModel updateViewModel);
     }
 }

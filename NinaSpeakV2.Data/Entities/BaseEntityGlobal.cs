@@ -1,8 +1,8 @@
 ﻿using NinaSpeakV2.Data.Interfaces;
 
-namespace NinaSpeakV2.Data.Models
+namespace NinaSpeakV2.Data.Entities
 {
-    public abstract class BaseModelGlobal : IBaseModelGlobal
+    public abstract class BaseEntityGlobal : IBaseEntityGlobal
     {
         public DateTime CreatedAt { get; set; }
 

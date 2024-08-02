@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NinaSpeakV2.Data.Models;
-using NinaSpeakV2.Data.ModelsMapping;
+using NinaSpeakV2.Data.Entities;
+using NinaSpeakV2.Data.EntitiesMapping;
 
 namespace NinaSpeakV2.Data
 {
@@ -26,12 +26,12 @@ namespace NinaSpeakV2.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            new UserModelMapping().Configure(modelBuilder.Entity<User>());
-            new ChatBotModelMapping().Configure(modelBuilder.Entity<ChatBot>());
-            new InstitutionModelMapping().Configure(modelBuilder.Entity<Institution>());
-            new ChatBotGenreModelMapping().Configure(modelBuilder.Entity<ChatBotGenre>());
-            new UserInstitutionModelMapping().Configure(modelBuilder.Entity<UserInstitution>());
-            new ChatBotConversationModelMapping().Configure(modelBuilder.Entity<ChatBotConversation>());
+            new UserEntityMapping().Configure(modelBuilder.Entity<User>());
+            new ChatBotEntityMapping().Configure(modelBuilder.Entity<ChatBot>());
+            new InstitutionEntityMapping().Configure(modelBuilder.Entity<Institution>());
+            new ChatBotGenreEntityMapping().Configure(modelBuilder.Entity<ChatBotGenre>());
+            new UserInstitutionEntityMapping().Configure(modelBuilder.Entity<UserInstitution>());
+            new ChatBotConversationEntityMapping().Configure(modelBuilder.Entity<ChatBotConversation>());
         }
     }
 }

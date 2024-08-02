@@ -1,4 +1,4 @@
-﻿using NinaSpeakV2.Data.Models;
+﻿using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
 
 namespace NinaSpeakV2.Data.Repositories
@@ -14,7 +14,7 @@ namespace NinaSpeakV2.Data.Repositories
             if (!userInstitutions.Any())
                 throw new Exception();
 
-            Model.UpdateRange(userInstitutions);
+            Entity.UpdateRange(userInstitutions);
 
             if (!await SaveChangesAsync())
                 throw new Exception();
@@ -32,7 +32,7 @@ namespace NinaSpeakV2.Data.Repositories
             if (model.Creator)
                 model.Creator = false;
 
-            Model.Update(model);
+            Entity.Update(model);
             return await SaveChangesAsync();
         }
 
@@ -46,7 +46,7 @@ namespace NinaSpeakV2.Data.Repositories
             foreach (var userInstitution in userInstitutions)
                 userInstitution.DeletedAt = DateTime.Now;
 
-            Model.UpdateRange(userInstitutions);
+            Entity.UpdateRange(userInstitutions);
             return await SaveChangesAsync();
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace NinaSpeakV2.Data.Interfaces
 {
-    public interface IBaseModelEnum : IBaseModel
+    public interface IBaseEntityEnum : IBaseEntity
     {
         public string? Description { get; set; }
     }

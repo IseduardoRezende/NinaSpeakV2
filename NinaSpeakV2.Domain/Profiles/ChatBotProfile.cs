@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Domain.ViewModels.ChatBots;
 
 namespace NinaSpeakV2.Domain.Profiles

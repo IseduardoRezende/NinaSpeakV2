@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
-using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Extensions;
+using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.Institutions;
@@ -25,20 +25,20 @@ namespace NinaSpeakV2.Domain.Services
 
         //TODO: IMAGE HANDLER
 
-        public override async Task<ReadInstitutionViewModel> CreateAsync(CreateInstitutionViewModel createModel)
+        public override async Task<ReadInstitutionViewModel> CreateAsync(CreateInstitutionViewModel createViewModel)
         {            
-            if (!BaseValidator.IsAbove(createModel.UserFk, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsAbove(createViewModel.UserFk, BaseValidator.IdMinValue))
                 return new ReadInstitutionViewModel { BaseErrors = [new BaseError(BaseError.InvalidValue)] };
 
-            var model = await base.CreateAsync(createModel);
+            var entity = await base.CreateAsync(createViewModel);
 
-            if (model.HasErrors())
-                return model;
+            if (entity.HasErrors())
+                return entity;
 
             var userInstitution = new CreateUserInstitutionViewModel 
             { 
-                InstitutionFk = (long)model.Id!, 
-                UserFk = createModel.UserFk,
+                InstitutionFk = (long)entity.Id!, 
+                UserFk = createViewModel.UserFk,
                 Owner = true,
                 Writer = true,
                 Creator = true,
@@ -49,7 +49,7 @@ namespace NinaSpeakV2.Domain.Services
             if (userInstitutionModel.HasErrors())            
                 return new ReadInstitutionViewModel { BaseErrors = userInstitutionModel.BaseErrors };            
             
-            return model;
+            return entity;
         }
 
         protected override Func<Institution, bool> ApplyFilters()
@@ -57,62 +57,62 @@ namespace NinaSpeakV2.Domain.Services
             return _ => true;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateInstitutionViewModel createModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateInstitutionViewModel createViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(createModel))
+            if (!BaseValidator.IsValid(createViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            if (!InstitutionValidator.IsValidName(createModel.Name))
+            if (!InstitutionValidator.IsValidName(createViewModel.Name))
                 errors.Add(new BaseError(BaseError.InvalidName));
 
-            if (!BaseEnumValidator.IsValidDescription(createModel.Description))
+            if (!BaseEnumValidator.IsValidDescription(createViewModel.Description))
                 errors.Add(new BaseError(BaseError.InvalidDescription));
 
-            if (!InstitutionValidator.IsValidImage(createModel.Image))
+            if (!InstitutionValidator.IsValidImage(createViewModel.Image))
                 errors.Add(new BaseError(BaseError.InvalidImage));
 
-            if (await _institutionRepository.NameAlreadyExistAsync(createModel.Name))
+            if (await _institutionRepository.NameAlreadyExistAsync(createViewModel.Name))
                 errors.Add(new BaseError(BaseError.NameAlreadyExist));
 
             return errors;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateInstitutionViewModel updateModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateInstitutionViewModel updateViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(updateModel))
+            if (!BaseValidator.IsValid(updateViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            if (!InstitutionValidator.IsValidName(updateModel.Name))
+            if (!InstitutionValidator.IsValidName(updateViewModel.Name))
                 errors.Add(new BaseError(BaseError.InvalidName));
             
-            if (!BaseEnumValidator.IsValidDescription(updateModel.Description))
+            if (!BaseEnumValidator.IsValidDescription(updateViewModel.Description))
                 errors.Add(new BaseError(BaseError.InvalidDescription));
 
-            if (!InstitutionValidator.IsValidImage(updateModel.Image))
+            if (!InstitutionValidator.IsValidImage(updateViewModel.Image))
                 errors.Add(new BaseError(BaseError.InvalidImage));
 
-            var model = await _institutionRepository.GetByIdAsync(updateModel.Id);
+            var entity = await _institutionRepository.GetByIdAsync(updateViewModel.Id);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
             {
                 errors.Add(new BaseError(BaseError.InstitutionNotFound));
                 return errors;
             }
 
-            if (InstitutionValidator.IsEqual(model!, updateModel)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
+            if (InstitutionValidator.IsEqual(entity!, updateViewModel)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
 
-            if (!await _institutionRepository.CanChangeNameAsync(model!, updateModel.Name))
+            if (!await _institutionRepository.CanChangeNameAsync(entity!, updateViewModel.Name))
                 errors.Add(new BaseError(BaseError.NameAlreadyExist));
 
             return errors;
@@ -143,11 +143,11 @@ namespace NinaSpeakV2.Domain.Services
             return institution is not null;
         }
 
-        protected override void UpdateFields(Institution model, UpdateInstitutionViewModel updateModel)
+        protected override void UpdateFields(Institution entity, UpdateInstitutionViewModel updateViewModel)
         {
-            model.Name = updateModel.Name;
-            model.Description = updateModel.Description;
-            model.Image = updateModel.FileName;
+            entity.Name = updateViewModel.Name;
+            entity.Description = updateViewModel.Description;
+            entity.Image = updateViewModel.FileName;
         }
     }
 }

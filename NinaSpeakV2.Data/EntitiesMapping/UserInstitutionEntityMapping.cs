@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public class UserInstitutionModelMapping : BaseModelGlobalMapping<UserInstitution>
+    public class UserInstitutionEntityMapping : BaseEntityGlobalMapping<UserInstitution>
     {
         public override void Configure(EntityTypeBuilder<UserInstitution> builder)
         {
@@ -38,7 +38,7 @@ namespace NinaSpeakV2.Data.ModelsMapping
                 .HasDefaultValue(false)
                 .IsRequired()
                 .HasColumnName("Proprietario");
-            
+
             builder
                 .Property(m => m.Writer)
                 .HasDefaultValue(false)

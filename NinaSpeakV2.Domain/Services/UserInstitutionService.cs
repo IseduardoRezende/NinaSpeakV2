@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
-using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Extensions;
+using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
@@ -24,56 +24,56 @@ namespace NinaSpeakV2.Domain.Services
             _userInstitutionRepository = userInstitutionRepository;
         }
 
-        public override async Task<ReadUserInstitutionViewModel> CreateAsync(CreateUserInstitutionViewModel createModel)
+        public override async Task<ReadUserInstitutionViewModel> CreateAsync(CreateUserInstitutionViewModel createViewModel)
         {
-            var errors = await ValidateCreationAsync(createModel);
+            var errors = await ValidateCreationAsync(createViewModel);
 
             if (errors.Any())
                 return new ReadUserInstitutionViewModel { BaseErrors = errors };
 
-            var user = await _userRepository.GetByAsync(u => u.Email == createModel.UserEmail.ToLowerInvariant());                       
-            createModel.UserFk = user!.Id;
+            var user = await _userRepository.GetByAsync(u => u.Email == createViewModel.UserEmail.ToLowerInvariant());                       
+            createViewModel.UserFk = user!.Id;
 
-            var userInstitution = _mapper.Map<UserInstitution>(createModel);            
+            var userInstitution = _mapper.Map<UserInstitution>(createViewModel);            
             userInstitution = await _userInstitutionRepository.CreateAsync(userInstitution);
         
-            await _institutionRepository.UpdateCodeAsync(createModel.InstitutionFk);            
-            var readModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);            
+            await _institutionRepository.UpdateCodeAsync(createViewModel.InstitutionFk);            
+            var readViewModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);            
         
-            readModel.UserEmail = user.Email;
-            return readModel;
+            readViewModel.UserEmail = user.Email;
+            return readViewModel;
         }
 
-        public async Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels)
+        public async Task<IEnumerable<ReadUserInstitutionViewModel>> UpdateAsync(IEnumerable<UpdateUserInstitutionViewModel> updateViewModels)
         {
-            var errors = await ValidateChangeAsync(updateModels);
+            var errors = await ValidateChangeAsync(updateViewModels);
 
             if (errors.Any())
                 return new[] { new ReadUserInstitutionViewModel { BaseErrors = errors } };
 
-            var changedOnes = await GetOnlyChangedOnesAsync(updateModels);
+            var changedOnes = await GetOnlyChangedOnesAsync(updateViewModels);
 
             if (!BaseValidator.IsValid(changedOnes))
                 return new[] { new ReadUserInstitutionViewModel { BaseErrors = new[] { new BaseError(BaseError.NoChangesDetected) } } };
 
-            var models = _mapper.Map<IEnumerable<UserInstitution>>(changedOnes);
-            models = await _userInstitutionRepository.UpdateAsync(models);
-            return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(models);
+            var entities = _mapper.Map<IEnumerable<UserInstitution>>(changedOnes);
+            entities = await _userInstitutionRepository.UpdateAsync(entities);
+            return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(entities);
         }
 
-        private async Task<IEnumerable<UpdateUserInstitutionViewModel>> GetOnlyChangedOnesAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels)
+        private async Task<IEnumerable<UpdateUserInstitutionViewModel>> GetOnlyChangedOnesAsync(IEnumerable<UpdateUserInstitutionViewModel> updateViewModels)
         {
-            if (!BaseValidator.IsValid(updateModels))
+            if (!BaseValidator.IsValid(updateViewModels))
                 return Enumerable.Empty<UpdateUserInstitutionViewModel>();
 
-            var usersInstitutions = await _userInstitutionRepository.GetMembersByInstitutionFkAsync(updateModels.First().InstitutionFk);
+            var usersInstitutions = await _userInstitutionRepository.GetMembersByInstitutionFkAsync(updateViewModels.First().InstitutionFk);
 
             if (!BaseValidator.IsValid(usersInstitutions))
                 return Enumerable.Empty<UpdateUserInstitutionViewModel>();
 
             var changedOnes = new List<UpdateUserInstitutionViewModel>();
 
-            foreach (var updateModel in updateModels)
+            foreach (var updateModel in updateViewModels)
             {
                 var userInstitution = usersInstitutions.FirstOrDefault(ui => ui.UserFk == updateModel.UserFk);
 
@@ -89,19 +89,19 @@ namespace NinaSpeakV2.Domain.Services
             return changedOnes;
         }
 
-        private async Task<IEnumerable<BaseError>> ValidateChangeAsync(IEnumerable<UpdateUserInstitutionViewModel> updateModels)
+        private async Task<IEnumerable<BaseError>> ValidateChangeAsync(IEnumerable<UpdateUserInstitutionViewModel> updateViewModels)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(updateModels))
+            if (!BaseValidator.IsValid(updateViewModels))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            var updateModel = updateModels.First();
+            var updateModel = updateViewModels.First();
 
-            if (!updateModels.All(ui => ui.InstitutionFk == updateModel.InstitutionFk))
+            if (!updateViewModels.All(ui => ui.InstitutionFk == updateModel.InstitutionFk))
             {
                 errors.Add(new BaseError(BaseError.InvalidValue));
                 return errors;
@@ -145,29 +145,29 @@ namespace NinaSpeakV2.Domain.Services
             return _ => true;
         }
         
-        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateUserInstitutionViewModel createModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateUserInstitutionViewModel createViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(createModel))
+            if (!BaseValidator.IsValid(createViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
             
-            if (!BaseValidator.IsAbove(createModel.InstitutionFk, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsAbove(createViewModel.InstitutionFk, BaseValidator.IdMinValue))
                 errors.Add(new BaseError(BaseError.InvalidValue));
 
-            if (!UserValidator.IsValidPassword(createModel.UserPassword))
+            if (!UserValidator.IsValidPassword(createViewModel.UserPassword))
                 errors.Add(new BaseError(BaseError.InvalidPassword));
 
-            if (!UserValidator.IsValidEmail(createModel.UserEmail))
+            if (!UserValidator.IsValidEmail(createViewModel.UserEmail))
                 errors.Add(new BaseError(BaseError.InvalidEmail));
 
-            if (!InstitutionValidator.IsValidCode(createModel.InstitutionCode))
+            if (!InstitutionValidator.IsValidCode(createViewModel.InstitutionCode))
                 errors.Add(new BaseError(BaseError.InvalidCode));
 
-            var institution = await _institutionRepository.GetByIdAsync(createModel.InstitutionFk);
+            var institution = await _institutionRepository.GetByIdAsync(createViewModel.InstitutionFk);
 
             if (!BaseValidator.IsValid(institution))
             {
@@ -175,7 +175,7 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            var user = await _userRepository.GetByAsync(u => u.Email == createModel.UserEmail.ToLowerInvariant());
+            var user = await _userRepository.GetByAsync(u => u.Email == createViewModel.UserEmail.ToLowerInvariant());
             
             if (!BaseValidator.IsValid(user))
             {
@@ -183,12 +183,12 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
             
-            var password = createModel.UserPassword.ConvertToSHA512(user!.Salt);
+            var password = createViewModel.UserPassword.ConvertToSHA512(user!.Salt);
 
             if (password != user.Password)
                 errors.Add(new BaseError(BaseError.InvalidPassword));
 
-            var members = await GetMembersByInstitutionFkAsync(createModel.InstitutionFk);             
+            var members = await GetMembersByInstitutionFkAsync(createViewModel.InstitutionFk);             
 
             if (members.Any(m => m.UserFk == user.Id))
                 errors.Add(new BaseError(BaseError.UserInstitutionAlreadyExist));
@@ -201,12 +201,12 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsAbove(institutionFk, BaseValidator.IdMinValue))
                 return false;
 
-            var readModels = await GetMembersByInstitutionFkAsync(institutionFk);
+            var readViewModels = await GetMembersByInstitutionFkAsync(institutionFk);
 
-            if (!BaseValidator.IsValid(readModels))
+            if (!BaseValidator.IsValid(readViewModels))
                 return false;
 
-            var userInstitutions = _mapper.Map<IEnumerable<UserInstitution>>(readModels);
+            var userInstitutions = _mapper.Map<IEnumerable<UserInstitution>>(readViewModels);
             return await _userInstitutionRepository.SoftDeleteAsync(userInstitutions);
         }
 
@@ -281,29 +281,29 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(userInstitution);
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateUserInstitutionViewModel updateModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateUserInstitutionViewModel updateViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(updateModel))
+            if (!BaseValidator.IsValid(updateViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            if (!BaseValidator.IsAbove(updateModel.UserFk, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsAbove(updateViewModel.UserFk, BaseValidator.IdMinValue))
             {
                 errors.Add(new BaseError(BaseError.InvalidValue));
                 return errors;
             }
 
-            if (!BaseValidator.IsAbove(updateModel.InstitutionFk, BaseValidator.IdMinValue))
+            if (!BaseValidator.IsAbove(updateViewModel.InstitutionFk, BaseValidator.IdMinValue))
             {
                 errors.Add(new BaseError(BaseError.InvalidValue));
                 return errors;
             }
 
-            var userInstitution = await _userInstitutionRepository.GetByIdsAsync(new[] { updateModel.UserFk, updateModel.InstitutionFk });
+            var userInstitution = await _userInstitutionRepository.GetByIdsAsync(new[] { updateViewModel.UserFk, updateViewModel.InstitutionFk });
 
             if (!BaseValidator.IsValid(userInstitution))
             {
@@ -311,16 +311,16 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            if (UserInstitutionValidator.IsEqual(userInstitution!, updateModel))
+            if (UserInstitutionValidator.IsEqual(userInstitution!, updateViewModel))
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
 
             return errors;
         }
 
-        protected override void UpdateFields(UserInstitution model, UpdateUserInstitutionViewModel updateModel)
+        protected override void UpdateFields(UserInstitution entity, UpdateUserInstitutionViewModel updateViewModel)
         {
-            model.Owner = updateModel.Owner;
-            model.Writer = updateModel.Writer;
+            entity.Owner = updateViewModel.Owner;
+            entity.Writer = updateViewModel.Writer;
         }
     }
 }

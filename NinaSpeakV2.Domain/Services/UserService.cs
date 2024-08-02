@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
-using NinaSpeakV2.Domain.Entities;
 using NinaSpeakV2.Domain.Extensions;
+using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.Users;
@@ -23,48 +23,48 @@ namespace NinaSpeakV2.Domain.Services
 
         //TODO: DELETE ACTION
 
-        public override async Task<ReadUserViewModel> CreateAsync(CreateUserViewModel createModel)
+        public override async Task<ReadUserViewModel> CreateAsync(CreateUserViewModel createViewModel)
         {
-            var errors = await ValidateCreationAsync(createModel);
+            var errors = await ValidateCreationAsync(createViewModel);
 
             if (errors.Any())
                 return new ReadUserViewModel { BaseErrors = errors };
 
-            createModel.Salt = Guid.NewGuid().ToString();
-            createModel.Password = createModel.Password.ConvertToSHA512(createModel.Salt);
-            createModel.Email = createModel.Email.ToLowerInvariant();
+            createViewModel.Salt = Guid.NewGuid().ToString();
+            createViewModel.Password = createViewModel.Password.ConvertToSHA512(createViewModel.Salt);
+            createViewModel.Email = createViewModel.Email.ToLowerInvariant();
 
-            var model = _mapper.Map<User>(createModel);
-            model = await _userRepository.CreateAsync(model);
+            var entity = _mapper.Map<User>(createViewModel);
+            entity = await _userRepository.CreateAsync(entity);
             
-            var userInstitution = await _userInstitutionService.StandardRegistrationAsync(model.Id);
+            var userInstitution = await _userInstitutionService.StandardRegistrationAsync(entity.Id);
 
             if (userInstitution.HasErrors())
                 return new ReadUserViewModel { BaseErrors = userInstitution.BaseErrors };
 
             //Send Email to Confirm
 
-            return _mapper.Map<ReadUserViewModel>(model);
+            return _mapper.Map<ReadUserViewModel>(entity);
         }
 
-        public override async Task<ReadUserViewModel> UpdateAsync(UpdateUserViewModel updateModel)
+        public override async Task<ReadUserViewModel> UpdateAsync(UpdateUserViewModel updateViewModel)
         {
-            var errors = await ValidateChangeAsync(updateModel);
+            var errors = await ValidateChangeAsync(updateViewModel);
 
             if (errors.Any())
                 return new ReadUserViewModel { BaseErrors = errors };
 
-            var model = await _userRepository.GetByIdAsync(updateModel.Id);
+            var entity = await _userRepository.GetByIdAsync(updateViewModel.Id);
 
-            if (!BaseValidator.IsValid(model))
+            if (!BaseValidator.IsValid(entity))
                 return new ReadUserViewModel { BaseErrors = new[] { new BaseError(BaseError.InexistentObject) } };
 
-            UpdateFields(model!, updateModel);
-            model = await _userRepository.UpdateAsync(model!);
+            UpdateFields(entity!, updateViewModel);
+            entity = await _userRepository.UpdateAsync(entity!);
             
             //Send Email to Confirm
             
-            return _mapper.Map<ReadUserViewModel>(model);
+            return _mapper.Map<ReadUserViewModel>(entity);
         }
 
         protected override Func<User, bool> ApplyFilters()
@@ -72,51 +72,51 @@ namespace NinaSpeakV2.Domain.Services
             return _ => true;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateUserViewModel createModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateUserViewModel createViewModel)
         {
             var errors = new List<BaseError>();            
 
-            if (!BaseValidator.IsValid(createModel))
+            if (!BaseValidator.IsValid(createViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
 
-            if (createModel.Password != createModel.ConfirmPassword)
+            if (createViewModel.Password != createViewModel.ConfirmPassword)
                 errors.Add(new BaseError(BaseError.PasswordNotMatch));
 
-            if (!UserValidator.IsValidPassword(createModel.Password))
+            if (!UserValidator.IsValidPassword(createViewModel.Password))
                 errors.Add(new BaseError(BaseError.InvalidPassword));
 
-            if (!UserValidator.IsValidEmail(createModel.Email))
+            if (!UserValidator.IsValidEmail(createViewModel.Email))
                 errors.Add(new BaseError(BaseError.InvalidEmail));
 
-            if (await _userRepository.EmailAlreadyExistAsync(createModel.Email))
+            if (await _userRepository.EmailAlreadyExistAsync(createViewModel.Email))
                 errors.Add(new BaseError(BaseError.EmailAlreadyExist));
 
             return errors;
         }
 
-        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateUserViewModel updateModel)
+        protected override async Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateUserViewModel updateViewModel)
         {
             var errors = new List<BaseError>();
 
-            if (!BaseValidator.IsValid(updateModel))
+            if (!BaseValidator.IsValid(updateViewModel))
             {
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
             
-            if (updateModel.Password != updateModel.ConfirmPassword)
+            if (updateViewModel.Password != updateViewModel.ConfirmPassword)
                 errors.Add(new BaseError(BaseError.PasswordNotMatch));
 
-            if (!UserValidator.IsValidPassword(updateModel.Password))
+            if (!UserValidator.IsValidPassword(updateViewModel.Password))
                 errors.Add(new BaseError(BaseError.InvalidPassword));
 
-            if (!UserValidator.IsValidEmail(updateModel.Email))
+            if (!UserValidator.IsValidEmail(updateViewModel.Email))
                 errors.Add(new BaseError(BaseError.InvalidEmail));
 
-            var user = await _userRepository.GetByIdAsync(updateModel.Id);
+            var user = await _userRepository.GetByIdAsync(updateViewModel.Id);
 
             if (!BaseValidator.IsValid(user))
             {
@@ -124,25 +124,25 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            if (user!.Email.Equals(updateModel.Email, StringComparison.InvariantCultureIgnoreCase)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
+            if (user!.Email.Equals(updateViewModel.Email, StringComparison.InvariantCultureIgnoreCase)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
 
-            var password = updateModel.Password.ConvertToSHA512(user.Salt);
+            var password = updateViewModel.Password.ConvertToSHA512(user.Salt);
 
             if (user.Password != password)
                 errors.Add(new BaseError(BaseError.InvalidPassword));
 
-            if (!await _userRepository.CanChangeEmailAsync(user, updateModel.Email))
+            if (!await _userRepository.CanChangeEmailAsync(user, updateViewModel.Email))
                 errors.Add(new BaseError(BaseError.EmailAlreadyExist));
 
             return errors;
         }
 
-        protected override void UpdateFields(User model, UpdateUserViewModel updateModel)
+        protected override void UpdateFields(User entity, UpdateUserViewModel updateViewModel)
         {
-            model.Email = updateModel.Email.ToLowerInvariant();
-        
-            //Activated = false
+            entity.Email = updateViewModel.Email.ToLowerInvariant();
+
+            //Authenticated = false
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public class ChatBotGenreModelMapping : BaseModelEnumMapping<ChatBotGenre>
+    public class ChatBotGenreEntityMapping : BaseEntityEnumMapping<ChatBotGenre>
     {
         public override void Configure(EntityTypeBuilder<ChatBotGenre> builder)
         {
@@ -13,7 +13,7 @@ namespace NinaSpeakV2.Data.ModelsMapping
 
             builder
                 .HasIndex(m => m.Description)
-                .IsUnique();                   
+                .IsUnique();
         }
     }
 }

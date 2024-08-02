@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NinaSpeakV2.Api.Extensions;
 using NinaSpeakV2.Api.Utils;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.ViewModels.ChatBotConversations;
 

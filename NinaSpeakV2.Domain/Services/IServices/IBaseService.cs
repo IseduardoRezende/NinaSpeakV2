@@ -3,15 +3,15 @@ using NinaSpeakV2.Domain.Interfaces;
 
 namespace NinaSpeakV2.Domain.Services.IServices
 {
-    public interface IBaseService<TModel, CreateModel, UpdateModel, ReadModel> : IBaseReadonlyService<TModel, ReadModel>        
-        where TModel      : class, IBaseModelGlobal
-        where CreateModel : class, IBaseCreateViewModel
-        where UpdateModel : class, IBaseUpdateViewModel
-        where ReadModel   : class, IBaseReadViewModel, new()
+    public interface IBaseService<TEntity, TCreateViewModel, TUpdateViewModel, TReadViewModel> : IBaseReadonlyService<TEntity, TReadViewModel>        
+        where TEntity          : class, IBaseEntityGlobal
+        where TCreateViewModel : class, IBaseCreateViewModel
+        where TUpdateViewModel : class, IBaseUpdateViewModel
+        where TReadViewModel   : class, IBaseReadViewModel, new()
     {
-        Task<ReadModel> CreateAsync(CreateModel createModel);
+        Task<TReadViewModel> CreateAsync(TCreateViewModel createModel);
         
-        Task<ReadModel> UpdateAsync(UpdateModel updateModel);
+        Task<TReadViewModel> UpdateAsync(TUpdateViewModel updateModel);
 
         Task<bool> SoftDeleteAsync(long id);
 

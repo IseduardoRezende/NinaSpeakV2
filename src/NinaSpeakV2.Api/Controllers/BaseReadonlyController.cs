@@ -10,16 +10,16 @@ using NinaSpeakV2.Api.Enums;
 namespace NinaSpeakV2.Api.Controllers
 {
     [Route("[controller]"), Authorize, EnableRateLimiting(nameof(PolicyType.Authenticated))]
-    public abstract class BaseReadonlyController<TModel, ReadModel> : Controller
-        where TModel    : class, IBaseModelGlobal
-        where ReadModel : class, IBaseReadViewModel, new()
+    public abstract class BaseReadonlyController<TEntity, TReadViewModel> : Controller
+        where TEntity        : class, IBaseEntityGlobal
+        where TReadViewModel : class, IBaseReadViewModel, new()
     {
         //ADD CANCELLETIONTOKEN ON EACH METHOD
 
-        protected IBaseReadonlyService<TModel, ReadModel> _readonlyService;
+        protected IBaseReadonlyService<TEntity, TReadViewModel> _readonlyService;
         protected IMapper _mapper;
 
-        protected BaseReadonlyController(IBaseReadonlyService<TModel, ReadModel> readonlyService, IMapper mapper)
+        protected BaseReadonlyController(IBaseReadonlyService<TEntity, TReadViewModel> readonlyService, IMapper mapper)
         {
             _readonlyService = readonlyService;
             _mapper = mapper;

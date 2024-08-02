@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public class InstitutionModelMapping : BaseModelEnumMapping<Institution>
+    public class InstitutionEntityMapping : BaseEntityEnumMapping<Institution>
     {
         public override void Configure(EntityTypeBuilder<Institution> builder)
         {
@@ -23,7 +23,7 @@ namespace NinaSpeakV2.Data.ModelsMapping
                 .HasDefaultValueSql("LEFT(LOWER(NEWID()), 8)")
                 .IsRequired()
                 .HasColumnName("Codigo");
-            
+
             builder
                 .Property(m => m.Image)
                 .HasMaxLength(30)

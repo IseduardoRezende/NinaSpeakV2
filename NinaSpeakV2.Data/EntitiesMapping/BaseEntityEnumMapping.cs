@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NinaSpeakV2.Data.Interfaces;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public abstract class BaseModelEnumMapping<TModel> : BaseModelMapping<TModel>
-        where TModel : class, IBaseModelEnum
+    public abstract class BaseEntityEnumMapping<TModel> : BaseEntityMapping<TModel>
+        where TModel : class, IBaseEntityEnum
     {
         public override void Configure(EntityTypeBuilder<TModel> builder)
         {

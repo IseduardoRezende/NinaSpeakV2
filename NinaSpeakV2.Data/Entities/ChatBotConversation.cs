@@ -1,6 +1,6 @@
-﻿namespace NinaSpeakV2.Data.Models
+﻿namespace NinaSpeakV2.Data.Entities
 {
-    public class ChatBotConversation : BaseModel
+    public class ChatBotConversation : BaseEntity
     {
         public long ChatBotFk { get; set; }
 

@@ -4,8 +4,8 @@ using NinaSpeakV2.Data.Repositories.IRepositories;
 
 namespace NinaSpeakV2.Data.Repositories
 {
-    public abstract class BaseReadonlyRepository<TModel> : IBaseReadonlyRepository<TModel>
-        where TModel : class, IBaseModelGlobal
+    public abstract class BaseReadonlyRepository<TEntity> : IBaseReadonlyRepository<TEntity>
+        where TEntity : class, IBaseEntityGlobal
     {
         protected NinaSpeakContext _context;
 
@@ -14,20 +14,20 @@ namespace NinaSpeakV2.Data.Repositories
             _context = context;
         }
 
-        protected DbSet<TModel> Model
+        protected DbSet<TEntity> Entity
         {
             get
             {
-                return _context.Set<TModel>();
+                return _context.Set<TEntity>();
             }
         }
 
-        public virtual Task<IEnumerable<TModel>> GetAsync(Func<TModel, bool> filters, params string[] includes)
+        public virtual Task<IEnumerable<TEntity>> GetAsync(Func<TEntity, bool> filters, params string[] includes)
         {
             ArgumentNullException.ThrowIfNull(filters, nameof(filters));
             ArgumentNullException.ThrowIfNull(includes, nameof(includes));
 
-            IQueryable<TModel> query = Model;
+            IQueryable<TEntity> query = Entity;
 
             foreach (var include in includes)
                 query = query.Include(include);
@@ -35,12 +35,12 @@ namespace NinaSpeakV2.Data.Repositories
             return Task.FromResult(query.Where(filters));
         }
 
-        public virtual Task<TModel?> GetByAsync(Func<TModel, bool> filters, params string[] includes)
+        public virtual Task<TEntity?> GetByAsync(Func<TEntity, bool> filters, params string[] includes)
         {
             ArgumentNullException.ThrowIfNull(filters, nameof(filters));
             ArgumentNullException.ThrowIfNull(includes, nameof(includes));
 
-            IQueryable<TModel> query = Model;
+            IQueryable<TEntity> query = Entity;
 
             foreach (var include in includes)
                 query = query.Include(include);
@@ -48,7 +48,7 @@ namespace NinaSpeakV2.Data.Repositories
             return Task.FromResult(query.Where(filters).FirstOrDefault());
         }
 
-        public virtual async Task<TModel?> GetByIdsAsync(long[] ids, params string[] includes)
+        public virtual async Task<TEntity?> GetByIdsAsync(long[] ids, params string[] includes)
         {
             ArgumentNullException.ThrowIfNull(ids, nameof(ids));
             ArgumentNullException.ThrowIfNull(includes, nameof(includes));
@@ -57,7 +57,7 @@ namespace NinaSpeakV2.Data.Repositories
                 return null;
 
             var keys = Array.ConvertAll(ids, id => (object)id);
-            var model = await Model.FindAsync(keys);
+            var model = await Entity.FindAsync(keys);
 
             if (model is null)
                 return null;
@@ -68,14 +68,14 @@ namespace NinaSpeakV2.Data.Repositories
             return model;
         }
 
-        public virtual async Task<TModel?> GetByIdAsync(long id, params string[] includes)
+        public virtual async Task<TEntity?> GetByIdAsync(long id, params string[] includes)
         {
             ArgumentNullException.ThrowIfNull(includes, nameof(includes));
 
             if (id <= default(long))
                 return null;
 
-            var model = await Model.FindAsync(id);
+            var model = await Entity.FindAsync(id);
 
             if (model is null)
                 return null;

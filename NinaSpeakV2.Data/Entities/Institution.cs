@@ -1,6 +1,6 @@
-﻿namespace NinaSpeakV2.Data.Models
+﻿namespace NinaSpeakV2.Data.Entities
 {
-    public class Institution : BaseModelEnum
+    public class Institution : BaseEntityEnum
     {
         public const string StandardName = "ChatBot de Graça";
 

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public class UserModelMapping : BaseModelMapping<User>
+    public class UserEntityMapping : BaseEntityMapping<User>
     {
         public override void Configure(EntityTypeBuilder<User> builder)
         {
@@ -22,12 +22,12 @@ namespace NinaSpeakV2.Data.ModelsMapping
                 .HasMaxLength(128)
                 .IsRequired()
                 .HasColumnName("Senha");
-            
+
             builder
                 .Property(m => m.Salt)
                 .HasMaxLength(36)
                 .IsRequired()
-                .HasColumnName("Sal");            
+                .HasColumnName("Sal");
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Domain.ViewModels.Institutions;
 
 namespace NinaSpeakV2.Domain.Validators

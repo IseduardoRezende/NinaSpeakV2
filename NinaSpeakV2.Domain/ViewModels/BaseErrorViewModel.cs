@@ -1,5 +1,5 @@
-﻿using NinaSpeakV2.Domain.Entities;
-using NinaSpeakV2.Domain.Interfaces;
+﻿using NinaSpeakV2.Domain.Interfaces;
+using NinaSpeakV2.Domain.Models;
 using System.Text.Json.Serialization;
 
 namespace NinaSpeakV2.Domain.ViewModels

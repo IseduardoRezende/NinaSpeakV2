@@ -1,6 +1,6 @@
-﻿namespace NinaSpeakV2.Data.Models
+﻿namespace NinaSpeakV2.Data.Entities
 {
-    public class User : BaseModel
+    public class User : BaseEntity
     {
         public User()
         {

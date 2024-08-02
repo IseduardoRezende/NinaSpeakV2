@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NinaSpeakV2.Data.Models;
+using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
 
 namespace NinaSpeakV2.Data.Repositories
@@ -18,7 +18,7 @@ namespace NinaSpeakV2.Data.Repositories
             if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Invalid Name");
 
-            return await Model.AnyAsync(i => i.Name == name);
+            return await Entity.AnyAsync(i => i.Name == name);
         }
 
         public async Task<bool> CanChangeNameAsync(Institution institution, string newName)
@@ -35,7 +35,7 @@ namespace NinaSpeakV2.Data.Repositories
         public async Task UpdateCodeAsync(long id)
         {
             var newCode = Guid.NewGuid().ToString()[..8];
-            await Model.Where(i => i.Id == id && i.Name != Institution.StandardName).ExecuteUpdateAsync(s => s.SetProperty(i => i.Code, newCode));
+            await Entity.Where(i => i.Id == id && i.Name != Institution.StandardName).ExecuteUpdateAsync(s => s.SetProperty(i => i.Code, newCode));
         }
     }
 }

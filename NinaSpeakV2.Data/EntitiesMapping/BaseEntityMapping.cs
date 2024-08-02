@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NinaSpeakV2.Data.Interfaces;
 
-namespace NinaSpeakV2.Data.ModelsMapping
+namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public abstract class BaseModelMapping<TModel> : BaseModelGlobalMapping<TModel>
-        where TModel : class, IBaseModel
+    public abstract class BaseEntityMapping<TModel> : BaseEntityGlobalMapping<TModel>
+        where TModel : class, IBaseEntity
     {
         public override void Configure(EntityTypeBuilder<TModel> builder)
         {
@@ -17,7 +17,7 @@ namespace NinaSpeakV2.Data.ModelsMapping
                 .HasColumnName("Id")
                 .UseIdentityColumn();
             builder
-                .HasKey(m => m.Id);           
+                .HasKey(m => m.Id);
         }
     }
 }
