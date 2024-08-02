@@ -63,7 +63,7 @@ namespace NinaSpeakV2.Domain.Services
 
             var entity = await _baseReadonlyRepository.GetByIdAsync(id);
 
-            if (!BaseValidator.IsValid(entity))
+            if (!BaseValidator.IsValid(entity) || entity!.DeletedAt is not null)
                 return false;
 
             return await _baseRepository.SoftDeleteAsync(entity!);
@@ -76,7 +76,7 @@ namespace NinaSpeakV2.Domain.Services
 
             var entity = await _baseReadonlyRepository.GetByIdsAsync(ids);
 
-            if (!BaseValidator.IsValid(entity))
+            if (!BaseValidator.IsValid(entity) || entity!.DeletedAt is not null)
                 return false;
 
             return await _baseRepository.SoftDeleteAsync(entity!);
@@ -89,7 +89,7 @@ namespace NinaSpeakV2.Domain.Services
 
             var entity = await _baseReadonlyRepository.GetByIdAsync(id);
 
-            if (!BaseValidator.IsValid(entity))
+            if (!BaseValidator.IsValid(entity) || entity!.DeletedAt is null)
                 return false;
 
             return await _baseRepository.ActiveAsync(entity!);
@@ -102,7 +102,7 @@ namespace NinaSpeakV2.Domain.Services
 
             var entity = await _baseReadonlyRepository.GetByIdsAsync(ids);
 
-            if (!BaseValidator.IsValid(entity))
+            if (!BaseValidator.IsValid(entity) || entity!.DeletedAt is null)
                 return false;
 
             return await _baseRepository.ActiveAsync(entity!);
