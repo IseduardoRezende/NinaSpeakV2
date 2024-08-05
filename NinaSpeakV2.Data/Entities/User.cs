@@ -13,7 +13,9 @@
 
         public string Salt { get; set; }
 
-        //Activated: bool
+        public bool Authenticated { get; set; }
+
+        public short? VerificationCode { get; set; }
 
         public ICollection<UserInstitution> UserInstitutions { get; set; }
     }

@@ -28,6 +28,18 @@ namespace NinaSpeakV2.Data.EntitiesMapping
                 .HasMaxLength(36)
                 .IsRequired()
                 .HasColumnName("Sal");
+
+            builder
+                .Property(m => m.Authenticated)
+                .HasDefaultValue(false)
+                .IsRequired()
+                .HasColumnName("Autenticado");
+
+            builder
+                .Property(m => m.VerificationCode)
+                .HasMaxLength(5)
+                .IsRequired(false)
+                .HasColumnName("CodigoVerificacao");
         }
     }
 }
