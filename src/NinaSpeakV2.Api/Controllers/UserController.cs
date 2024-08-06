@@ -19,5 +19,21 @@ namespace NinaSpeakV2.Api.Controllers
 
             return await base.Details(id);
         }
+
+        public override async Task<IActionResult> Delete(long? id)
+        {
+            if (!UserRequestValidator.IsHimself(id, User))
+                return Forbid();
+
+            return await base.Delete(id);
+        }
+
+        public override async Task<IActionResult> Edit(long? id)
+        {
+            if (!UserRequestValidator.IsHimself(id, User))
+                return Forbid();
+
+            return await base.Edit(id);
+        }
     }
 }
