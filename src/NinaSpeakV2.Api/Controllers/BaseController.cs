@@ -79,7 +79,7 @@ namespace NinaSpeakV2.Api.Controllers
             var value = await _readonlyService.GetByIdAsync(id ?? 0);
 
             if (!BaseValidator.IsValid(value))
-                return NotFound();
+                return NotFound(); //Return UnprocessableEntity ?
 
             return View(value);
         }
@@ -88,7 +88,7 @@ namespace NinaSpeakV2.Api.Controllers
         public virtual async Task<IActionResult> Delete(long id)
         {
             if (!await _baseService.SoftDeleteAsync(id))
-                return NotFound();
+                return NotFound(); //Return UnprocessableEntity ?
 
             return RedirectToAction("Index", "Home");
         }

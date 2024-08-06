@@ -61,7 +61,11 @@ namespace NinaSpeakV2.Api.Controllers
                 return View(login);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index"); //Redirect To Verification View
         }
+
+        //ForgotPassword
+    
+        //ResendVerification
     }
 }

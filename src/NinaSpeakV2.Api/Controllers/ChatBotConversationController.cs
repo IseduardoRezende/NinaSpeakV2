@@ -21,7 +21,7 @@ namespace NinaSpeakV2.Api.Controllers
 
         public override async Task<IActionResult> Index()
         {
-            return View(await _readonlyService.GetAsync("ChatBot"));
+            return View(await _readonlyService.GetAsync(ignoreGlobalFilter: false, "ChatBot"));
         }
 
         public override async Task<IActionResult> Create()

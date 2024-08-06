@@ -34,7 +34,7 @@ namespace NinaSpeakV2.Api.Controllers
         [HttpGet("{id?}")]
         public virtual async Task<IActionResult> Details(long? id)
         {
-           return View(await _readonlyService.GetByIdAsync(id ?? 0));      
+           return View(await _readonlyService.GetByIdAsync(id ?? 0)); //Return NotFound
         }        
     }
 }
