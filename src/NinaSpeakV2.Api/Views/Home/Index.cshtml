@@ -1,4 +1,5 @@
-﻿@{
+﻿@using NinaSpeakV2.Api.Extensions
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -25,7 +26,8 @@
         <!-- Bem-vindo -->
         <div class="welcome-banner">
             <h1>Bem-Vindo ao ChatBot Grátis!</h1>
-            <p>Gerencie suas instituições e chatbots de forma fácil e eficiente.</p>
+            <p>Gerencie suas Instituições e ChatBots de forma fácil e eficiente.</p>
+            <p>Olá <strong>@User.GetCurrentUserEmail()</strong> <i class="fa fa-heart"></i></p>
         </div>
         <!-- Menu lateral -->
         <div class="row">
