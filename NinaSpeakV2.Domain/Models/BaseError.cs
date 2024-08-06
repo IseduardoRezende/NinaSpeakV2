@@ -12,6 +12,7 @@
         public const string InvalidValues = "Invalid Values.";
 
         public const string UserNotFound = "User not found.";
+        public const string UserNotAuthenticated = "User not authenticated.";
         public const string UserInstitutionNotFound = "User Institution not found.";
         public const string InstitutionNotFound = "Institution not found.";
         public const string ChatBotNotFound = "ChatBot not found.";
