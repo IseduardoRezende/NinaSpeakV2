@@ -220,12 +220,12 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsAbove(institutionFk, BaseValidator.IdMinValue))
                 return false;
 
-            var readViewModels = await GetMembersByInstitutionFkAsync(institutionFk);
+            var readViewModels = await GetMembersByInstitutionFkAsync(institutionFk, ignoreGlobalFilter: true);
 
             if (!BaseValidator.IsValid(readViewModels))
                 return false;
 
-            var userInstitutions = _mapper.Map<IEnumerable<UserInstitution>>(readViewModels);
+            var userInstitutions = _mapper.Map<IEnumerable<UserInstitution>>(readViewModels.Where(ui => ui.DeletedAt is null));
             return await _userInstitutionRepository.SoftDeleteAsync(userInstitutions);
         }
 
@@ -236,7 +236,7 @@ namespace NinaSpeakV2.Domain.Services
 
             var members = await GetMembersByInstitutionFkAsync(institutionFk);
 
-            if (members.LongCount() is 0)
+            if (!members.Any())
             {
                 var institution = await _institutionRepository.GetByIdAsync(institutionFk);
                 return await _institutionRepository.SoftDeleteAsync(institution!);
@@ -257,7 +257,6 @@ namespace NinaSpeakV2.Domain.Services
             oldestMember!.Owner = true;
 
             var model = _mapper.Map<UserInstitution>(oldestMember);
-
             await _userInstitutionRepository.UpdateAsync(model);
         }
 
