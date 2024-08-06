@@ -21,12 +21,12 @@ namespace NinaSpeakV2.Domain.Services
             _mapper = mapper;
         }
 
-        public virtual async Task<IEnumerable<TReadViewModel>> GetAsync(params string[] includes)
+        public virtual async Task<IEnumerable<TReadViewModel>> GetAsync(bool ignoreGlobalFilter = false, params string[] includes)
         {
             if (!BaseValidator.IsValid(includes))
                 return new[] { new TReadViewModel { BaseErrors = new[] { new BaseError(BaseError.InvalidIncludes) } } };
 
-            var entities = await _baseReadonlyRepository.GetAsync(ApplyFilters(), includes);
+            var entities = await _baseReadonlyRepository.GetAsync(ApplyFilters(), ignoreGlobalFilter, includes);
             return _mapper.Map<IEnumerable<TReadViewModel>>(entities);
         }
 
@@ -57,7 +57,7 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<TReadViewModel>(entity);            
         }
         
-        public virtual async Task<TReadViewModel?> GetByAsync(Func<TEntity, bool> filter, params string[] includes)
+        public virtual async Task<TReadViewModel?> GetByAsync(Func<TEntity, bool> filter, bool ignoreGlobalFilter = false, params string[] includes)
         {
             if (!BaseValidator.IsValid(filter))
                 return new TReadViewModel { BaseErrors = new[] { new BaseError(BaseError.InvalidFilters) } };
@@ -65,7 +65,7 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsValid(includes))
                 return new TReadViewModel { BaseErrors = new[] { new BaseError(BaseError.InvalidIncludes) } };
 
-            var entity = await _baseReadonlyRepository.GetByAsync(filter, includes);
+            var entity = await _baseReadonlyRepository.GetByAsync(filter, ignoreGlobalFilter, includes);
 
             if (entity is null)
                 return null;

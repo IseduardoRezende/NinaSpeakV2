@@ -201,7 +201,7 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsAbove(userFk, BaseValidator.IdMinValue))
                 return false;
 
-            var userInstitutions = await GetByUserFkAsync(userFk);
+            var userInstitutions = await GetByUserFkAsync(userFk, ignoreGlobalFilter: true);
 
             if (!BaseValidator.IsValid(userInstitutions))
                 return false;
@@ -209,7 +209,7 @@ namespace NinaSpeakV2.Domain.Services
             foreach (var userInstitution in userInstitutions)
             {
                 if (!await SoftDeleteAsync(userFk, userInstitution.InstitutionFk))
-                    return false;
+                    return false;  //Add Log ?
             }
 
             return true;
@@ -261,12 +261,12 @@ namespace NinaSpeakV2.Domain.Services
             await _userInstitutionRepository.UpdateAsync(model);
         }
 
-        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetMembersByInstitutionFkAsync(long institutionFk)
+        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetMembersByInstitutionFkAsync(long institutionFk, bool ignoreGlobalFilter = false)
         {
             if (!BaseValidator.IsAbove(institutionFk, BaseValidator.IdMinValue))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
             
-            var usersIntitution = await _userInstitutionRepository.GetMembersByInstitutionFkAsync(institutionFk);
+            var usersIntitution = await _userInstitutionRepository.GetMembersByInstitutionFkAsync(institutionFk, ignoreGlobalFilter);
 
             if (!BaseValidator.IsValid(usersIntitution))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
@@ -274,12 +274,12 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(usersIntitution);
         }
 
-        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk)
+        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk, bool ignoreGlobalFilter = false)
         {
             if (!BaseValidator.IsAbove(userFk, BaseValidator.IdMinValue))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
 
-            var userInstitutions = await _userInstitutionRepository.GetByOwnerAsync(userFk);
+            var userInstitutions = await _userInstitutionRepository.GetByOwnerAsync(userFk, ignoreGlobalFilter);
 
             if (!BaseValidator.IsValid(userInstitutions))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
@@ -287,12 +287,12 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(userInstitutions);
         }
 
-        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool onlyWriter = false)
+        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false, bool onlyWriter = false)
         {
             if (!BaseValidator.IsAbove(userFk, BaseValidator.IdMinValue))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
 
-            var userInstitution = await _userInstitutionRepository.GetByUserFkAsync(userFk, onlyWriter);
+            var userInstitution = await _userInstitutionRepository.GetByUserFkAsync(userFk, ignoreGlobalFilter, onlyWriter);
 
             if (!BaseValidator.IsValid(userInstitution))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
