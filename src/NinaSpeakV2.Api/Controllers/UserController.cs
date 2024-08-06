@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NinaSpeakV2.Api.Configurations;
 using NinaSpeakV2.Api.RequestValidators;
 using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Domain.Services.IServices;
@@ -26,6 +27,15 @@ namespace NinaSpeakV2.Api.Controllers
                 return Forbid();
 
             return await base.Delete(id);
+        }
+
+        public override async Task<IActionResult> Delete(long id)
+        {
+            if (!await _baseService.SoftDeleteAsync(id))
+                return NotFound();
+
+            await EnvironmentConfiguration.ConfigureLogout(HttpContext);
+            return RedirectToAction("Index", "Login");
         }
 
         public override async Task<IActionResult> Edit(long? id)
