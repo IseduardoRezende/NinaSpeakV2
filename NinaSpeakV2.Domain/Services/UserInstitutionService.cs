@@ -196,6 +196,25 @@ namespace NinaSpeakV2.Domain.Services
             return errors;
         }
 
+        public async Task<bool> SoftDeleteByUserFkAsync(long userFk)
+        {
+            if (!BaseValidator.IsAbove(userFk, BaseValidator.IdMinValue))
+                return false;
+
+            var userInstitutions = await GetByUserFkAsync(userFk);
+
+            if (!BaseValidator.IsValid(userInstitutions))
+                return false;
+
+            foreach (var userInstitution in userInstitutions)
+            {
+                if (!await SoftDeleteAsync(userFk, userInstitution.InstitutionFk))
+                    return false;
+            }
+
+            return true;
+        }
+
         public async Task<bool> SoftDeleteByInstitutionFkAsync(long institutionFk)
         {
             if (!BaseValidator.IsAbove(institutionFk, BaseValidator.IdMinValue))

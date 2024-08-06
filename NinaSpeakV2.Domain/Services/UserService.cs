@@ -21,8 +21,6 @@ namespace NinaSpeakV2.Domain.Services
             _userInstitutionService = userInstitutionService;
         }
 
-        //TODO: DELETE ACTION
-
         public override async Task<ReadUserViewModel> CreateAsync(CreateUserViewModel createViewModel)
         {
             var errors = await ValidateCreationAsync(createViewModel);
@@ -65,6 +63,20 @@ namespace NinaSpeakV2.Domain.Services
             //Send Email to Confirm
             
             return _mapper.Map<ReadUserViewModel>(entity);
+        }
+
+        public override async Task<bool> SoftDeleteAsync(long id)
+        {
+            if (!await base.SoftDeleteAsync(id))
+                return false;
+
+            if (!await _userInstitutionService.SoftDeleteByUserFkAsync(id))
+            {
+                await base.ActiveAsync(id);
+                return false;
+            }
+
+            return true;
         }
 
         protected override Func<User, bool> ApplyFilters()
@@ -141,8 +153,6 @@ namespace NinaSpeakV2.Domain.Services
         protected override void UpdateFields(User entity, UpdateUserViewModel updateViewModel)
         {
             entity.Email = updateViewModel.Email.ToLowerInvariant();
-
-            //Authenticated = false
         }
     }
 }
