@@ -8,10 +8,10 @@ namespace NinaSpeakV2.Data.Repositories.IRepositories
 
         Task<bool> SoftDeleteAsync(IEnumerable<UserInstitution> userInstitutions);
 
-        Task<IEnumerable<UserInstitution>> GetByOwnerAsync(long userFk);
+        Task<IEnumerable<UserInstitution>> GetByOwnerAsync(long userFk, bool ignoreGlobalFilter = false);
 
-        Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool onlyWriter = false);
+        Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false, bool onlyWriter = false);
 
-        Task<IEnumerable<UserInstitution>> GetMembersByInstitutionFkAsync(long institutionFk);
+        Task<IEnumerable<UserInstitution>> GetMembersByInstitutionFkAsync(long institutionFk, bool ignoreGlobalFilter = false);
     }
 }

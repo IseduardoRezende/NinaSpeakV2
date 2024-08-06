@@ -50,34 +50,34 @@ namespace NinaSpeakV2.Data.Repositories
             return await SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<UserInstitution>> GetMembersByInstitutionFkAsync(long institutionFk)
+        public async Task<IEnumerable<UserInstitution>> GetMembersByInstitutionFkAsync(long institutionFk, bool ignoreGlobalFilter = false)
         {
             if (institutionFk <= default(long))
                 return Enumerable.Empty<UserInstitution>();
 
-            var usersInstitution = await base.GetAsync(ui => ui.InstitutionFk == institutionFk, "User", "Institution");
+            var usersInstitution = await base.GetAsync(ui => ui.InstitutionFk == institutionFk, ignoreGlobalFilter, "User", "Institution");
             return usersInstitution.OrderBy(ui => ui.User.Email);
         }
 
-        public async Task<IEnumerable<UserInstitution>> GetByOwnerAsync(long userFk)
+        public async Task<IEnumerable<UserInstitution>> GetByOwnerAsync(long userFk, bool ignoreGlobalFilter = false)
         {
             if (userFk <= default(long))
                 return Enumerable.Empty<UserInstitution>();
 
-            return await base.GetAsync(ui => ui.UserFk == userFk && ui.Owner, "User", "Institution");
+            return await base.GetAsync(ui => ui.UserFk == userFk && ui.Owner, ignoreGlobalFilter, "User", "Institution");
         }
 
-        public async Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool onlyWriter = false)
+        public async Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false, bool onlyWriter = false)
         {
             if (userFk <= default(long))
                 return Enumerable.Empty<UserInstitution>();
 
             if (onlyWriter)
             {
-                return await base.GetAsync(ui => ui.UserFk == userFk && ui.Writer, "User", "Institution");
+                return await base.GetAsync(ui => ui.UserFk == userFk && ui.Writer, ignoreGlobalFilter, "User", "Institution");
             }
 
-            return await base.GetAsync(ui => ui.UserFk == userFk, "User", "Institution");
+            return await base.GetAsync(ui => ui.UserFk == userFk, ignoreGlobalFilter, "User", "Institution");
         }
     }
 }

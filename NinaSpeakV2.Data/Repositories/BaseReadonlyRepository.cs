@@ -22,7 +22,7 @@ namespace NinaSpeakV2.Data.Repositories
             }
         }
 
-        public virtual Task<IEnumerable<TEntity>> GetAsync(Func<TEntity, bool> filters, params string[] includes)
+        public virtual Task<IEnumerable<TEntity>> GetAsync(Func<TEntity, bool> filters, bool ignoreGlobalFilter = false, params string[] includes)
         {
             ArgumentNullException.ThrowIfNull(filters, nameof(filters));
             ArgumentNullException.ThrowIfNull(includes, nameof(includes));
@@ -31,11 +31,14 @@ namespace NinaSpeakV2.Data.Repositories
 
             foreach (var include in includes)
                 query = query.Include(include);
+
+            if (ignoreGlobalFilter)
+                return Task.FromResult(query.IgnoreQueryFilters().Where(filters));
 
             return Task.FromResult(query.Where(filters));
         }
 
-        public virtual Task<TEntity?> GetByAsync(Func<TEntity, bool> filters, params string[] includes)
+        public virtual Task<TEntity?> GetByAsync(Func<TEntity, bool> filters, bool ignoreGlobalFilter = false, params string[] includes)
         {
             ArgumentNullException.ThrowIfNull(filters, nameof(filters));
             ArgumentNullException.ThrowIfNull(includes, nameof(includes));
@@ -44,6 +47,9 @@ namespace NinaSpeakV2.Data.Repositories
 
             foreach (var include in includes)
                 query = query.Include(include);
+
+            if (ignoreGlobalFilter)
+                return Task.FromResult(query.IgnoreQueryFilters().Where(filters).FirstOrDefault());
 
             return Task.FromResult(query.Where(filters).FirstOrDefault());
         }
