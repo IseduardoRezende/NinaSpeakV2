@@ -6,7 +6,19 @@ namespace NinaSpeakV2.Data.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(NinaSpeakContext context) : base(context) { }        
+        public UserRepository(NinaSpeakContext context) : base(context) { }
+
+        public override async Task<bool> SoftDeleteAsync(User model)
+        {
+            if (model is null)
+                return false;
+
+            model.DeletedAt = DateTime.Now;
+            model.Authenticated = false;
+            
+            Entity.Update(model);
+            return await SaveChangesAsync();
+        }
 
         public async Task<bool> EmailAlreadyExistAsync(string email)
         {
