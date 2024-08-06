@@ -14,6 +14,17 @@ namespace NinaSpeakV2.Domain.ViewModels.Users
         public string ConfirmPassword { get; set; }
 
         [JsonIgnore]
-        public string Salt { get; set; }        
+        public string Salt { get; set; }
+
+        [JsonIgnore]
+        public bool Authenticated { get; set; }
+
+        [JsonIgnore]
+        public short VerificationCode { get; set; } = GenerateVerificationCode();
+
+        private static short GenerateVerificationCode()
+        {
+            return Convert.ToInt16(Random.Shared.Next().ToString()[..5]);
+        }
     }
 }

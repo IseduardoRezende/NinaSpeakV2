@@ -90,6 +90,9 @@ namespace NinaSpeakV2.Domain.Services
             if (password != user.Password)
                 errors.Add(new BaseError(BaseError.InvalidPassword));
 
+            if (!user.Authenticated)
+                errors.Add(new BaseError(BaseError.UserNotAuthenticated));
+
             return errors;
         }
     }
