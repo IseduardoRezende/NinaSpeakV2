@@ -1,32 +1,35 @@
-﻿@using NinaSpeakV2.Domain.ViewModels.Users
+﻿@using NinaSpeakV2.Api.Extensions
+@using NinaSpeakV2.Api.Utils
+@using NinaSpeakV2.Domain.ViewModels.Users
 @model ReadUserViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Detalhes</h1>
-
-<div>
-    <h4>Usuário</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>        
-    </dl>
-</div>
-<div>
-    @* <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> | *@
-    @* <a asp-action="Delete" asp-route-id="@Model.Id">Deletar</a> | *@
-    <a asp-action="Index">Voltar</a>
-    @* <a asp-controller="Home" asp-action="Index">Voltar</a> *@
+<div class="container mt-4">
+    <h1 class="text-center mb-4"><i class="fa fa-street-view"></i> @Model.Email</h1>
+    <div class="card shadow-sm">
+        <div class="card-header text-center">
+            <h4 class="mb-0">Ações</h4>
+        </div>
+        <div class="card-body d-flex justify-content-center flex-wrap">
+            <a asp-action="Edit" asp-route-id="@User.GetCurrentUserId()" class="btn btn-outline-primary mx-2 my-1" role="button" aria-label="Alterar Email"><i class="fa fa-envelope"></i> Alterar Email</a>
+            <a asp-action="EditPassword" asp-route-id="@User.GetCurrentUserId()" class="btn btn-outline-success mx-2 my-1" role="button" aria-label="Alterar Senha"><i class="fa fa-lock"></i> Alterar Senha</a>
+            <a asp-action="Delete" asp-route-id="@User.GetCurrentUserId()" class="btn btn-outline-danger mx-2 my-1" role="button" aria-label="Excluir Conta"><i class="fa fa-trash"></i> Excluir Conta</a>
+        </div>
+        <br />
+    </div>
+    <div class="text-center mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary" role="button" aria-label="Voltar"><i class="bi bi-arrow-left"></i> Voltar</a>
+    </div>
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
