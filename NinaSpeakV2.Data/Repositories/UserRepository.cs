@@ -20,6 +20,18 @@ namespace NinaSpeakV2.Data.Repositories
             return await SaveChangesAsync();
         }
 
+        public override async Task<bool> ActiveAsync(User model)
+        {
+            if (model is null)
+                return false;
+
+            model.DeletedAt = null;
+            model.Authenticated = true;
+
+            Entity.Update(model);
+            return await SaveChangesAsync();
+        }
+
         public async Task<bool> EmailAlreadyExistAsync(string email)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email))
