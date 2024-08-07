@@ -65,6 +65,24 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<ReadUserViewModel>(entity);
         }
 
+        public async Task<ReadUserViewModel> UpdatePasswordAsync(UpdateUserPasswordViewModel updateViewModel)
+        {
+            var errors = await ValidadeUpdatePasswordAsync(updateViewModel);
+
+            if (errors.Any())
+                return new ReadUserViewModel { BaseErrors = errors };
+
+            var entity = await _userRepository.GetByIdAsync(updateViewModel.Id);
+
+            if (!BaseValidator.IsValid(entity))
+                return new ReadUserViewModel { BaseErrors = new[] { new BaseError(BaseError.InexistentObject) } };
+
+            UpdatePassword(entity!, updateViewModel);
+
+            entity = await _userRepository.UpdateAsync(entity!);
+            return _mapper.Map<ReadUserViewModel>(entity);
+        }
+
         public override async Task<bool> SoftDeleteAsync(long id)
         {
             if (!await base.SoftDeleteAsync(id))
@@ -119,13 +137,10 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
             
-            if (updateViewModel.Password != updateViewModel.ConfirmPassword)
-                errors.Add(new BaseError(BaseError.PasswordNotMatch));
+            if (!updateViewModel.NewEmail.Equals(updateViewModel.ConfirmNewEmail))
+                errors.Add(new BaseError(BaseError.EmailNotMatch));
 
-            if (!UserValidator.IsValidPassword(updateViewModel.Password))
-                errors.Add(new BaseError(BaseError.InvalidPassword));
-
-            if (!UserValidator.IsValidEmail(updateViewModel.Email))
+            if (!UserValidator.IsValidEmail(updateViewModel.NewEmail))
                 errors.Add(new BaseError(BaseError.InvalidEmail));
 
             var user = await _userRepository.GetByIdAsync(updateViewModel.Id);
@@ -136,23 +151,56 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            if (user!.Email.Equals(updateViewModel.Email, StringComparison.InvariantCultureIgnoreCase)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
+            if (user!.Email.Equals(updateViewModel.NewEmail, StringComparison.InvariantCultureIgnoreCase)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
-
-            var password = updateViewModel.Password.ConvertToSHA512(user.Salt);
-
-            if (user.Password != password)
-                errors.Add(new BaseError(BaseError.InvalidPassword));
-
-            if (!await _userRepository.CanChangeEmailAsync(user, updateViewModel.Email))
+            
+            if (!await _userRepository.CanChangeEmailAsync(user, updateViewModel.NewEmail))
                 errors.Add(new BaseError(BaseError.EmailAlreadyExist));
 
             return errors;
         }
 
+        private async Task<IEnumerable<BaseError>> ValidadeUpdatePasswordAsync(UpdateUserPasswordViewModel updateViewModel)
+        {
+            var errors = new List<BaseError>();
+
+            if (!BaseValidator.IsValid(updateViewModel))
+            {
+                errors.Add(new BaseError(BaseError.NullObject));
+                return errors;
+            }
+
+            if (!updateViewModel.Password.Equals(updateViewModel.ConfirmPassword))
+                errors.Add(new BaseError(BaseError.PasswordNotMatch));
+
+            if (!UserValidator.IsValidPassword(updateViewModel.Password))
+                errors.Add(new BaseError(BaseError.InvalidPassword));
+
+            var user = await _userRepository.GetByIdAsync(updateViewModel.Id);
+
+            if (!BaseValidator.IsValid(user))
+            {
+                errors.Add(new BaseError(BaseError.UserNotFound));
+                return errors;
+            }
+
+            var password = updateViewModel.Password.ConvertToSHA512(user!.Salt);
+
+            if (password.Equals(user.Password))
+                errors.Add(new BaseError(BaseError.NoChangesDetected));
+                        
+            return errors;
+        }
+
         protected override void UpdateFields(User entity, UpdateUserViewModel updateViewModel)
         {
-            entity.Email = updateViewModel.Email.ToLowerInvariant();
+            entity.Email = updateViewModel.NewEmail.ToLowerInvariant();
+        }
+
+        private void UpdatePassword(User entity, UpdateUserPasswordViewModel updateViewModel) 
+        {
+            entity.Salt = Guid.NewGuid().ToString();
+            entity.Password = updateViewModel.Password.ConvertToSHA512(entity.Salt);
         }
     }
 }
