@@ -67,16 +67,11 @@ namespace NinaSpeakV2.Data.Repositories
             return await base.GetAsync(ui => ui.UserFk == userFk && ui.Owner, ignoreGlobalFilter, "User", "Institution");
         }
 
-        public async Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false, bool onlyWriter = false)
+        public async Task<IEnumerable<UserInstitution>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false)
         {
             if (userFk <= default(long))
                 return Enumerable.Empty<UserInstitution>();
-
-            if (onlyWriter)
-            {
-                return await base.GetAsync(ui => ui.UserFk == userFk && ui.Writer, ignoreGlobalFilter, "User", "Institution");
-            }
-
+            
             return await base.GetAsync(ui => ui.UserFk == userFk, ignoreGlobalFilter, "User", "Institution");
         }
     }
