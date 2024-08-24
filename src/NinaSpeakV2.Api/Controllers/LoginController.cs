@@ -66,6 +66,8 @@ namespace NinaSpeakV2.Api.Controllers
 
         //ForgotPassword
     
+        //Verification
+        
         //ResendVerification
     }
 }
