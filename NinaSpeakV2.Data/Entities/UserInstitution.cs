@@ -2,6 +2,11 @@
 {
     public class UserInstitution : BaseEntity
     {
+        public UserInstitution()
+        {
+            ChatBotUserInstitutions = new List<ChatBotUserInstitution>();
+        }
+
         public long UserFk { get; set; }
 
         public long InstitutionFk { get; set; }
@@ -13,5 +18,7 @@
         public User User { get; set; }
 
         public Institution Institution { get; set; }
+    
+        public ICollection<ChatBotUserInstitution> ChatBotUserInstitutions { get; set; }
     }
 }

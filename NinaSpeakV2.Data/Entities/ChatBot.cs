@@ -5,6 +5,7 @@
         public ChatBot()
         {
             ChatBotConversations = new List<ChatBotConversation>();
+            ChatBotUserInstitutions = new List<ChatBotUserInstitution>();
         }
 
         public string Name { get; set; }
@@ -18,5 +19,7 @@
         public Institution Institution { get; set; }
 
         public ICollection<ChatBotConversation> ChatBotConversations { get; set; }
+
+        public ICollection<ChatBotUserInstitution> ChatBotUserInstitutions { get; set; }
     }
 }

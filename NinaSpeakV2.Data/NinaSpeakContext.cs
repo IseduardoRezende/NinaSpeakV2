@@ -20,6 +20,8 @@ namespace NinaSpeakV2.Data
 
         public DbSet<ChatBot> ChatBot { get; set; }
 
+        public DbSet<ChatBotUserInstitution> ChatBotUserInstitution { get; set; }
+
         public DbSet<ChatBotGenre> ChatBotGenre { get; set; }
 
         public DbSet<ChatBotConversation> ChatBotConversation { get; set; }
@@ -32,6 +34,7 @@ namespace NinaSpeakV2.Data
             new ChatBotGenreEntityMapping().Configure(modelBuilder.Entity<ChatBotGenre>());
             new UserInstitutionEntityMapping().Configure(modelBuilder.Entity<UserInstitution>());
             new ChatBotConversationEntityMapping().Configure(modelBuilder.Entity<ChatBotConversation>());
+            new ChatBotUserInstitutionEntityMapping().Configure(modelBuilder.Entity<ChatBotUserInstitution>());
         }
     }
 }
