@@ -27,16 +27,12 @@ namespace NinaSpeakV2.Api.Controllers
             return await base.Details(id);
         }
 
-        public override async Task<IActionResult> Delete(long? id)
+        [HttpPost("Delete"), ValidateAntiForgeryToken]
+        public override async Task<IActionResult> Delete(long id)
         {
             if (!UserRequestValidator.IsHimself(id, User))
                 return Forbid();
 
-            return await base.Delete(id);
-        }
-
-        public override async Task<IActionResult> Delete(long id)
-        {
             if (!await _baseService.SoftDeleteAsync(id))
                 return NotFound();
 
@@ -66,7 +62,7 @@ namespace NinaSpeakV2.Api.Controllers
             }
 
             await EnvironmentConfiguration.ConfigureLogout(HttpContext);
-            return RedirectToAction("Login", "Verification");
+            return RedirectToAction("Login", "Verification");  //Redirect To Verification View
         }
 
         [HttpGet("EditPassword/{id?}")]
