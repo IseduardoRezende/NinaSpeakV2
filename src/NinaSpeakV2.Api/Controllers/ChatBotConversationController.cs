@@ -27,7 +27,7 @@ namespace NinaSpeakV2.Api.Controllers
         public override async Task<IActionResult> Create()
         {
             var userId = User.GetCurrentUserId();
-            ViewData[Constant.ViewDataChatBots] = await _userInstitutionService.GetByUserFkAsync(userId, onlyWriter: true);
+            ViewData[Constant.ViewDataChatBots] = await _userInstitutionService.GetByUserFkAsync(userId);
             return View();
         }        
     }

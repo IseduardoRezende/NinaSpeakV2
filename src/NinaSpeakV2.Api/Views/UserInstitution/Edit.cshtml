@@ -42,11 +42,7 @@
                                             <td class="text-center">
                                                 @Html.DisplayFor(model => @Model[i].Owner)
                                                 <input type="hidden" asp-for="@Model[i].Owner" name="[@i].Owner" />
-                                            </td>
-                                            <td class="text-center">
-                                                @Html.DisplayFor(model => @Model[i].Writer)
-                                                <input type="hidden" asp-for="@Model[i].Writer" name="[@i].Writer" />
-                                            </td>
+                                            </td>                                            
                                             <td class="text-center">
                                                 <button class="btn btn-secondary" disabled>Remover</button>
                                             </td>
@@ -55,10 +51,7 @@
                                         {
                                             <td class="text-center">
                                                 <input asp-for="@Model[i].Owner" type="checkbox" name="[@i].Owner" class="form-check-input" />
-                                            </td>
-                                            <td class="text-center">
-                                                <input asp-for="@Model[i].Writer" type="checkbox" name="[@i].Writer" class="form-check-input" />
-                                            </td>
+                                            </td>                                            
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-user-id="@Model[i].UserFk">
                                                     Remover
