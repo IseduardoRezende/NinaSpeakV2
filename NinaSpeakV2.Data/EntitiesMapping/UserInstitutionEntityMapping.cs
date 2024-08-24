@@ -4,14 +4,14 @@ using NinaSpeakV2.Data.Entities;
 
 namespace NinaSpeakV2.Data.EntitiesMapping
 {
-    public class UserInstitutionEntityMapping : BaseEntityGlobalMapping<UserInstitution>
+    public class UserInstitutionEntityMapping : BaseEntityMapping<UserInstitution>
     {
         public override void Configure(EntityTypeBuilder<UserInstitution> builder)
         {
             builder.ToTable("UsuarioInstituicao");
             base.Configure(builder);
 
-            builder.HasKey(m => new { m.UserFk, m.InstitutionFk });
+            builder.HasIndex(m => new { m.UserFk, m.InstitutionFk }).IsUnique();
 
             builder
                 .Property(m => m.UserFk)

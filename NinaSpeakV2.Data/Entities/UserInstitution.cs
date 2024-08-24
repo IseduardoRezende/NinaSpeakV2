@@ -1,6 +1,6 @@
 ﻿namespace NinaSpeakV2.Data.Entities
 {
-    public class UserInstitution : BaseEntityGlobal
+    public class UserInstitution : BaseEntity
     {
         public long UserFk { get; set; }
 
