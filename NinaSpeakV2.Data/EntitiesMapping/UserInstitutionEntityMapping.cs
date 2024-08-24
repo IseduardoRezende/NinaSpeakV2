@@ -38,13 +38,7 @@ namespace NinaSpeakV2.Data.EntitiesMapping
                 .HasDefaultValue(false)
                 .IsRequired()
                 .HasColumnName("Proprietario");
-
-            builder
-                .Property(m => m.Writer)
-                .HasDefaultValue(false)
-                .IsRequired()
-                .HasColumnName("Escritor");
-
+            
             builder
                .Property(m => m.Creator)
                .HasDefaultValue(false)
