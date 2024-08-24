@@ -12,14 +12,14 @@
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
-                <th>
+                <th class="text-center">
+                   Imagem
+                </th>
+                <th class="text-center">
                     @Html.Label("Instituição")
-                </th>
-                <th>
-                    @Html.Label("Imagem")
-                </th>
-                <th>
-                    @Html.Label("Proprietárioª")
+                </th>                
+                <th class="text-center">
+                    Ações
                 </th>
             </tr>
         </thead>
@@ -27,44 +27,38 @@
             @foreach (var userInstitution in Model)
             {
                 <tr>
-                    <td>
+                    <td class="text-center">
+                        @if (string.IsNullOrEmpty(userInstitution.InstitutionImage))
+                        {
+                            <i class="fas fa-image"></i>
+                        }
+                        else
+                        {
+                            <img src="@userInstitution.InstitutionImage" alt="Imagem da Instituição" style="max-width: 100px; max-height: 100px;" />
+                        }
+                    </td>
+                    <td class="text-center">
                         @Html.DisplayFor(modelItem => userInstitution.InstitutionName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => userInstitution.InstitutionImage)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => userInstitution.Owner)
-                    </td>
-                    @if (userInstitution.Creator)
-                    {
-                        <td>
-                            <div class="btn-group">
-                                <a asp-action="Edit" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-info" aria-label="Editar"><i class="fas fa-edit"></i> Editar</a>
-                                <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
+                    </td>                    
+                    <td class="text-center">
+                        <div class="btn-group">
+                            @if (userInstitution.Creator || userInstitution.Owner)
+                            {
+                                <a asp-action="Edit" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-info" aria-label="Editar">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            }
+                            <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes">
+                                <i class="fas fa-info-circle"></i> Detalhes
+                            </a>
+                            @if (userInstitution.Creator)
+                            {
                                 <button type="button" class="btn btn-sm btn-danger" aria-label="Deletar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-institution-id="@userInstitution.InstitutionFk">
                                     <i class="fas fa-trash-alt"></i> Deletar
                                 </button>
-                            </div>
-                        </td>
-                    }
-                    else if (userInstitution.Owner)
-                    {
-                        <td>
-                            <div class="btn-group">
-                                <a asp-action="Edit" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-info" aria-label="Editar"><i class="fas fa-edit"></i> Editar</a>
-                                <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
-                            </div>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <div class="btn-group">
-                                <a asp-action="Details" asp-route-id="@userInstitution.InstitutionFk" class="btn btn-sm btn-secondary" aria-label="Detalhes"><i class="fas fa-info-circle"></i> Detalhes</a>
-                            </div>
-                        </td>
-                    }
+                            }
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>

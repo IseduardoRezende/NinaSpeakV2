@@ -146,10 +146,24 @@
                                         @Html.DisplayFor(modelItem => member.UserEmail)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => member.Owner)
+                                        @if (member.Owner)
+                                        {
+                                            <input type="checkbox" checked="checked" class="form-check-input" disabled="disabled" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="form-check-input" disabled="disabled" />
+                                        }
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => member.Writer)
+                                        @if (member.Writer)
+                                        {
+                                            <input type="checkbox" checked="checked" class="form-check-input" disabled="disabled" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="form-check-input" disabled="disabled" />
+                                        }
                                     </td>
                                 </tr>
                             }
