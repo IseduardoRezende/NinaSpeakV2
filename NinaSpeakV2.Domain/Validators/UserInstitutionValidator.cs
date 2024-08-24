@@ -10,8 +10,7 @@ namespace NinaSpeakV2.Domain.Validators
             ArgumentNullException.ThrowIfNull(userInstitution, nameof(userInstitution));
             ArgumentNullException.ThrowIfNull(updateModel, nameof(updateModel));
 
-            return userInstitution.Owner == updateModel.Owner &&
-                   userInstitution.Writer == updateModel.Writer;
+            return userInstitution.Owner == updateModel.Owner;
         }
     }
 }

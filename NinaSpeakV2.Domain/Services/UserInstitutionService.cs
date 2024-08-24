@@ -132,7 +132,6 @@ namespace NinaSpeakV2.Domain.Services
                 UserFk = user!.Id,
                 InstitutionFk = institution.Id,
                 Owner = false,
-                Writer = false,
                 Creator = false
             };
 
@@ -286,12 +285,12 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(userInstitutions);
         }
 
-        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false, bool onlyWriter = false)
+        public async Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false)
         {
             if (!BaseValidator.IsAbove(userFk, BaseValidator.IdMinValue))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
 
-            var userInstitution = await _userInstitutionRepository.GetByUserFkAsync(userFk, ignoreGlobalFilter, onlyWriter);
+            var userInstitution = await _userInstitutionRepository.GetByUserFkAsync(userFk, ignoreGlobalFilter);
 
             if (!BaseValidator.IsValid(userInstitution))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
@@ -338,7 +337,6 @@ namespace NinaSpeakV2.Domain.Services
         protected override void UpdateFields(UserInstitution entity, UpdateUserInstitutionViewModel updateViewModel)
         {
             entity.Owner = updateViewModel.Owner;
-            entity.Writer = updateViewModel.Writer;
         }
     }
 }

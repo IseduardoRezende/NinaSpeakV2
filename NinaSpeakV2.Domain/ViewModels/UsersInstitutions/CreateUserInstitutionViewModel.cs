@@ -24,10 +24,7 @@ namespace NinaSpeakV2.Domain.ViewModels.UsersInstitutions
 
         [JsonIgnore]
         public bool Owner { get; set; }
-
-        [JsonIgnore]
-        public bool Writer { get; set; }
-
+        
         [JsonIgnore]
         public bool Creator { get; set; }
     }

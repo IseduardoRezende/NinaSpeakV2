@@ -40,7 +40,6 @@ namespace NinaSpeakV2.Domain.Services
                 InstitutionFk = (long)entity.Id!, 
                 UserFk = createViewModel.UserFk,
                 Owner = true,
-                Writer = true,
                 Creator = true,
             };
 
