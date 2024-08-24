@@ -140,7 +140,7 @@ namespace NinaSpeakV2.Domain.Services
             if (!updateViewModel.NewEmail.Equals(updateViewModel.ConfirmNewEmail))
                 errors.Add(new BaseError(BaseError.EmailNotMatch));
 
-            if (!UserValidator.IsValidEmail(updateViewModel.NewEmail))
+            if (!UserValidator.IsValidEmail(updateViewModel.Email) || !UserValidator.IsValidEmail(updateViewModel.NewEmail))
                 errors.Add(new BaseError(BaseError.InvalidEmail));
 
             var user = await _userRepository.GetByIdAsync(updateViewModel.Id);
@@ -151,7 +151,10 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            if (user!.Email.Equals(updateViewModel.NewEmail, StringComparison.InvariantCultureIgnoreCase)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
+            if (!user!.Email.Equals(updateViewModel.Email, StringComparison.InvariantCultureIgnoreCase))
+                errors.Add(new BaseError(BaseError.InvalidEmail));
+
+            if (user.Email.Equals(updateViewModel.NewEmail, StringComparison.InvariantCultureIgnoreCase)) //Create an abstract implementation (IsEqual) foreach [Model]Validator
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
             
             if (!await _userRepository.CanChangeEmailAsync(user, updateViewModel.NewEmail))
