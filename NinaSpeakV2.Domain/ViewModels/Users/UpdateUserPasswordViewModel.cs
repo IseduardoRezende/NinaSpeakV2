@@ -8,6 +8,9 @@ namespace NinaSpeakV2.Domain.ViewModels.Users
         public string Password { get; set; }
 
         [JsonInclude]
-        public string ConfirmPassword { get; set; }
+        public string NewPassword { get; set; }
+
+        [JsonInclude]
+        public string ConfirmNewPassword { get; set; }
     }
 }

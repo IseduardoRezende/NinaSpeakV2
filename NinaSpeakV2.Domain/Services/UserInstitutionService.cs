@@ -209,7 +209,7 @@ namespace NinaSpeakV2.Domain.Services
             foreach (var userInstitution in userInstitutions)
             {
                 if (!await SoftDeleteAsync(userFk, userInstitution.InstitutionFk))
-                    return false;  //Add Log ?
+                    return false;  //RollBack (Active) | Add Log ?
             }
 
             return true;

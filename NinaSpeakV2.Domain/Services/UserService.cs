@@ -169,11 +169,11 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.NullObject));
                 return errors;
             }
-
-            if (!updateViewModel.Password.Equals(updateViewModel.ConfirmPassword))
+            
+            if (!updateViewModel.NewPassword.Equals(updateViewModel.ConfirmNewPassword))
                 errors.Add(new BaseError(BaseError.PasswordNotMatch));
 
-            if (!UserValidator.IsValidPassword(updateViewModel.Password))
+            if (!UserValidator.IsValidPassword(updateViewModel.Password) || !UserValidator.IsValidPassword(updateViewModel.NewPassword))
                 errors.Add(new BaseError(BaseError.InvalidPassword));
 
             var user = await _userRepository.GetByIdAsync(updateViewModel.Id);
@@ -184,9 +184,14 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            var password = updateViewModel.Password.ConvertToSHA512(user!.Salt);
+            var currentPassword = updateViewModel.Password.ConvertToSHA512(user!.Salt);
 
-            if (password.Equals(user.Password))
+            if (!currentPassword.Equals(user.Password))
+                errors.Add(new BaseError(BaseError.InvalidPassword));
+
+            var newPassword = updateViewModel.NewPassword.ConvertToSHA512(user!.Salt);
+
+            if (newPassword.Equals(user.Password))
                 errors.Add(new BaseError(BaseError.NoChangesDetected));
                         
             return errors;
@@ -200,7 +205,7 @@ namespace NinaSpeakV2.Domain.Services
         private void UpdatePassword(User entity, UpdateUserPasswordViewModel updateViewModel) 
         {
             entity.Salt = Guid.NewGuid().ToString();
-            entity.Password = updateViewModel.Password.ConvertToSHA512(entity.Salt);
+            entity.Password = updateViewModel.NewPassword.ConvertToSHA512(entity.Salt);
         }
     }
 }
