@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NinaSpeakV2.Data;
 
@@ -11,9 +12,11 @@ using NinaSpeakV2.Data;
 namespace NinaSpeakV2.Data.Migrations
 {
     [DbContext(typeof(NinaSpeakContext))]
-    partial class NinaSpeakContextModelSnapshot : ModelSnapshot
+    [Migration("20240825002730_Add-ChatBotTable-ChatBotTypeFk")]
+    partial class AddChatBotTableChatBotTypeFk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

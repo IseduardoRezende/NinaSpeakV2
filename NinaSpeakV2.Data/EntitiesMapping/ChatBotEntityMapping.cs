@@ -22,6 +22,16 @@ namespace NinaSpeakV2.Data.EntitiesMapping
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
+                .Property(m => m.ChatBotTypeFk)
+                .IsRequired()
+                .HasColumnName("ChatBotTipoFk");
+            builder
+                .HasOne(m => m.ChatBotType)
+                .WithMany(m => m.ChatBots)
+                .HasForeignKey(m => m.ChatBotTypeFk)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
                 .Property(m => m.InstitutionFk)
                 .IsRequired()
                 .HasColumnName("InstituicaoFk");

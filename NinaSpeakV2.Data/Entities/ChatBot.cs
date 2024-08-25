@@ -12,9 +12,13 @@
 
         public long ChatBotGenreFk { get; set; }
 
+        public long ChatBotTypeFk { get; set; }
+
         public long InstitutionFk { get; set; }
 
         public ChatBotGenre ChatBotGenre { get; set; }
+
+        public ChatBotType ChatBotType { get; set; }
 
         public Institution Institution { get; set; }
 

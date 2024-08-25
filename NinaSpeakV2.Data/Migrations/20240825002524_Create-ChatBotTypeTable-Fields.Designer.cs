@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NinaSpeakV2.Data;
 
@@ -11,9 +12,11 @@ using NinaSpeakV2.Data;
 namespace NinaSpeakV2.Data.Migrations
 {
     [DbContext(typeof(NinaSpeakContext))]
-    partial class NinaSpeakContextModelSnapshot : ModelSnapshot
+    [Migration("20240825002524_Create-ChatBotTypeTable-Fields")]
+    partial class CreateChatBotTypeTableFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,10 +37,6 @@ namespace NinaSpeakV2.Data.Migrations
                     b.Property<long>("ChatBotGenreFk")
                         .HasColumnType("bigint")
                         .HasColumnName("ChatBotGeneroFk");
-
-                    b.Property<long>("ChatBotTypeFk")
-                        .HasColumnType("bigint")
-                        .HasColumnName("ChatBotTipoFk");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -67,8 +66,6 @@ namespace NinaSpeakV2.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatBotGenreFk");
-
-                    b.HasIndex("ChatBotTypeFk");
 
                     b.HasIndex("InstitutionFk");
 
@@ -385,12 +382,6 @@ namespace NinaSpeakV2.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("NinaSpeakV2.Data.Entities.ChatBotType", "ChatBotType")
-                        .WithMany("ChatBots")
-                        .HasForeignKey("ChatBotTypeFk")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("NinaSpeakV2.Data.Entities.Institution", "Institution")
                         .WithMany("ChatBots")
                         .HasForeignKey("InstitutionFk")
@@ -398,8 +389,6 @@ namespace NinaSpeakV2.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("ChatBotGenre");
-
-                    b.Navigation("ChatBotType");
 
                     b.Navigation("Institution");
                 });
@@ -461,11 +450,6 @@ namespace NinaSpeakV2.Data.Migrations
                 });
 
             modelBuilder.Entity("NinaSpeakV2.Data.Entities.ChatBotGenre", b =>
-                {
-                    b.Navigation("ChatBots");
-                });
-
-            modelBuilder.Entity("NinaSpeakV2.Data.Entities.ChatBotType", b =>
                 {
                     b.Navigation("ChatBots");
                 });

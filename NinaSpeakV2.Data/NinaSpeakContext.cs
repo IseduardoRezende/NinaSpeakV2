@@ -24,6 +24,8 @@ namespace NinaSpeakV2.Data
 
         public DbSet<ChatBotGenre> ChatBotGenre { get; set; }
 
+        public DbSet<ChatBotType> ChatBotType { get; set; }
+        
         public DbSet<ChatBotConversation> ChatBotConversation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,6 +33,7 @@ namespace NinaSpeakV2.Data
             new UserEntityMapping().Configure(modelBuilder.Entity<User>());
             new ChatBotEntityMapping().Configure(modelBuilder.Entity<ChatBot>());
             new InstitutionEntityMapping().Configure(modelBuilder.Entity<Institution>());
+            new ChatBotTypeEntityMapping().Configure(modelBuilder.Entity<ChatBotType>());
             new ChatBotGenreEntityMapping().Configure(modelBuilder.Entity<ChatBotGenre>());
             new UserInstitutionEntityMapping().Configure(modelBuilder.Entity<UserInstitution>());
             new ChatBotConversationEntityMapping().Configure(modelBuilder.Entity<ChatBotConversation>());
