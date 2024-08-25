@@ -1,6 +1,7 @@
 ﻿@using NinaSpeakV2.Api.Utils
 @using NinaSpeakV2.Domain.Models
 @using NinaSpeakV2.Domain.ViewModels.ChatBotGenres
+@using NinaSpeakV2.Domain.ViewModels.ChatBotTypes
 @using NinaSpeakV2.Domain.ViewModels.ChatBots
 @using NinaSpeakV2.Domain.ViewModels.UsersInstitutions
 @model CreateChatBotViewModel
@@ -8,63 +9,79 @@
 @{
     ViewData["Title"] = "Create";
 
+    var chatBotTypes = ViewData[Constant.ViewDataChatBotTypes] as IEnumerable<ReadChatBotTypeViewModel> ?? Enumerable.Empty<ReadChatBotTypeViewModel>();
     var chatBotGenres = ViewData[Constant.ViewDataChatBotGenres] as IEnumerable<ReadChatBotGenreViewModel> ?? Enumerable.Empty<ReadChatBotGenreViewModel>();
     var userInstitutions = ViewData[Constant.ViewDataUserInstitutions] as IEnumerable<ReadUserInstitutionViewModel> ?? Enumerable.Empty<ReadUserInstitutionViewModel>();
 }
 
-<h1>Criar</h1>
+<h1 class="text-center my-4">Criar ChatBot</h1>
 
-<h4>ChatBot</h4>
-<hr />
-
-@Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
-
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label">Nome</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Informações do ChatBot</h4>
+                </div>
+                <div class="card-body">
+                    @Html.Partial(Constant.PartialViewNameBaseErrors, ViewData[Constant.ViewDataBaseErrors] as IEnumerable<BaseError>)
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label">Nome <i class="fas fa-pencil-alt"></i></label>
+                            <input asp-for="Name" class="form-control" placeholder="Digite o nome do chatbot" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label">Descrição <i class="fas fa-info-circle"></i></label>
+                            <textarea asp-for="Description" class="form-control" placeholder="Digite a descrição do chatbot"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ChatBotGenreFk" class="control-label">Gênero <i class="fa fa-genderless"></i></label>
+                            <select asp-for="ChatBotGenreFk" class="form-control">
+                                @foreach (var genre in chatBotGenres!)
+                                {
+                                    <option value="@genre.Id">@genre.Description</option>
+                                }
+                            </select>
+                            <span asp-validation-for="ChatBotGenreFk" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ChatBotTypeFk" class="control-label">Tipo <i class="fa fa-chalkboard"></i></label>
+                            <select asp-for="ChatBotTypeFk" class="form-control">
+                                @foreach (var type in chatBotTypes!)
+                                {
+                                    <option value="@type.Id">@type.Description</option>
+                                }
+                            </select>
+                            <span asp-validation-for="ChatBotTypeFk" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="InstitutionFk" class="control-label">Instituição <i class="fa fa-users"></i></label>
+                            <select asp-for="InstitutionFk" class="form-control">
+                                @foreach (var userInstitution in userInstitutions!)
+                                {
+                                    <option value="@userInstitution.InstitutionFk">@userInstitution.InstitutionName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="InstitutionFk" class="text-danger"></span>
+                        </div>
+                        <div class="form-group text-center">
+                            <input type="submit" value="Cadastrar" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label">Descrição</label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+            <div>
+                <a asp-action="Index" class="btn-link">Voltar</a>
             </div>
-            <div class="form-group">
-                <label asp-for="ChatBotGenreFk" class="control-label">Gênero</label>
-                <select asp-for="ChatBotGenreFk" class="form-control">
-                    @foreach (var genre in chatBotGenres!)
-                    {
-                        <option value="@genre.Id">@genre.Description</option>
-                    }
-                </select>
-                <span asp-validation-for="ChatBotGenreFk" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InstitutionFk" class="control-label">Instituição</label>
-                <select asp-for="InstitutionFk" class="form-control">
-                    @foreach (var userInstitution in userInstitutions!)
-                    {
-                        <option value="@userInstitution.InstitutionFk">@userInstitution.InstitutionName</option>
-                    }
-                </select>
-                <span asp-validation-for="InstitutionFk" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Cadastrar" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
-
 @section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
