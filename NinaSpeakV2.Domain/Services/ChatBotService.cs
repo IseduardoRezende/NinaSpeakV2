@@ -13,13 +13,16 @@ namespace NinaSpeakV2.Domain.Services
     {
         private readonly IChatBotRepository _chatBotRepository;
         private readonly IInstitutionService _institutionService;
+        private readonly IChatBotTypeService _chatBotTypeService;
         private readonly IChatBotGenreService _chatBotGenreService;
 
         public ChatBotService(IChatBotRepository chatBotRepository, IInstitutionService institutionService,
-                              IChatBotGenreService chatBotGenreService, IMapper mapper) : base(chatBotRepository, mapper)
+                              IChatBotGenreService chatBotGenreService, IChatBotTypeService chatBotTypeService, 
+                              IMapper mapper) : base(chatBotRepository, mapper)
         {
             _chatBotRepository = chatBotRepository;
             _institutionService = institutionService;
+            _chatBotTypeService = chatBotTypeService;
             _chatBotGenreService = chatBotGenreService;
         }       
 
@@ -43,6 +46,14 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsValid(chatBotGenre))
             {
                 errors.Add(new BaseError(BaseError.ChatBotGenreNotFound));
+                return errors;
+            }
+
+            var chatBotType = await _chatBotTypeService.GetByIdAsync(createViewModel.ChatBotTypeFk);
+
+            if (!BaseValidator.IsValid(chatBotType))
+            {
+                errors.Add(new BaseError(BaseError.ChatBotTypeNotFound));
                 return errors;
             }
 
@@ -101,6 +112,14 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
+            var chatBotType = await _chatBotTypeService.GetByIdAsync(updateViewModel.ChatBotTypeFk);
+
+            if (!BaseValidator.IsValid(chatBotType))
+            {
+                errors.Add(new BaseError(BaseError.ChatBotTypeNotFound));
+                return errors;
+            }
+
             var institution = await _institutionService.GetByIdAsync(chatBot!.InstitutionFk);
 
             if (!BaseValidator.IsValid(institution))
@@ -130,6 +149,7 @@ namespace NinaSpeakV2.Domain.Services
             entity.Name = updateViewModel.Name;
             entity.Description = updateViewModel.Description;
             entity.ChatBotGenreFk = updateViewModel.ChatBotGenreFk;
+            entity.ChatBotTypeFk = updateViewModel.ChatBotTypeFk;
         }
     }
 }

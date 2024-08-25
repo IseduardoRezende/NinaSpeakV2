@@ -20,7 +20,8 @@ namespace NinaSpeakV2.Domain.Validators
             
             return chatBot.Name == updateModel.Name && 
                    chatBot.Description == updateModel.Description &&
-                   chatBot.ChatBotGenreFk == updateModel.ChatBotGenreFk;
+                   chatBot.ChatBotGenreFk == updateModel.ChatBotGenreFk &&
+                   chatBot.ChatBotTypeFk == updateModel.ChatBotTypeFk;
         }
     }
 }
