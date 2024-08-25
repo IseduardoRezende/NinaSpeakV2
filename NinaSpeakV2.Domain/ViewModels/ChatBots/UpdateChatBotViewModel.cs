@@ -11,5 +11,8 @@ namespace NinaSpeakV2.Domain.ViewModels.ChatBots
 
         [Required(ErrorMessage = BaseError.ChatBotGenresErrorSpan), JsonInclude]
         public long ChatBotGenreFk { get; set; }
+
+        [Required(ErrorMessage = BaseError.ChatBotTypesErrorSpan), JsonInclude]
+        public long ChatBotTypeFk { get; set; }
     }
 }
