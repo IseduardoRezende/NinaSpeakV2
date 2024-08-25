@@ -6,6 +6,7 @@
         public const string ViewDataUserId                   = "UserId";
         public const string ViewDataUserEmail                = "UserEmail";        
         public const string ViewDataChatBotGenres            = "ChatBotGenres";
+        public const string ViewDataChatBotTypes             = "ChatBotTypes";
         public const string ViewDataUserInstitutions         = "UserInstitutions";       
         public const string ViewDataChatBots                 = "ChatBots";
         public const string ViewDataChatBotId                = "ChatBotId";

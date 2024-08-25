@@ -23,6 +23,7 @@
         public const string ChatBotNotFound = "ChatBot not found.";
         public const string ChatBotConversationNotFound = "ChatBot Conversation not found.";
         public const string ChatBotGenreNotFound = "ChatBot Genre not found.";
+        public const string ChatBotTypeNotFound = "ChatBot Type not found.";
         
         public const string InvalidPassword = "Invalid Password.";
         public const string PasswordNotMatch = "Password and Confirm Password don't match.";
@@ -40,6 +41,7 @@
 
         public const string UserInstitutionsErrorSpan = "An Institution is required to Create a ChatBot";        
         public const string ChatBotGenresErrorSpan = "An ChatBot Genre is required to Create a ChatBot";
+        public const string ChatBotTypesErrorSpan = "An ChatBot Type is required to Create a ChatBot";
         public const string ChatBotsErrorSpan = "An ChatBot is required to Create a Conversation";
 
         public BaseError(string description)
