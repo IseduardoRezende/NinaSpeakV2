@@ -1,4 +1,5 @@
-﻿@using NinaSpeakV2.Api.Utils
+﻿@using NinaSpeakV2.Api.Extensions
+@using NinaSpeakV2.Api.Utils
 @using NinaSpeakV2.Domain.Models
 @using NinaSpeakV2.Domain.ViewModels.ChatBotGenres
 @using NinaSpeakV2.Domain.ViewModels.ChatBotTypes
@@ -67,6 +68,7 @@
                             </select>
                             <span asp-validation-for="InstitutionFk" class="text-danger"></span>
                         </div>
+                        <input type="hidden" asp-for="UserFk" value="@User.GetCurrentUserId()" />
                         <div class="form-group text-center">
                             <input type="submit" value="Cadastrar" class="btn btn-primary" />
                         </div>

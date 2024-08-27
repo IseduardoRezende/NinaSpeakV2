@@ -10,8 +10,8 @@ using NinaSpeakV2.Domain.ViewModels.ChatBots;
 
 namespace NinaSpeakV2.Api.Controllers
 {
-    public class ChatBotController
-        : BaseController<ChatBot, CreateChatBotViewModel, UpdateChatBotViewModel, ReadChatBotViewModel>
+    public class ChatBotController : 
+                 BaseController<ChatBot, CreateChatBotViewModel, UpdateChatBotViewModel, ReadChatBotViewModel>
     {
         private readonly IChatBotTypeService _chatBotTypeService;
         private readonly IChatBotGenreService _chatBotGenreService;
