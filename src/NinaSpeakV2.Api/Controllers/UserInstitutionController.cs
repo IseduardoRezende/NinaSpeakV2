@@ -112,7 +112,7 @@ namespace NinaSpeakV2.Api.Controllers
                 return View(updateModels);
             }
 
-            return RedirectToAction("Edit", "Institution", new { Id = updateModels.First().InstitutionFk } );
+            return RedirectToAction("Edit", "UserInstitution", new { InstitutionId = updateModels.First().InstitutionFk } );
         }        
 
         [HttpPost("Delete"), ValidateAntiForgeryToken]
