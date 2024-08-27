@@ -17,6 +17,7 @@
         public const string UserNotAuthenticated = "User not authenticated.";
         public const string UserInstitutionNotFound = "User Institution not found.";
         public const string UserInstitutionAlreadyExist = "Member already exists in the Institution.";
+        public const string UserInstitutionLoad = "Member don't have an load.";
 
         public const string InstitutionNotFound = "Institution not found.";
         
