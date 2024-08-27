@@ -12,5 +12,11 @@ namespace NinaSpeakV2.Domain.Validators
 
             return userInstitution.Owner == updateModel.Owner;
         }
+
+        public static bool ContainsLoad(UserInstitution userInstitution)
+        {
+            ArgumentNullException.ThrowIfNull(userInstitution, nameof(userInstitution));
+            return userInstitution.Creator || userInstitution.Owner;
+        }
     }
 }
