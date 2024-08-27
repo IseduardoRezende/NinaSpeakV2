@@ -31,6 +31,8 @@ namespace NinaSpeakV2.Domain.Services
             if (errors.Any())
                 return new ReadUserInstitutionViewModel { BaseErrors = errors };
 
+            //Validate if User already participated of the Institution and its returning:
+
             var user = await _userRepository.GetByAsync(u => u.Email == createViewModel.UserEmail.ToLowerInvariant());                       
             createViewModel.UserFk = user!.Id;
 
@@ -230,7 +232,12 @@ namespace NinaSpeakV2.Domain.Services
 
         public async Task<bool> SoftDeleteAsync(long userFk, long institutionFk)
         {
-            if (!await base.SoftDeleteAsync(userFk, institutionFk))
+            var entity = await _userInstitutionRepository.GetByAsync(c => c.UserFk == userFk && c.InstitutionFk == institutionFk);
+
+            if (!BaseValidator.IsValid(entity))
+                return false;
+
+            if (!await _userInstitutionRepository.SoftDeleteAsync(entity!))
                 return false;
 
             var members = await GetMembersByInstitutionFkAsync(institutionFk);
@@ -282,6 +289,8 @@ namespace NinaSpeakV2.Domain.Services
             if (!BaseValidator.IsValid(userInstitutions))
                 return Enumerable.Empty<ReadUserInstitutionViewModel>();
 
+            userInstitutions = userInstitutions.OrderBy(c => c.Institution.Name);
+
             return _mapper.Map<IEnumerable<ReadUserInstitutionViewModel>>(userInstitutions);
         }
 
@@ -320,7 +329,7 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
 
-            var userInstitution = await _userInstitutionRepository.GetByIdsAsync(new[] { updateViewModel.UserFk, updateViewModel.InstitutionFk });
+            var userInstitution = await _userInstitutionRepository.GetByAsync(c => c.UserFk == updateViewModel.UserFk && c.InstitutionFk == updateViewModel.InstitutionFk);
 
             if (!BaseValidator.IsValid(userInstitution))
             {

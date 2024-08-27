@@ -32,6 +32,9 @@ namespace NinaSpeakV2.Data.Repositories
             if (model.Creator)
                 model.Creator = false;
 
+            if (model.Owner)
+                model.Owner = false;
+
             Entity.Update(model);
             return await SaveChangesAsync();
         }
@@ -44,7 +47,15 @@ namespace NinaSpeakV2.Data.Repositories
                 throw new Exception();
 
             foreach (var userInstitution in userInstitutions)
+            {
                 userInstitution.DeletedAt = DateTime.Now;
+
+                if (userInstitution.Creator)
+                    userInstitution.Creator = false;
+
+                if (userInstitution.Owner)
+                    userInstitution.Owner = false;
+            }
 
             Entity.UpdateRange(userInstitutions);
             return await SaveChangesAsync();
