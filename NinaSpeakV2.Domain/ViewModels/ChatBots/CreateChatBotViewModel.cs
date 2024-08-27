@@ -17,5 +17,8 @@ namespace NinaSpeakV2.Domain.ViewModels.ChatBots
 
         [Required(ErrorMessage = BaseError.UserInstitutionsErrorSpan), JsonInclude]
         public long InstitutionFk { get; set; }
+
+        [JsonIgnore]
+        public long UserFk { get; set; }
     }
 }
