@@ -12,6 +12,16 @@ namespace NinaSpeakV2.Domain.Services
             : base(chatBotTypeRepository, mapper)
         { }
 
+        public override async Task<IEnumerable<ReadChatBotTypeViewModel>> GetAsync(bool ignoreGlobalFilter = false, params string[] includes)
+        {
+            var result = await base.GetAsync(ignoreGlobalFilter, includes);
+            
+            if (result == null || !result.Any())
+                return Enumerable.Empty<ReadChatBotTypeViewModel>();
+
+            return result.OrderBy(c => c.Description);            
+        }
+
         protected override Func<ChatBotType, bool> ApplyFilters()
         {
             return _ => true;
