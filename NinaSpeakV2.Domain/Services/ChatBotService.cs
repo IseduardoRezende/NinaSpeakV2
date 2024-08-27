@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Data.Repositories.IRepositories;
+using NinaSpeakV2.Domain.Extensions;
 using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
 using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.ChatBots;
+using NinaSpeakV2.Domain.ViewModels.ChatBotUsersInstitutions;
 
 namespace NinaSpeakV2.Domain.Services
 {
@@ -15,20 +17,54 @@ namespace NinaSpeakV2.Domain.Services
         private readonly IInstitutionService _institutionService;
         private readonly IChatBotTypeService _chatBotTypeService;
         private readonly IChatBotGenreService _chatBotGenreService;
-
+        private readonly IUserInstitutionService _userInstitutionService;
+        private readonly IChatBotUserInstitutionService _chatBotUserInstitutionService;
+        
         public ChatBotService(IChatBotRepository chatBotRepository, IInstitutionService institutionService,
                               IChatBotGenreService chatBotGenreService, IChatBotTypeService chatBotTypeService, 
+                              IUserInstitutionService userInstitutionService, IChatBotUserInstitutionService chatBotUserInstitutionService, 
                               IMapper mapper) : base(chatBotRepository, mapper)
         {
             _chatBotRepository = chatBotRepository;
             _institutionService = institutionService;
             _chatBotTypeService = chatBotTypeService;
             _chatBotGenreService = chatBotGenreService;
-        }       
+            _userInstitutionService = userInstitutionService;
+            _chatBotUserInstitutionService = chatBotUserInstitutionService;
+        }
 
-        protected override Func<ChatBot, bool> ApplyFilters()
+        public override async Task<ReadChatBotViewModel> CreateAsync(CreateChatBotViewModel createViewModel)
         {
-            return _ => true;
+            var chatBot = await base.CreateAsync(createViewModel);
+        
+            if (chatBot.HasErrors())
+                return chatBot;
+
+            var institutionMember = await _userInstitutionService.GetByAsync(c => c.UserFk == createViewModel.UserFk && c.InstitutionFk == chatBot.InstitutionFk );
+
+            if (!BaseValidator.IsValid(institutionMember))
+            {
+                await base.SoftDeleteAsync((long)chatBot!.Id!);
+                return new ReadChatBotViewModel { BaseErrors = new[] { new BaseError(BaseError.UserInstitutionNotFound) } };
+            }
+
+            var chatBotMember = new CreateChatBotUserInstitutionViewModel
+            {
+                ChatBotFk = (long)chatBot.Id!,
+                UserInstitutionFk = (long)institutionMember!.Id!,
+                Writer = true,
+                Reader = true
+            };
+
+            var result = await _chatBotUserInstitutionService.CreateAsync(chatBotMember);
+
+            if (result.HasErrors())
+            {
+                await base.SoftDeleteAsync((long)chatBot!.Id!);
+                return new ReadChatBotViewModel { BaseErrors = result.BaseErrors };
+            }
+
+            return chatBot;
         }
 
         protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateChatBotViewModel createViewModel)
@@ -64,7 +100,7 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.InstitutionNotFound));
                 return errors;
             }
-
+            
             if (!BaseEnumValidator.IsValidDescription(createViewModel.Description))
                 errors.Add(new BaseError(BaseError.InvalidDescription));
 
@@ -111,15 +147,7 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.ChatBotGenreNotFound));
                 return errors;
             }
-
-            var chatBotType = await _chatBotTypeService.GetByIdAsync(updateViewModel.ChatBotTypeFk);
-
-            if (!BaseValidator.IsValid(chatBotType))
-            {
-                errors.Add(new BaseError(BaseError.ChatBotTypeNotFound));
-                return errors;
-            }
-
+            
             var institution = await _institutionService.GetByIdAsync(chatBot!.InstitutionFk);
 
             if (!BaseValidator.IsValid(institution))
@@ -132,7 +160,12 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.NameAlreadyExist));
 
             return errors;
-        }       
+        }
+
+        protected override Func<ChatBot, bool> ApplyFilters()
+        {
+            return _ => true;
+        }
 
         public async Task<IEnumerable<ReadChatBotViewModel>> GetByInstitutionsFksAsync(IEnumerable<long> institutionsFks)
         {
@@ -149,7 +182,6 @@ namespace NinaSpeakV2.Domain.Services
             entity.Name = updateViewModel.Name;
             entity.Description = updateViewModel.Description;
             entity.ChatBotGenreFk = updateViewModel.ChatBotGenreFk;
-            entity.ChatBotTypeFk = updateViewModel.ChatBotTypeFk;
         }
     }
 }
