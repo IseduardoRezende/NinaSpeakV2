@@ -24,7 +24,7 @@ namespace NinaSpeakV2.Domain.ViewModels.Users
 
         private static short GenerateVerificationCode()
         {
-            return Convert.ToInt16(Random.Shared.Next().ToString()[..5]);
+            return Convert.ToInt16(Random.Shared.Next().ToString()[..4]);
         }
     }
 }
