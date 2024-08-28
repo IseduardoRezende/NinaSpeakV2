@@ -12,12 +12,14 @@ namespace NinaSpeakV2.Domain.Services
     public class UserService : BaseService<User, CreateUserViewModel, UpdateUserViewModel, ReadUserViewModel>, IUserService
     {
         protected readonly IUserRepository _userRepository;
+        private   readonly IInstitutionService _institutionService;
         protected readonly IUserInstitutionService _userInstitutionService;
 
-        public UserService(IUserRepository userRepository, IUserInstitutionService userInstitutionService,
-            IMapper mapper) : base(userRepository, mapper)
+        public UserService(IUserRepository userRepository, IUserInstitutionService userInstitutionService, IInstitutionService institutionService,
+                           IMapper mapper) : base(userRepository, mapper)
         {
             _userRepository = userRepository;
+            _institutionService = institutionService;
             _userInstitutionService = userInstitutionService;
         }
 
@@ -28,21 +30,33 @@ namespace NinaSpeakV2.Domain.Services
             if (errors.Any())
                 return new ReadUserViewModel { BaseErrors = errors };
 
+            var user = await _userRepository.GetByAsync(u => u.Email == createViewModel.Email.ToLowerInvariant(), ignoreGlobalFilter: true);
+
+            if (BaseValidator.IsValid(user))
+            {
+                if (!await ActiveAsync(user!, createViewModel))
+                    return new ReadUserViewModel { BaseErrors = new[] { new BaseError(BaseError.InternalProcessError) } };
+                
+                //Send Email to Confirm
+
+                return _mapper.Map<ReadUserViewModel>(user);
+            }
+
             createViewModel.Salt = Guid.NewGuid().ToString();
             createViewModel.Password = createViewModel.Password.ConvertToSHA512(createViewModel.Salt);
             createViewModel.Email = createViewModel.Email.ToLowerInvariant();
 
-            var entity = _mapper.Map<User>(createViewModel);
-            entity = await _userRepository.CreateAsync(entity);
+            user = _mapper.Map<User>(createViewModel);
+            user = await _userRepository.CreateAsync(user);
             
-            var userInstitution = await _userInstitutionService.StandardRegistrationAsync(entity.Id);
+            var userInstitution = await _userInstitutionService.StandardRegistrationAsync(user.Id);
 
             if (userInstitution.HasErrors())
                 return new ReadUserViewModel { BaseErrors = userInstitution.BaseErrors };
 
             //Send Email to Confirm
 
-            return _mapper.Map<ReadUserViewModel>(entity);
+            return _mapper.Map<ReadUserViewModel>(user);
         }
 
         public override async Task<ReadUserViewModel> UpdateAsync(UpdateUserViewModel updateViewModel)
@@ -97,6 +111,32 @@ namespace NinaSpeakV2.Domain.Services
             return true;
         }
 
+        private async Task<bool> ActiveAsync(User user, CreateUserViewModel createUser)
+        {
+            if (!BaseValidator.IsValid(user) || user!.DeletedAt is null || !BaseValidator.IsValid(createUser))
+                return false;
+
+            user.DeletedAt = null;
+            user.Salt = Guid.NewGuid().ToString();
+            user.Password = createUser.Password.ConvertToSHA512(user.Salt);
+            user.VerificationCode = createUser.VerificationCode;
+
+            user = await _userRepository.UpdateAsync(user!);
+
+            if (!BaseValidator.IsValid(user))
+                return false;
+
+            var standardInstitution = await _institutionService.GetStandardAsync();
+
+            if (!await _userInstitutionService.ActiveAsync(userFk: user.Id, institutionFk: (long)standardInstitution.Id!))
+            {
+                await _userRepository.SoftDeleteAsync(user);
+                return false;
+            }
+
+            return true;
+        }
+       
         protected override Func<User, bool> ApplyFilters()
         {
             return _ => true;

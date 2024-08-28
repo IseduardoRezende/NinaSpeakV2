@@ -12,8 +12,8 @@ namespace NinaSpeakV2.Domain.Services
 {
     public class LoginService : UserService, ILoginService
     {
-        public LoginService(IUserRepository userRepository, IUserInstitutionService userInstitutionService, IMapper mapper) 
-            : base(userRepository, userInstitutionService, mapper)
+        public LoginService(IUserRepository userRepository, IUserInstitutionService userInstitutionService, IInstitutionService institutionService, IMapper mapper) 
+            : base(userRepository, userInstitutionService, institutionService, mapper)
         { }
 
         public async Task<ReadUserViewModel> LoginAsync(ReadLoginViewModel login)
@@ -52,6 +52,8 @@ namespace NinaSpeakV2.Domain.Services
 
             if (result.HasErrors())
                 return result;
+
+            //Validate User Authentication before create a member
 
             var value = await _userInstitutionService.CreateAsync(userInstitution);
 
