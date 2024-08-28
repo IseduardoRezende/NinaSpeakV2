@@ -23,7 +23,7 @@ namespace NinaSpeakV2.Domain.Services
             _institutionRepository = institutionRepository;
             _userInstitutionRepository = userInstitutionRepository;
         }
-
+        
         public override async Task<ReadUserInstitutionViewModel> CreateAsync(CreateUserInstitutionViewModel createViewModel)
         {
             var errors = await ValidateCreationAsync(createViewModel);
@@ -31,14 +31,22 @@ namespace NinaSpeakV2.Domain.Services
             if (errors.Any())
                 return new ReadUserInstitutionViewModel { BaseErrors = errors };
 
-            //Validate if User already participated of the Institution and its returning:
-
             var user = await _userRepository.GetByAsync(u => u.Email == createViewModel.UserEmail.ToLowerInvariant());                       
             createViewModel.UserFk = user!.Id;
 
-            var userInstitution = _mapper.Map<UserInstitution>(createViewModel);            
-            userInstitution = await _userInstitutionRepository.CreateAsync(userInstitution);
-        
+            var userInstitution = await _userInstitutionRepository
+                                        .GetByAsync(c => c.UserFk == createViewModel.UserFk && c.InstitutionFk == createViewModel.InstitutionFk, ignoreGlobalFilter: true);
+
+            if (BaseValidator.IsValid(userInstitution))
+            {
+                await _userInstitutionRepository.ActiveAsync(userInstitution!);
+            }
+            else
+            {
+                userInstitution = _mapper.Map<UserInstitution>(createViewModel);            
+                userInstitution = await _userInstitutionRepository.CreateAsync(userInstitution);       
+            }
+
             await _institutionRepository.UpdateCodeAsync(createViewModel.InstitutionFk);            
             var readViewModel = _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);            
         
@@ -183,7 +191,7 @@ namespace NinaSpeakV2.Domain.Services
                 errors.Add(new BaseError(BaseError.UserNotFound));
                 return errors;
             }
-            
+                        
             var password = createViewModel.UserPassword.ConvertToSHA512(user!.Salt);
 
             if (password != user.Password)
