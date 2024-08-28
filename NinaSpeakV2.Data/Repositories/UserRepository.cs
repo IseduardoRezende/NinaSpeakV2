@@ -13,8 +13,9 @@ namespace NinaSpeakV2.Data.Repositories
             if (model is null)
                 return false;
 
-            model.DeletedAt = DateTime.Now;
             model.Authenticated = false;
+            model.VerificationCode = null;
+            model.DeletedAt = DateTime.Now;
             
             Entity.Update(model);
             return await SaveChangesAsync();
@@ -26,7 +27,6 @@ namespace NinaSpeakV2.Data.Repositories
                 return false;
 
             model.DeletedAt = null;
-            model.Authenticated = true;
 
             Entity.Update(model);
             return await SaveChangesAsync();
