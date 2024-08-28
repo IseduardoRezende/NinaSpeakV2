@@ -117,6 +117,14 @@ namespace NinaSpeakV2.Domain.Services
             return errors;
         }
 
+        public async Task<ReadInstitutionViewModel> GetStandardAsync()
+        {
+            var standardInstitution = await _institutionRepository.GetStandardAsync();
+
+            ArgumentNullException.ThrowIfNull(standardInstitution, nameof(standardInstitution));
+            return _mapper.Map<ReadInstitutionViewModel>(standardInstitution);
+        }
+
         public override async Task<bool> SoftDeleteAsync(long id)
         {
             if (!await base.SoftDeleteAsync(id))

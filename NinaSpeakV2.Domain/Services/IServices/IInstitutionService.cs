@@ -7,5 +7,7 @@ namespace NinaSpeakV2.Domain.Services.IServices
         : IBaseService<Institution, CreateInstitutionViewModel, UpdateInstitutionViewModel, ReadInstitutionViewModel>
     {
         bool TryGetByCode(string? code, out ReadInstitutionViewModel? institution);
+
+        Task<ReadInstitutionViewModel> GetStandardAsync();
     }
 }
