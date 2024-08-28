@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NinaSpeakV2.Data.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace NinaSpeakV2.Domain.Validators
 {
@@ -6,6 +7,12 @@ namespace NinaSpeakV2.Domain.Validators
     {
         public const int PasswordMaxLength = 20;
         public const int PasswordMinLength = 8;
+
+        public static bool IsAuthenticated(User user)
+        {
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            return user.Authenticated;
+        }
 
         public static bool IsValidPassword(string password)
         {

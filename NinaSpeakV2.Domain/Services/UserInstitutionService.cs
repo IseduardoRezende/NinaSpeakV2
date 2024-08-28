@@ -147,7 +147,7 @@ namespace NinaSpeakV2.Domain.Services
 
             userInstitution = await _userInstitutionRepository.CreateAsync(userInstitution);
             return _mapper.Map<ReadUserInstitutionViewModel>(userInstitution);
-        }
+        }       
 
         protected override Func<UserInstitution, bool> ApplyFilters()
         {
@@ -192,6 +192,9 @@ namespace NinaSpeakV2.Domain.Services
                 return errors;
             }
                         
+            if (!UserValidator.IsAuthenticated(user!))
+                errors.Add(new BaseError(BaseError.UserNotAuthenticated));
+
             var password = createViewModel.UserPassword.ConvertToSHA512(user!.Salt);
 
             if (password != user.Password)
@@ -260,6 +263,16 @@ namespace NinaSpeakV2.Domain.Services
                 await ChooseNewOwner(members);
 
             return true;
+        }
+
+        public async Task<bool> ActiveAsync(long userFk, long institutionFk)
+        {
+            var entity = await _userInstitutionRepository.GetByAsync(c => c.UserFk == userFk && c.InstitutionFk == institutionFk, ignoreGlobalFilter: true);
+
+            if (!BaseValidator.IsValid(entity))
+                return false;
+            
+            return await _userInstitutionRepository.ActiveAsync(entity!);
         }
 
         private async Task ChooseNewOwner(IEnumerable<ReadUserInstitutionViewModel> members)

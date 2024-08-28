@@ -14,8 +14,10 @@ namespace NinaSpeakV2.Domain.Services.IServices
 
         Task<bool> SoftDeleteAsync(long userFk, long institutionFk);
 
-        Task<ReadUserInstitutionViewModel> StandardRegistrationAsync(long userFk);
+        Task<bool> ActiveAsync(long userFk, long institutionFk);
 
+        Task<ReadUserInstitutionViewModel> StandardRegistrationAsync(long userFk);
+        
         Task<IEnumerable<ReadUserInstitutionViewModel>> GetByOwnerAsync(long userFk, bool ignoreGlobalFilter = false);
 
         Task<IEnumerable<ReadUserInstitutionViewModel>> GetByUserFkAsync(long userFk, bool ignoreGlobalFilter = false);
