@@ -1,64 +1,124 @@
-﻿@using NinaSpeakV2.Domain.ViewModels.ChatBots
-@model IEnumerable<ReadChatBotViewModel>
+﻿@using NinaSpeakV2.Domain.ViewModels.ChatBotUsersInstitutions
+@model IEnumerable<ReadChatBotUserInstitutionViewModel>
 
 @{
     ViewData["Title"] = "Index";
+    var antiForgeryToken = @Html.AntiForgeryToken().ToString();
 }
 
-<h1>Listagem de ChatBots</h1>
-
-<p>
-    <a asp-action="Create">Criar novo</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.Label("Nome")
-            </th>
-            <th>
-                @Html.Label("Descrição")
-            </th>
-            <th>
-                @Html.Label("Instituição")
-            </th>
-            <th>
-                @Html.Label("Gênero")
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="container">
+    <h2 class="my-4">Seus ChatBots</h2>
+    <a asp-action="Create" class="btn btn-primary mb-3">Criar novo</a>
+    <table class="table table-striped">
+        <thead class="thead-dark">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.InstitutionName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ChatBotGenreDescription)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
-                </td>
+                <th class="text-center">
+                    @Html.Label("Instituição")
+                </th>
+                <th class="text-center">
+                    ChatBot
+                </th>
+                <th class="text-center">
+                    Ações
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var chatbotUserInstitution in Model)
+            {
+                <tr>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => chatbotUserInstitution.UserInstitutionInstitutionName)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => chatbotUserInstitution.ChatBotName)
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            @if (chatbotUserInstitution.UserInstitutionCreator || chatbotUserInstitution.UserInstitutionOwner)
+                            {
+                                <a asp-action="Edit" asp-route-id="@chatbotUserInstitution.ChatBotFk" class="btn btn-sm btn-info" aria-label="Editar">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            }
+                            <a asp-action="Details" asp-route-id="@chatbotUserInstitution.ChatBotFk" class="btn btn-sm btn-secondary" aria-label="Detalhes">
+                                <i class="fas fa-info-circle"></i> Detalhes
+                            </a>
+                            @if (chatbotUserInstitution.UserInstitutionCreator || chatbotUserInstitution.UserInstitutionOwner)
+                            {
+                                <button type="button" class="btn btn-sm btn-danger" aria-label="Deletar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-chatbot-id="@chatbotUserInstitution.ChatBotFk">
+                                    <i class="fas fa-trash-alt"></i> Deletar
+                                </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link">Voltar</a>
+</div>
 
-<div>
-    <a asp-controller="Home" asp-action="Index">Voltar</a>
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title w-100 text-center" id="confirmDeleteModalLabel">Confirmar Deleção</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body w-100 text-center">
+                Tem certeza de que deseja deletar?
+                <br /><br />
+                <strong>Não será mais possível visualizar e ensinar Conversas ao ChatBot.</strong>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100 text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="confirmDeleteButton" class="btn btn-danger">Deletar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
+
+    <script>
+        var confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        var chatbotIdToDelete = null;
+        var antiForgeryToken = '@Html.AntiForgeryToken()'.split('value="')[1].split('"')[0]; // Obter o token anti-falsificação
+
+        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            chatbotIdToDelete = button.getAttribute('data-chatbot-id');
+        });
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function () {
+            if (chatbotIdToDelete) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '@Url.Action("Delete")';
+
+                // Adicionar token anti-falsificação
+                var antiForgeryInput = document.createElement('input');
+                antiForgeryInput.type = 'hidden';
+                antiForgeryInput.name = '__RequestVerificationToken';
+                antiForgeryInput.value = antiForgeryToken;
+                form.appendChild(antiForgeryInput);
+
+                var chatbotFkInput = document.createElement('input');
+                chatbotFkInput.type = 'hidden';
+                chatbotFkInput.name = 'id';
+                chatbotFkInput.value = chatbotIdToDelete;
+                form.appendChild(chatbotFkInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
