@@ -10,8 +10,8 @@ using NinaSpeakV2.Domain.ViewModels.Institutions;
 
 namespace NinaSpeakV2.Api.Controllers
 {
-    public class InstitutionController
-        : BaseController<Institution, CreateInstitutionViewModel, UpdateInstitutionViewModel, ReadInstitutionViewModel>
+    public class InstitutionController : 
+                 BaseController<Institution, CreateInstitutionViewModel, UpdateInstitutionViewModel, ReadInstitutionViewModel>
     {
         private readonly IUserInstitutionService _userInstitutionService;
 
@@ -48,7 +48,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             institution!.Members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution.Id!);
 
-            if (!InstitutionRequestValidator.IsMember(User.GetCurrentUserEmail(), institution.Members))
+            if (!UserInstitutionRequestValidator.IsMember(User.GetCurrentUserEmail(), institution.Members))
                 return Forbid();
 
             return View(institution);
@@ -63,7 +63,7 @@ namespace NinaSpeakV2.Api.Controllers
 
             var members = await _userInstitutionService.GetMembersByInstitutionFkAsync((long)institution!.Id!);
 
-            if (!InstitutionRequestValidator.IsOwner(User.GetCurrentUserEmail(), members))
+            if (!UserInstitutionRequestValidator.IsOwner(User.GetCurrentUserEmail(), members))
                 return Forbid();
 
             var updateModel = _mapper.Map<UpdateInstitutionViewModel>(institution);

@@ -3,7 +3,7 @@ using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 
 namespace NinaSpeakV2.Api.RequestValidators
 {
-    public class InstitutionRequestValidator
+    public class UserInstitutionRequestValidator
     {
         public static bool IsCreator(string userEmail, IEnumerable<ReadUserInstitutionViewModel> members)
         {
@@ -58,6 +58,23 @@ namespace NinaSpeakV2.Api.RequestValidators
                 return false;
 
             return members.Any(m => m.UserFk == userFk);
+        }
+
+        public static bool IsCreator(ReadUserInstitutionViewModel member)
+        {
+            ArgumentNullException.ThrowIfNull(member, nameof(member));
+            return member.Creator;
+        }
+
+        public static bool IsOwner(ReadUserInstitutionViewModel member)
+        {
+            ArgumentNullException.ThrowIfNull(member, nameof(member));
+            return member.Owner;
+        }
+
+        public static bool IsMember(ReadUserInstitutionViewModel member)
+        {
+            return BaseValidator.IsValid(member);
         }
     }
 }

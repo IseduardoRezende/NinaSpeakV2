@@ -18,8 +18,8 @@ using NinaSpeakV2.Domain.ViewModels.UsersInstitutions;
 
 namespace NinaSpeakV2.Api.Controllers
 {
-    public class UserInstitutionController
-        : BaseController<UserInstitution, CreateUserInstitutionViewModel, UpdateUserInstitutionViewModel, ReadUserInstitutionViewModel>
+    public class UserInstitutionController : 
+                 BaseController<UserInstitution, CreateUserInstitutionViewModel, UpdateUserInstitutionViewModel, ReadUserInstitutionViewModel>
     {
         private readonly ILoginService _loginService;
         private readonly IInstitutionService _institutionService;
@@ -79,7 +79,7 @@ namespace NinaSpeakV2.Api.Controllers
             }
 
             await EnvironmentConfiguration.ConfigureLogin(HttpContext, user);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");  //Redirect To Verification Login View
         }
 
         public override async Task<IActionResult> Edit(long? institutionId)
@@ -89,7 +89,7 @@ namespace NinaSpeakV2.Api.Controllers
             if (!BaseValidator.IsValid(usersInstitution))
                 return NotFound();
 
-            if (!InstitutionRequestValidator.IsOwner(User.GetCurrentUserEmail(), usersInstitution))
+            if (!UserInstitutionRequestValidator.IsOwner(User.GetCurrentUserEmail(), usersInstitution))
                 return Forbid();
             
             var updateModel = _mapper.Map<IEnumerable<UpdateUserInstitutionViewModel>>(usersInstitution);
