@@ -18,5 +18,23 @@ namespace NinaSpeakV2.Domain.ViewModels.ChatBotUsersInstitutions
 
         [JsonInclude]
         public string ChatBotName { get; set; }
+
+        [JsonInclude]
+        public string ChatBotDescription { get; set; }
+
+        [JsonInclude]
+        public string ChatBotGenre { get; set; }
+
+        [JsonInclude]
+        public string ChatBotType { get; set; }
+
+        [JsonInclude]
+        public string UserInstitutionInstitutionName { get; set; }
+
+        [JsonInclude]
+        public bool UserInstitutionOwner { get; set; }
+
+        [JsonInclude]
+        public bool UserInstitutionCreator { get; set; }
     }
 }
