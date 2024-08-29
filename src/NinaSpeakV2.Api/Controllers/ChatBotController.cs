@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NinaSpeakV2.Api.Extensions;
+using NinaSpeakV2.Api.RequestValidators;
 using NinaSpeakV2.Api.Utils;
 using NinaSpeakV2.Data.Entities;
 using NinaSpeakV2.Domain.Extensions;
 using NinaSpeakV2.Domain.Models;
 using NinaSpeakV2.Domain.Services.IServices;
+using NinaSpeakV2.Domain.Validators;
 using NinaSpeakV2.Domain.ViewModels.ChatBots;
 
 namespace NinaSpeakV2.Api.Controllers
@@ -16,19 +19,27 @@ namespace NinaSpeakV2.Api.Controllers
         private readonly IChatBotTypeService _chatBotTypeService;
         private readonly IChatBotGenreService _chatBotGenreService;
         private readonly IUserInstitutionService _userInstitutionService;
+        private readonly IChatBotUserInstitutionService _chatBotUserInstitutionService;
 
         public ChatBotController(IChatBotService chatBotService, IChatBotTypeService chatBotTypeService, IChatBotGenreService chatBotGenreService,
-                                 IUserInstitutionService userInstitutionService, IMapper mapper) 
-            : base(chatBotService, mapper)
+                                 IUserInstitutionService userInstitutionService, IChatBotUserInstitutionService chatBotUserInstitutionService, 
+                                 IMapper mapper) : base(chatBotService, mapper)
         {
             _chatBotTypeService = chatBotTypeService;
             _chatBotGenreService = chatBotGenreService;
             _userInstitutionService = userInstitutionService;
+            _chatBotUserInstitutionService = chatBotUserInstitutionService;
         }
 
         public override async Task<IActionResult> Index()
         {
-            return View(await _readonlyService.GetAsync(ignoreGlobalFilter: false, "ChatBotGenre", "Institution"));
+            var userId = User.GetCurrentUserId();
+            return View(await _chatBotUserInstitutionService.GetByUserIdAsync(userId));
+        }
+
+        public override Task<IActionResult> Details(long? id)
+        {
+            return base.Details(id);
         }
 
         public override async Task<IActionResult> Create()
@@ -64,13 +75,32 @@ namespace NinaSpeakV2.Api.Controllers
         {
             var entity = await _readonlyService.GetByIdAsync(id ?? 0);
 
-            if (entity is null)
+            if (!BaseValidator.IsValid(entity))
                 return NotFound();
 
             var updateModel = _mapper.Map<UpdateChatBotViewModel>(entity);
 
-            ViewData[Constant.ViewDataChatBotGenres] = await _chatBotGenreService.GetAsync();                        
+            var member = await _userInstitutionService.GetByAsync(ui => ui.UserFk == User.GetCurrentUserId() && 
+                                                                        ui.InstitutionFk == entity!.InstitutionFk);
+            
+            if (!BaseValidator.IsValid(member) || 
+               (!UserInstitutionRequestValidator.IsCreator(member!) && !UserInstitutionRequestValidator.IsOwner(member!)))
+            {
+                return Forbid();
+            }
+
+            var chatBotGenres = await _chatBotGenreService.GetAsync();
+
+            var chatBotGenreSelectList = new SelectList(chatBotGenres, "Id", "Description", entity!.ChatBotGenreFk);
+            ViewData[Constant.ViewDataChatBotGenres] = chatBotGenreSelectList;                        
+            
             return View(updateModel);
-        }        
+        }
+        
+        [HttpPost("Delete"), ValidateAntiForgeryToken]
+        public override Task<IActionResult> Delete(long id)
+        {
+            return base.Delete(id);
+        }
     }
 }
