@@ -14,6 +14,7 @@ namespace NinaSpeakV2.Domain.Services
     {
         private readonly IChatBotRepository _chatBotRepository;
         private readonly IUserInstitutionRepository _userInstitutionRepository;
+        private readonly IChatBotUserInstitutionRepository _chatBotUserInstitutionRepository;
 
         public ChatBotUserInstitutionService(IChatBotUserInstitutionRepository chatBotUserInstitutionRepository, 
                                              IChatBotRepository chatBotRepository, IUserInstitutionRepository userInstitutionRepository,
@@ -21,6 +22,7 @@ namespace NinaSpeakV2.Domain.Services
         { 
             _chatBotRepository = chatBotRepository;
             _userInstitutionRepository = userInstitutionRepository;
+            _chatBotUserInstitutionRepository = chatBotUserInstitutionRepository;
         }
 
         protected override async Task<IEnumerable<BaseError>> ValidateCreationAsync(CreateChatBotUserInstitutionViewModel createViewModel)
@@ -55,6 +57,19 @@ namespace NinaSpeakV2.Domain.Services
         protected override Task<IEnumerable<BaseError>> ValidateChangeAsync(UpdateChatBotUserInstitutionViewModel updateViewModel)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<ReadChatBotUserInstitutionViewModel>> GetByUserIdAsync(long userId)
+        {
+            if (!BaseValidator.IsAbove(userId, BaseValidator.IdMinValue))
+                return Enumerable.Empty<ReadChatBotUserInstitutionViewModel>();
+
+            var chatBotUsersInstitution = await _chatBotUserInstitutionRepository.GetByUserIdAsync(userId);
+
+            if (!BaseValidator.IsValid(chatBotUsersInstitution))
+                return Enumerable.Empty<ReadChatBotUserInstitutionViewModel>();
+
+            return _mapper.Map<IEnumerable<ReadChatBotUserInstitutionViewModel>>(chatBotUsersInstitution);
         }
 
         protected override Func<ChatBotUserInstitution, bool> ApplyFilters()
