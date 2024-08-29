@@ -17,11 +17,10 @@ namespace NinaSpeakV2.Domain.Validators
         {
             ArgumentNullException.ThrowIfNull(chatBot, nameof(chatBot));
             ArgumentNullException.ThrowIfNull(updateModel, nameof(updateModel));
-            
-            return chatBot.Name == updateModel.Name && 
+
+            return chatBot.Name == updateModel.Name &&
                    chatBot.Description == updateModel.Description &&
-                   chatBot.ChatBotGenreFk == updateModel.ChatBotGenreFk &&
-                   chatBot.ChatBotTypeFk == updateModel.ChatBotTypeFk;
+                   chatBot.ChatBotGenreFk == updateModel.ChatBotGenreFk;
         }
     }
 }
