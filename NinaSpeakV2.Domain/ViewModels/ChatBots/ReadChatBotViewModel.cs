@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using NinaSpeakV2.Domain.ViewModels.ChatBotUsersInstitutions;
+using System.Text.Json.Serialization;
 
 namespace NinaSpeakV2.Domain.ViewModels.ChatBots
 {
@@ -24,5 +25,11 @@ namespace NinaSpeakV2.Domain.ViewModels.ChatBots
 
         [JsonInclude]
         public string InstitutionName { get; set; }
+
+        [JsonInclude]
+        public long QtyMembers { get { return Members.LongCount(); } }
+
+        [JsonInclude]
+        public IEnumerable<ReadChatBotUserInstitutionViewModel> Members { get; set; } = Enumerable.Empty<ReadChatBotUserInstitutionViewModel>();
     }
 }

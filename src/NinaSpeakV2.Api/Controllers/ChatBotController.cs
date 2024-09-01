@@ -37,9 +37,19 @@ namespace NinaSpeakV2.Api.Controllers
             return View(await _chatBotUserInstitutionService.GetByUserIdAsync(userId));
         }
 
-        public override Task<IActionResult> Details(long? id)
+        public override async Task<IActionResult> Details(long? id)
         {
-            return base.Details(id);
+            var chatBot = await _readonlyService.GetByIdAsync(id ?? 0, "Institution", "ChatBotGenre", "ChatBotType");
+
+            if (!BaseValidator.IsValid(chatBot))
+                return NotFound();
+
+            chatBot!.Members = await _chatBotUserInstitutionService.GetMembersByChatBotFkAsync((long)chatBot.Id!);
+
+            if (!ChatBotUserInstitutionRequestValidator.IsMember(User.GetCurrentUserEmail(), chatBot.Members))
+                return Forbid();
+
+            return View(chatBot);
         }
 
         public override async Task<IActionResult> Create()
@@ -73,6 +83,11 @@ namespace NinaSpeakV2.Api.Controllers
 
         public override async Task<IActionResult> Edit(long? id)
         {
+            if (ViewData.TryGetValues(Constant.ViewDataBaseErrors, out object? values))
+            {
+                ViewData.SetBaseErrors((values as IEnumerable<BaseError>)!);
+            }
+
             var entity = await _readonlyService.GetByIdAsync(id ?? 0);
 
             if (!BaseValidator.IsValid(entity))
@@ -90,13 +105,29 @@ namespace NinaSpeakV2.Api.Controllers
             }
 
             var chatBotGenres = await _chatBotGenreService.GetAsync();
-
             var chatBotGenreSelectList = new SelectList(chatBotGenres, "Id", "Description", entity!.ChatBotGenreFk);
-            ViewData[Constant.ViewDataChatBotGenres] = chatBotGenreSelectList;                        
-            
+        
+            ViewData[Constant.ViewDataChatBotGenres] = chatBotGenreSelectList;                                    
             return View(updateModel);
         }
         
+        public override async Task<IActionResult> Edit(long id, UpdateChatBotViewModel updateModel)
+        {
+            if (id != updateModel.Id)
+                return BadRequest();
+
+            var value = await _baseService.UpdateAsync(updateModel);
+
+            if (value.HasErrors())
+            {
+                ViewData.SetBaseErrors(value.BaseErrors!);
+                ViewData.TemporarilyStore();
+                return RedirectToAction("Edit", new { Id = id });
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpPost("Delete"), ValidateAntiForgeryToken]
         public override Task<IActionResult> Delete(long id)
         {
