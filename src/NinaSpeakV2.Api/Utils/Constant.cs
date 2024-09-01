@@ -13,6 +13,7 @@
         public const string ViewDataInstitution              = "Institution";        
 
         public const string InstitutionStandardName          = "ChatBot de Graça";
+        public const string ChatBotStandardName              = "Nosso ChatBot";
 
         public const string PartialViewNameBaseErrors        = "_BaseErrors";        
     }

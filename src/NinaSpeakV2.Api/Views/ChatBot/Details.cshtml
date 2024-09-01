@@ -1,50 +1,193 @@
-﻿@using NinaSpeakV2.Domain.ViewModels.ChatBots
+﻿@using NinaSpeakV2.Api.Extensions
+@using NinaSpeakV2.Api.Utils
+@using NinaSpeakV2.Domain.ViewModels.ChatBots
 @model ReadChatBotViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Detalhes</h1>
+<style>
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
 
-<div>
-    <h4>ChatBot</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.InstitutionName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.InstitutionName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ChatBotGenreDescription)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ChatBotGenreDescription)
-        </dd>
-    </dl>
+    .pagination .page-link {
+        color: #007bff;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .pagination {
+        margin-top: 20px;
+    }
+</style>
+
+<h1 class="text-center">Detalhes do ChatBot</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>ChatBot: @Model.Name</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Instituição:</strong>
+            </div>
+            <div class="col-sm-10">
+                @Html.DisplayTextFor(model => model.InstitutionName)
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Descrição:</strong>
+            </div>
+            <div class="col-sm-10">
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Gênero:</strong>
+            </div>
+            <div class="col-sm-10">
+                @Html.DisplayTextFor(model => model.ChatBotGenreDescription)
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>Tipo:</strong>
+            </div>
+            <div class="col-sm-10">
+                <strong>@Html.DisplayTextFor(model => model.ChatBotTypeDescription)</strong>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">
+                <strong>N° Membros:</strong>
+            </div>
+            <div class="col-sm-10">
+                @Html.DisplayFor(model => model.QtyMembers)
+            </div>
+        </div>
+        @if (Model.Name is not Constant.ChatBotStandardName)
+        {
+            <div class="row mb-3">
+                <div class="col-sm-2">
+                    <strong>Membros:</strong>
+                </div>
+                <div class="col-sm-10">
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Escritorª
+                                </th>
+                                <th>
+                                    Leitorª
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="memberTableBody">
+                            @foreach (var member in Model.Members)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => member.UserInstitutionUserEmail)
+                                    </td>
+                                    <td>
+                                        @if (member.Writer)
+                                        {
+                                            <input type="checkbox" checked="checked" class="form-check-input" disabled="disabled" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="form-check-input" disabled="disabled" />
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (member.Reader)
+                                        {
+                                            <input type="checkbox" checked="checked" class="form-check-input" disabled="disabled" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="form-check-input" disabled="disabled" />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <nav>
+                        <ul class="pagination justify-content-center" id="paginationControls">
+                            <!-- Pagination controls will be inserted here by JavaScript -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        }
+    </div>
 </div>
-<div>
-    <a asp-action="Index">Voltar</a>
-    @* <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> | *@
-    @* <a asp-action="Delete" asp-route-id="@Model.Id">Deletar</a> | *@
-    @* <a asp-controller="Home" asp-action="Index">Voltar</a> *@
+
+<div class="text-center">
+    <a asp-action="Index" class="btn btn-primary">Voltar</a>
 </div>
 
 @section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const rowsPerPage = 5;
+            const rows = $('#memberTableBody tr');
+            const rowsCount = rows.length;
+            const pageCount = Math.ceil(rowsCount / rowsPerPage);
+            const paginationControls = $('#paginationControls');
+
+            // Generate pagination controls
+            for (let i = 1; i <= pageCount; i++) {
+                paginationControls.append(`
+                    <li class="page-item">
+                        <a class="page-link" href="#">${i}</a>
+                    </li>
+                `);
+            }
+
+            // Display the first set of rows
+            displayRows(1);
+
+            // Handle pagination click events
+            paginationControls.on('click', 'a', function (e) {
+                e.preventDefault();
+                const pageNumber = $(this).text();
+                displayRows(pageNumber);
+                // Highlight the active page number
+                paginationControls.find('li').removeClass('active');
+                $(this).parent().addClass('active');
+            });
+
+            function displayRows(pageNumber) {
+                const start = (pageNumber - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                rows.hide();
+                rows.slice(start, end).show();
+            }
+
+            // Set the first page as active by default
+            paginationControls.find('li:first').addClass('active');
+        });
+    </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
