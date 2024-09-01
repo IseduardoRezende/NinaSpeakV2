@@ -8,9 +8,11 @@ namespace NinaSpeakV2.Domain.Validators
         public const int NameMaxLength = 80;
         public const int NameMinLength = 1;
 
+        public const string StandardName = "Nosso ChatBot";
+
         public static bool IsValidName(string name)
         {
-            return IsValid(name) && IsBetween(name.Length, NameMinLength, NameMaxLength);
+            return IsValid(name) && IsBetween(name.Length, NameMinLength, NameMaxLength) && name is not StandardName;
         }
 
         public static bool IsEqual(ChatBot chatBot, UpdateChatBotViewModel updateModel)
