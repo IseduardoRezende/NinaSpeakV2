@@ -49,7 +49,7 @@
                             <span asp-validation-for="ChatBotGenreFk" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="ChatBotTypeFk" class="control-label">Tipo <i class="fa fa-chalkboard"></i></label>
+                            <label asp-for="ChatBotTypeFk" class="control-label">Tipo <i class="fa fa-chalkboard"></i>&nbsp;&nbsp;&nbsp;<strong class="text-black">(valor não poderá ser alterado)</strong></label>
                             <select asp-for="ChatBotTypeFk" class="form-control">
                                 @foreach (var type in chatBotTypes!)
                                 {
