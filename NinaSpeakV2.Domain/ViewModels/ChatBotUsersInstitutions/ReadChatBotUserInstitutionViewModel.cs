@@ -11,30 +11,27 @@ namespace NinaSpeakV2.Domain.ViewModels.ChatBotUsersInstitutions
         public long UserInstitutionFk { get; set; }
 
         [JsonInclude]
-        public bool Writer { get; set; }
-
-        [JsonInclude]
-        public bool Reader { get; set; }
-
-        [JsonInclude]
         public string ChatBotName { get; set; }
-
-        [JsonInclude]
-        public string ChatBotDescription { get; set; }
-
-        [JsonInclude]
-        public string ChatBotGenre { get; set; }
-
-        [JsonInclude]
-        public string ChatBotType { get; set; }
-
+        
         [JsonInclude]
         public string UserInstitutionInstitutionName { get; set; }
+
+        [JsonInclude]
+        public long UserInstitutionUserId { get; set; }
+
+        [JsonInclude]
+        public string UserInstitutionUserEmail { get; set; }
 
         [JsonInclude]
         public bool UserInstitutionOwner { get; set; }
 
         [JsonInclude]
         public bool UserInstitutionCreator { get; set; }
+
+        [JsonInclude]
+        public bool Writer { get; set; }
+
+        [JsonInclude]
+        public bool Reader { get; set; }
     }
 }

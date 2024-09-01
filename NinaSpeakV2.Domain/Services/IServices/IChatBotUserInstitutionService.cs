@@ -7,5 +7,7 @@ namespace NinaSpeakV2.Domain.Services.IServices
         IBaseService<ChatBotUserInstitution, CreateChatBotUserInstitutionViewModel, UpdateChatBotUserInstitutionViewModel, ReadChatBotUserInstitutionViewModel>
     {
         Task<IEnumerable<ReadChatBotUserInstitutionViewModel>> GetByUserIdAsync(long userId);
+
+        Task<IEnumerable<ReadChatBotUserInstitutionViewModel>> GetMembersByChatBotFkAsync(long chatBotFk);
     }
 }

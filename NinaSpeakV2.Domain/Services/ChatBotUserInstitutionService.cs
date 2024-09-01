@@ -72,6 +72,19 @@ namespace NinaSpeakV2.Domain.Services
             return _mapper.Map<IEnumerable<ReadChatBotUserInstitutionViewModel>>(chatBotUsersInstitution);
         }
 
+        public async Task<IEnumerable<ReadChatBotUserInstitutionViewModel>> GetMembersByChatBotFkAsync(long chatBotFk)
+        {
+            if (!BaseValidator.IsAbove(chatBotFk, BaseValidator.IdMinValue))
+                return Enumerable.Empty<ReadChatBotUserInstitutionViewModel>();
+
+            var chatBotUsersIntitution = await _chatBotUserInstitutionRepository.GetMembersByChatBotFkAsync(chatBotFk);
+
+            if (!BaseValidator.IsValid(chatBotUsersIntitution))
+                return Enumerable.Empty<ReadChatBotUserInstitutionViewModel>();
+
+            return _mapper.Map<IEnumerable<ReadChatBotUserInstitutionViewModel>>(chatBotUsersIntitution);
+        }
+
         protected override Func<ChatBotUserInstitution, bool> ApplyFilters()
         {
             return _ => true;
@@ -79,7 +92,8 @@ namespace NinaSpeakV2.Domain.Services
 
         protected override void UpdateFields(ChatBotUserInstitution entity, UpdateChatBotUserInstitutionViewModel updateViewModel)
         {
-            throw new NotImplementedException();
+            entity.Writer = updateViewModel.Writer;
+            entity.Reader = updateViewModel.Reader;            
         }
     }
 }
