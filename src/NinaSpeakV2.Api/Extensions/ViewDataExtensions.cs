@@ -18,7 +18,7 @@ namespace NinaSpeakV2.Api.Extensions
             {
                 _viewDataCache.Set(viewData.Last().Key, viewData.Last().Value, new MemoryCacheEntryOptions
                 {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5)
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMilliseconds(100)
                 });
             }
         }
@@ -28,7 +28,11 @@ namespace NinaSpeakV2.Api.Extensions
             ArgumentNullException.ThrowIfNull(viewData, nameof(viewData));
             ArgumentNullException.ThrowIfNull(key, nameof(key));
 
-            return _viewDataCache.TryGetValue(key, out value);
+            if (!_viewDataCache.TryGetValue(key, out value))
+                return false;
+
+            _viewDataCache.Remove(key);
+            return true;
         }
 
         public static ViewDataDictionary SetBaseErrors(this ViewDataDictionary viewData, IEnumerable<BaseError> baseErrors)
